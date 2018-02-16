@@ -1,0 +1,16 @@
+
+
+.themes-light {
+    background-color:#ffffff;
+}
+
+.themes-dark {
+    background-color:#d1d1d1;
+}
+
+.themes-red {
+    height: 100%;
+    background-image: linear-gradient(#880000, #000000);
+    background-attachment:fixed;
+    color: #ffffff;
+}

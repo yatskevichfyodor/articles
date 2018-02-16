@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+
+    <title th:text="#{sitename}">My Site | Home</title>
+
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{favicon.ico}" />
+
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.0.0-beta-1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" th:href="@{css/styles.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/login.css}"/>
+</head>
+
+<body th:class="${#themes.code('body.class')}">
+
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <div class="card card-container">
+        <img id="profile-img" class="profile-img-card" src="/images/sacred-icon.png"
+             th:src="@{/images/sacred-icon.png}"/>
+        <p id="profile-name" class="profile-name-card"></p>
+        <form class="form-signin" th:action="@{/reg}" method="post" th:object="${userRegistrationDto}" enctype="utf8">
+            <input
+                    type="text" class="form-control"
+                    th:placeholder="#{form.username}" th:field="*{username}" th:maxlength="32" pattern="^[a-z0-9_-]{3,}$" required="required" th:title="#{form.error.username.incorrect}"/>
+            <input
+                type="text" class="form-control"
+                th:placeholder="#{form.email}" th:field="*{email}" th:maxlength="100" pattern="^[_A-Za-z0-9-+]+(.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(.[A-Za-z0-9]+)*(.[A-Za-z]{2,})$" required="required"/>
+            <input type="password" class="form-control" th:placeholder="#{form.password}"
+                   th:field="*{password}" th:maxlength="32" required="required"/>
+            <input type="password" class="form-control" th:placeholder="#{form.confirmPassword}"
+                   th:field="*{confirmPassword}" th:maxlength="32" required="required"/>
+            <div th:if="${#fields.hasAnyErrors()}">
+                <p th:each="err : ${#fields.allErrors()}" th:text="${err}">...</p>
+            </div>
+            <button class="btn btn-lg btn-primary btn-block btn-signin"
+                    type="submit">Sign up
+            </button>
+        </form>
+        <!-- 					<a href="#" class="forgot-password"> Forgot the password? </a> -->
+    </div>
+</div>
+
+<script src="/webjars/jquery/3.2.0/jquery.min.js" type="text/javascript"></script>
+<script th:src="@{/js/popper.min.js}" type="text/javascript"></script>
+<script src="/webjars/bootstrap/4.0.0-beta-1/js/bootstrap.min.js" type="text/javascript"></script>
+
+</body>
+</html>

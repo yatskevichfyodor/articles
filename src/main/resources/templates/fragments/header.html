@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<body>
+
+<nav th:fragment="header" th:class="'navbar navbar-expand-lg ' + ${#themes.code('navbar.theme')}"
+     th:style="'background-color: ' + ${#themes.code('navbar.background.color')}">
+
+    <a class="navbar-brand mr-auto" th:href="@{/}" th:text="#{navbar.home}">Home</a>
+
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown"
+               th:text="#{navbar.language}">Choose language</a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="?lang=en"
+                   th:text="#{navbar.language.english}">English</a>
+                <a class="dropdown-item" href="?lang=ru" th:text="#{navbar.language.russian}">Russian</a>
+            </div>
+        </li>
+
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown"
+               th:text="#{navbar.theme}">Choose theme</a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="?theme=light"
+                   th:text="#{navbar.theme.light}">Light</a>
+                <a class="dropdown-item" href="?theme=dark"
+                   th:text="#{navbar.theme.dark}">Dark</a>
+                <a class="dropdown-item" href="?theme=red"
+                   th:text="#{navbar.theme.red}">Red</a>
+            </div>
+        </li>
+    </ul>
+
+    <form class="form-inline" action="/search">
+        <input class="form-control mr-sm-2" type="search" name="search" th:placeholder="#{navbar.search}"/>
+    </form>
+
+    <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link active" th:href="@{/login}"
+                                sec:authorize="${isAnonymous()}" th:text="#{navbar.login}">Active</a></li>
+        <li class="nav-item"><a class="nav-link active" th:href="@{/reg}"
+                                sec:authorize="${isAnonymous()}" th:text="#{navbar.signup}">Link</a></li>
+        <li class="nav-item"><a class="nav-link active"
+                                th:href="@{/profile}" sec:authorize="isAuthenticated()"
+                                sec:authentication="name">Active</a></li>
+        <li class="nav-item"><a class="nav-link active" th:href="@{/logout}"
+                                sec:authorize="isAuthenticated()" th:text="#{navbar.logout}">Link</a></li>
+    </ul>
+</nav>
+
+</body>
+
+</html>
