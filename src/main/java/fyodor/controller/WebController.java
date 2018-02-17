@@ -41,4 +41,10 @@ public class WebController {
 	public String ajaxTest(HttpServletRequest request) {
 		return "ajax";
 	}
+
+
+	@RequestMapping(value = { "add-article" })
+	public String addArticle(HttpServletRequest request, Model model) {
+		return "add-article";
+	}
 }
