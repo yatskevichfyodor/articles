@@ -94,9 +94,9 @@ public class SecurityController {
     @RequestMapping(value = "/registrationconfirm", method = RequestMethod.GET)
     public String confirmRegistration(@RequestParam("username") String user, @RequestParam("hash") String hash, HttpServletRequest request, Model model) {
         String message;
-        boolean confermed = userService.confirm(user, hash);
+        boolean confirmed = userService.confirm(user, hash);
         Locale locale = localeRsolver.resolveLocale(request);
-        if (confermed) {
+        if (confirmed) {
             message = messageSource.getMessage("auth.message.successful", null, locale);
             model.addAttribute("message", message);
 //            model.addAttribute("message", "auth.successful");
