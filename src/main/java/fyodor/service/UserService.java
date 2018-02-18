@@ -1,15 +1,14 @@
 package fyodor.service;
 
+import fyodor.model.User;
 import fyodor.model.UserRegistrationDto;
+import fyodor.repository.RoleRepository;
+import fyodor.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-
-import fyodor.model.User;
-import fyodor.repository.RoleRepository;
-import fyodor.repository.UserRepository;
 
 
 @Service
@@ -53,5 +52,10 @@ public class UserService implements IUserService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void delete(User user) {
+        userRepository.delete(user.getId());
     }
 }

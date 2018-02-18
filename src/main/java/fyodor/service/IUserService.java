@@ -7,6 +7,8 @@ public interface IUserService {
 
     User save(UserRegistrationDto user);
 
+    void delete(User user);
+
     User findByUsernameIgnoreCase(String username);
 
     User findByEmailIgnoreCase(String email);
