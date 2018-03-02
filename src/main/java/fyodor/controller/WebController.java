@@ -18,7 +18,9 @@ import org.springframework.web.servlet.LocaleResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class WebController {
@@ -46,7 +48,14 @@ public class WebController {
 	}
 
 	@RequestMapping(value = "/profile", method = RequestMethod.GET)
-	public String userProfile(HttpServletRequest request) {
+	public String userProfile(HttpServletRequest request, Model model, Principal principal) {
+		String username = principal.getName();
+		List<Category> listOfCategories = categoryService.findByArticlesIn(articleService.
+				findByAuthor(userService.findByUsernameIgnoreCase((username))));
+		Set<Category> setOfCategories = new HashSet<Category>(listOfCategories);
+		model.addAttribute("user", userService.findByUsernameIgnoreCase(principal.getName()));
+		model.addAttribute("setOfCategories", setOfCategories);
+
 		return "profile";
 	}
 
@@ -58,9 +67,9 @@ public class WebController {
 
 	@RequestMapping(value = { "add-article" })
 	public String addArticle(HttpServletRequest request, Model model) {
-		List<Category> listOfCategories = categoryService.findAll();
-		model.addAttribute("listOfCategories", listOfCategories);
+		model.addAttribute("listOfCategories", categoryService.findAll());
 		model.addAttribute("article", new Article());
+
 		return "add-article";
 	}
 
