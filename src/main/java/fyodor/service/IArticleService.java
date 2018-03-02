@@ -6,6 +6,7 @@ import fyodor.model.User;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Set;
 
 public interface IArticleService {
     void save(Article article, Principal author);
@@ -15,4 +16,6 @@ public interface IArticleService {
     List<Article> findByCategoryAndAuthor(Category category, User author);
 
     List<Article> findByAuthor(User Author);
+
+    List<Article> findAll();
 }

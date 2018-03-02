@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.security.Principal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ArticleService implements IArticleService {
@@ -41,5 +42,10 @@ public class ArticleService implements IArticleService {
     @Override
     public List<Article> findByAuthor(User author) {
         return articleRepository.findByAuthor(author);
+    }
+
+    @Override
+    public List<Article> findAll() {
+        return articleRepository.findAll();
     }
 }

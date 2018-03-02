@@ -18,9 +18,7 @@ import org.springframework.web.servlet.LocaleResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 public class WebController {
@@ -44,6 +42,24 @@ public class WebController {
 	public String home(HttpServletRequest request, Model model) {
 		String messageValue = messageSource.getMessage("message.welcome", null, localeResolver.resolveLocale(request));
 		model.addAttribute("message", messageValue);
+
+		List<Article> simpleArticlesList = articleService.findAll();
+		List<List<Article>> n6ArticlesList = new LinkedList();
+		Iterator<Article> iterator = simpleArticlesList.iterator();
+
+		int i = 0;
+		List<Article> innerList = new LinkedList<>();
+		while (iterator.hasNext()) {
+			if (i % 6 == 0) {
+				innerList = new LinkedList<>();
+				n6ArticlesList.add(innerList);
+			}
+			Article article = iterator.next();
+			innerList.add(article);
+			i++;
+		}
+		model.addAttribute("n6ArticlesList", n6ArticlesList);
+
 		return "index";
 	}
 
