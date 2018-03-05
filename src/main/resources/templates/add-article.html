@@ -4,6 +4,8 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <meta charset="utf-8"/>
+    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <title th:text="#{sitename}">My Site | Home</title>
 
@@ -23,28 +25,28 @@
     <row>
         <div class="col-md-6">
             <h2 class="mb-3" th:text="#{article.creating}">Add article</h2>
-            <form id="dropzone" action="/upload" class="dropzone needsclick mb-3">
-                <div class="dz-message needsclick">
+            <div class="dropzone needsclick mb-3" id="dropzone1">
+                <div class="dz-message needsclick mb-3">
                     Drop image here or click to upload.
                 </div>
-            </form>
-            <form th:method="post" th:action="add-article" th:object="${article}">
-                <h6 th:text="#{category.select}">Select category:</h6>
-                <select name="category" id="category" class="form-control mb-2">
-                    <option th:each="category : ${listOfCategories}" th:value="${category.getId()}" th:text="${category.getName()}">Category name</option>
-                </select>
-                <div class="textareas">
-                    <input name="title" id="title" type="text" class="form-control" aria-describedby="basic-addon1"
-                           th:placeholder="#{article.title}"/>
-                    <textarea name="content" class="form-control mt-1 textarea" rows="7" cols="70" id="textarea-text-1"
-                              th:placeholder="#{article.content}"></textarea>
-                </div>
+            </div>
+            <h6 th:text="#{category.select}">Select category:</h6>
+            <select id="category" class="form-control mb-2">
+                <option th:each="category : ${listOfCategories}" th:value="${category.getId()}" th:text="${category.getName()}">Category name</option>
+            </select>
+            <div class="textareas">
+                <input id="title" type="text" class="form-control" aria-describedby="basic-addon1"
+                       th:placeholder="#{article.title}"/>
+                <textarea id="content" class="form-control mt-1 textarea" rows="7" cols="70"
+                          th:placeholder="#{article.content}"></textarea>
+            </div>
 
-                <button class="btn btn-success btn-lg submit-btn mt-4" type="submit" th:text="#{article.create}">
-                    Submit
-                </button>
-            </form>
+
         </div>
+
+        <button id="submit" class="btn btn-success btn-lg submit-btn mt-4" type="submit" th:text="#{article.create}">
+            Submit
+        </button>
     </row>
 </div>
 
@@ -52,6 +54,6 @@
 <script th:src="@{/js/popper.min.js}" type="text/javascript"></script>
 <script src="/webjars/bootstrap/4.0.0-beta-1/js/bootstrap.min.js" type="text/javascript"></script>
 <script th:src="@{/dropzone/dropzone.js}"></script>
-
+<script th:src="@{/js/add-article.js}"></script>
 </body>
 </html>

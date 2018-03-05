@@ -1,6 +1,7 @@
 package fyodor.controller;
 
 import fyodor.model.Article;
+import fyodor.model.ArticleDto;
 import fyodor.model.CategoryObject;
 import fyodor.service.IArticleService;
 import fyodor.service.ICategoryService;
@@ -36,5 +37,12 @@ public class AjaxController {
             titles.add(article.getTitle());
         }
         return ResponseEntity.ok(titles);
+    }
+
+    @PostMapping("/add-article")
+    public ResponseEntity<?> addArticle(@RequestBody ArticleDto articleDto, Principal principal) {
+        articleService.save(articleDto, principal);
+
+        return ResponseEntity.ok(true);
     }
 }

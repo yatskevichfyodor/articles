@@ -24,6 +24,11 @@ public class CategoryService implements ICategoryService{
     }
 
     @Override
+    public Category findById(Long id) {
+        return categoryRepository.findById(id);
+    }
+
+    @Override
     public List<Category> findByArticlesIn(List<Article> articles) {
         return categoryRepository.findByArticlesIn(articles);
     }

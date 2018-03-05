@@ -29,4 +29,7 @@ public class Article {
     @ManyToOne
     @JoinColumn(name = "authorid", referencedColumnName = "id")
     private User author;
+
+    @OneToOne
+    private Image image;
 }

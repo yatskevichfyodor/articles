@@ -10,5 +10,7 @@ public interface ICategoryService {
 
     Category findByName(String name);
 
+    Category findById(Long id);
+
     List<Category> findByArticlesIn(List<Article> article);
 }
