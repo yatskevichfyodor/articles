@@ -1,9 +1,9 @@
 package fyodor.controller;
 
+import fyodor.model.User;
 import fyodor.model.UserLoginDto;
 import fyodor.model.UserRegistrationDto;
 import fyodor.registration.OnRegistrationCompleteEvent;
-import fyodor.model.User;
 import fyodor.service.IUserService;
 import fyodor.service.SecurityService;
 import fyodor.validation.UserLoginValidator;
@@ -13,12 +13,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.LocaleResolver;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,18 +40,18 @@ public class SecurityController {
     private MessageSource messageSource;
 
     @Autowired
-    LocaleResolver localeRsolver;
+    private LocaleResolver localeRsolver;
 
     @Autowired
-    SecurityService securityService;
+    private SecurityService securityService;
 
-    @RequestMapping(value = {"/login"})
+    @GetMapping("/login")
     public String login(Model model) {
         model.addAttribute("userLoginDto", new UserLoginDto());
         return "login";
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @PostMapping("/login")
     public String loginPost(@ModelAttribute("userLoginDto") UserLoginDto userLoginDto, Errors errors, HttpServletRequest request, Model model) {
         userLoginValidator.validate((Object) userLoginDto, errors);
         if (errors.hasErrors())
@@ -63,19 +60,19 @@ public class SecurityController {
         return "redirect:/home";
     }
 
-    @RequestMapping(value = {"/logout"})
+    @GetMapping("/logout")
     public String logout() {
         SecurityContextHolder.getContext().setAuthentication(null);
         return "redirect:/login";
     }
 
-    @RequestMapping(value = "/reg")
+    @GetMapping("/reg")
     public String registration(Model model) {
         model.addAttribute("userRegistrationDto", new UserRegistrationDto());
         return "reg";
     }
 
-    @RequestMapping(value = "/reg", method = RequestMethod.POST)
+    @PostMapping("/reg")
     public String registration(@ModelAttribute("userRegistrationDto") UserRegistrationDto userRegistrationDto, Errors errors, HttpServletRequest request, Model model) {
         userRegistrationValidator.validate((Object) userRegistrationDto, errors);
         if (errors.hasErrors())
@@ -91,7 +88,7 @@ public class SecurityController {
         return "index";
     }
 
-    @RequestMapping(value = "/registrationconfirm", method = RequestMethod.GET)
+    @GetMapping("/registrationconfirm")
     public String confirmRegistration(@RequestParam("username") String user, @RequestParam("hash") String hash, HttpServletRequest request, Model model) {
         String message;
         boolean confirmed = userService.confirm(user, hash);
@@ -109,4 +106,19 @@ public class SecurityController {
         return "index";
     }
 
+    @PostMapping("/checkIfUsernameNotExists")
+    @ResponseBody
+    public Boolean checkIfUsernameNotExists(@RequestBody String username) {
+        if (userService.findByUsernameIgnoreCase(username) == null)
+            return true;
+        return false;
+    }
+
+    @PostMapping("/checkIfEmailNotExists")
+    @ResponseBody
+    public Boolean checkIfEmailNotExists(@RequestBody String email) {
+        if (userService.findByEmailIgnoreCase(email) == null)
+            return true;
+        return false;
+    }
 }
