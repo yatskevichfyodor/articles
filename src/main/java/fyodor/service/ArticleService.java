@@ -3,12 +3,14 @@ package fyodor.service;
 import fyodor.model.*;
 import fyodor.repository.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.json.JsonParser;
+import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.stereotype.Service;
 
-import javax.xml.bind.DatatypeConverter;
 import java.security.Principal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ArticleService implements IArticleService {
@@ -25,29 +27,23 @@ public class ArticleService implements IArticleService {
     IImageService imageService;
 
     @Override
-    public void save(Article article, Principal author) {
-        User user = userService.findByUsernameIgnoreCase(author.getName());
-        article.setAuthor(user);
-        article.setDate(new Date());
+    public void save(String json, Principal author) {
+        JsonParser springParser = JsonParserFactory.getJsonParser();
+        Map<String, Object> data = springParser.parseMap(json);
 
-        articleRepository.save(article);
-    }
-
-    @Override
-    public void save(ArticleDto articleDto, Principal author) {
         Article article = new Article();
         User user = userService.findByUsernameIgnoreCase(author.getName());
-        article.setTitle(articleDto.getTitle());
-        article.setContent(articleDto.getContent());
-        article.setCategory(categoryService.findById(articleDto.getCategory()));
+        article.setTitle((String)data.get("title"));
+        article.setContent((String)data.get("content"));
+        article.setCategory(categoryService.findById(Long.valueOf((String)data.get("category"))));
         article.setAuthor(user);
         article.setDate(new Date());
 
-        String data = articleDto.getPicture();
+        String imageCode = (String)data.get("picture");
 //        String base64Image = data.split(",")[1];
 //        byte[] imageBytes = DatatypeConverter.parseBase64Binary(base64Image);
 //        Image image = imageService.save(imageBytes);
-        Image image = imageService.save(data);
+        Image image = imageService.save(imageCode);
         article.setImage(image);
 
         articleRepository.save(article);

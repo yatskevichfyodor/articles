@@ -41,7 +41,7 @@ function ajaxSaveArticle(article){
         cache: false,
         timeout: 600000,
         success: function(){
-            window.location.replace($(location).attr('host') + 'article/' + article.title);
+            window.location.replace('/article/' + article.title);
         },
         error: function() {
             alert("error");

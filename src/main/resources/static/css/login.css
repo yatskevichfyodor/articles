@@ -1,3 +1,6 @@
+#errors_list {
+    color: red;
+}
 
 .card-container.card {
     max-width: 350px;

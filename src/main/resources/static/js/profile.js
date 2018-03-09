@@ -1,13 +1,12 @@
 $(document).ready(function () {
     $('#category').change(function() {
-        var dropdown = document.getElementById("category");
-        var title = dropdown.options[dropdown.selectedIndex].text;
+        var id = $('#category').val();
 
-        ajaxFindArticles(title);
+        ajaxFindArticles(id);
     });
 });
 
-function ajaxFindArticles(category){
+function ajaxFindArticles(id){
     var token = $('#_csrf').attr('content');
     var header = $('#_csrf_header').attr('content');
 
@@ -15,7 +14,7 @@ function ajaxFindArticles(category){
         type: "POST",
         contentType: "application/json",
         url: "/findArticlesByCategory",
-        data: JSON.stringify(category),
+        data: id,
         beforeSend: function(xhr) {
             xhr.setRequestHeader(header, token);
         },

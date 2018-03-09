@@ -2,6 +2,7 @@ package fyodor.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import java.util.Date;
 @Table(name = "article")
 @Data
 @EqualsAndHashCode(exclude={"content", "category", "author"})
+@ToString(exclude={"content", "category", "author"})
 public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

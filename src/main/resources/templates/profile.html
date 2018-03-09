@@ -46,7 +46,7 @@
                 <div class="col-md-6" th:text="#{article.category}">
                 </div>
                 <div class="col-md-6">
-                    <select name="category" class="form-control" id="category">
+                    <select class="form-control" id="category">
                         <option disabled="" selected="" th:text="#{category.select}"></option>
                         <option th:each="category : ${setOfCategories}"
                                 th:value="${category.getId()}" th:text="${category.getName()}">Category name</option>
@@ -66,7 +66,7 @@
 
         <div class="col-md-1"></div>
 
-        <div class="col-md-6 mt-2">
+        <div class="col-md-6">
             <div class="border pl-4 pb-3 pt-3">
                 <div class="sub-header col-md-12 mb-3">
                     <h2 class="subheader text-left" th:text="#{user.info}">User info</h2>

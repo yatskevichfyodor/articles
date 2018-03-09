@@ -107,11 +107,16 @@
             <version>4.0.0-beta-1</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sourceforge.nekohtml</groupId>
+            <artifactId>nekohtml</artifactId>
+            <version>1.9.15</version>
         </dependency>
 
     </dependencies>

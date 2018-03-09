@@ -39,7 +39,7 @@ public class WebController {
 	private MessageSource messageSource;
 
 	@Autowired
-	LocaleResolver localeResolver;
+	private LocaleResolver localeResolver;
 
 	@RequestMapping(value = { "/", "home" })
 	public String home(HttpServletRequest request, Model model) {

@@ -2,6 +2,7 @@ package fyodor.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -10,6 +11,7 @@ import java.util.Set;
 @Table(name = "role")
 @Data
 @EqualsAndHashCode(exclude={"users"})
+@ToString(exclude={"users"})
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
