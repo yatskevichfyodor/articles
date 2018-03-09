@@ -23,26 +23,22 @@
 
 <div class="container mt-4">
     <row>
-        <div class="col-md-6">
-            <h2 class="mb-3" th:text="#{article.creating}">Add article</h2>
-            <div class="dropzone needsclick mb-3" id="dropzone1">
-                <div class="dz-message needsclick mb-3">
-                    Drop image here or click to upload.
-                </div>
+        <h2 class="mb-3 col-md-6" th:text="#{article.creating}">Add article</h2>
+        <div class="dropzone needsclick mb-3 col-md-6" id="dropzone1">
+            <div class="dz-message needsclick mb-3">
+                Drop image here or click to upload.
             </div>
-            <h6 th:text="#{category.select}">Select category:</h6>
-            <select id="category" class="form-control mb-2">
-                <option th:each="category : ${listOfCategories}" th:value="${category.getId()}" th:text="${category.getName()}">Category name</option>
-            </select>
-            <div class="textareas">
-                <input id="title" type="text" class="form-control" aria-describedby="basic-addon1"
-                       th:placeholder="#{article.title}"/>
-                <textarea id="content" class="form-control mt-1 textarea" rows="7" cols="70"
-                          th:placeholder="#{article.content}"></textarea>
-            </div>
-
-
         </div>
+        <h6 th:text="#{category.select}">Select category:</h6>
+        <select id="category" class="form-control mb-2 col-md-6">
+            <option th:each="category : ${listOfCategories}" th:value="${category.getId()}"
+                    th:text="${category.getName()}">Category name
+            </option>
+        </select>
+        <input id="title" type="text" class="form-control col-md-6" aria-describedby="basic-addon1"
+               th:placeholder="#{article.title}"/>
+        <textarea id="content" class="form-control mt-1 textarea col-md-12" rows="14" maxlength="20000"
+                  th:placeholder="#{article.content}"></textarea>
 
         <button id="submit" class="btn btn-success btn-lg submit-btn mt-4" type="submit" th:text="#{article.create}">
             Submit

@@ -26,22 +26,19 @@
         <p id="profile-name" class="profile-name-card"></p>
         <form class="form-signin" th:action="@{/reg}" method="post" th:object="${userRegistrationDto}"
               enctype="utf8">
-            <input
-                    type="text" id="username" class="form-control"
+            <input type="text" id="username" class="form-control"
                     th:placeholder="#{form.username}" th:field="*{username}" th:maxlength="32"
-                    pattern="^[a-z0-9_-]{3,}$" required="required" th:title="#{form.error.username.incorrect}"/>
-            <input
-                    type="text" id="email" class="form-control"
-                    th:placeholder="#{form.email}" th:field="*{email}" th:maxlength="100"
-                    pattern="^[_A-Za-z0-9-+]+(.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(.[A-Za-z0-9]+)*(.[A-Za-z]{2,})$"
+                    pattern="^[a-z0-9_-]{3,}$" required="required"/>
+            <input type="text" id="email" class="form-control"
+                    th:placeholder="#{form.email}" th:field="*{email}"
                     required="required"/>
             <input type="password" id="password" class="form-control" th:placeholder="#{form.password}"
-                   th:field="*{password}" th:maxlength="32" required="required"/>
+                   th:field="*{password}" required="required"/>
             <input type="password" id="confirm_password" class="form-control" th:placeholder="#{form.confirmPassword}"
-                   th:field="*{confirmPassword}" th:maxlength="32" required="required"/>
+                   th:field="*{confirmPassword}" required="required"/>
             <div id="errors_list"></div>
             <div th:if="${#fields.hasAnyErrors()}">
-                <p th:each="err : ${#fields.allErrors()}" th:text="${err}">...</p>
+                <p th:each="err : ${#fields.allErrors()}" th:text="${err}"></p>
             </div>
             <button id="submit" class="btn btn-lg btn-primary btn-block btn-signin"
                     type="submit">Sign up
