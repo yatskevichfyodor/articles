@@ -3,12 +3,17 @@ package fyodor.controller;
 
 import fyodor.model.Article;
 import fyodor.model.Category;
-import fyodor.service.*;
+import fyodor.service.CategoryService;
+import fyodor.service.IArticleService;
+import fyodor.service.IImageService;
+import fyodor.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.LocaleResolver;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +41,7 @@ public class WebController {
 	@Autowired
 	private LocaleResolver localeResolver;
 
-	@GetMapping(value = { "/", "/home" })
+	@RequestMapping(value = { "/", "home" })
 	public String home(HttpServletRequest request, Model model) {
 		String messageValue = messageSource.getMessage("message.welcome", null, localeResolver.resolveLocale(request));
 		model.addAttribute("message", messageValue);
@@ -64,7 +69,7 @@ public class WebController {
 		return articlesMatrix;
 	}
 
-	@GetMapping(value = "/profile")
+	@RequestMapping(value = "/profile", method = RequestMethod.GET)
 	public String userProfile(HttpServletRequest request, Model model, Principal principal) {
 		String username = principal.getName();
 		List<Category> listOfCategories = categoryService.findByArticlesIn(articleService.
@@ -76,37 +81,40 @@ public class WebController {
 		return "profile";
 	}
 
-	@GetMapping(value = { "/add-article" })
+	@RequestMapping(value = "/ajax-test", method = RequestMethod.GET)
+	public String ajaxTest(HttpServletRequest request) {
+		return "ajax";
+	}
+
+
+	@RequestMapping(value = { "add-article" })
 	public String addArticle(HttpServletRequest request, Model model) {
 		model.addAttribute("listOfCategories", categoryService.findAll());
+		//model.addAttribute("article", new Article());
 
 		return "add-article";
 	}
 
-	@PostMapping("/add-article")
-	@ResponseBody
-	public Boolean addArticle(@RequestBody String json, Principal principal) {
-		articleService.save(json, principal);
+//	@RequestMapping(value = { "add-article" }, method = RequestMethod.POST)
+//	public String addArticlePost(HttpServletRequest request, Model model, @ModelAttribute("article") Article article,
+//								 Principal principal) {
+//
+//        articleService.save(article, principal);
+//
+//		return "redirect:/article/" + article.getTitle();
+//	}
 
-		return true;
-	}
-
-    @GetMapping(value = { "/article/{articleName}" })
+    @RequestMapping(value = { "article/{articleName}" })
     public String article(HttpServletRequest request, Model model, @PathVariable String articleName) {
 	    Article article = articleService.findByTitle(articleName);
         model.addAttribute("article", article);
         return "article";
     }
 
-    @PostMapping("/findArticlesByCategory")
-	@ResponseBody
-    public Set<String> findArticlesByCategory(@RequestBody String id, Principal principal) {
-        List<Article> articles = articleService.findByCategoryAndAuthor(categoryService.findById(Long.valueOf(id)),
-                userService.findByUsernameIgnoreCase(principal.getName()));
-        Set<String> titles = new HashSet<>();
-        for (Article article: articles) {
-            titles.add(article.getTitle());
-        }
-        return titles;
-    }
+//	@RequestMapping(value = { "upload-image" })
+//	public String uploadImage(HttpServletRequest request, @RequestParam("file") MultipartFile file) {
+//		imageSevice.save(file);
+//
+//		return "article";
+//	}
 }

@@ -1,11 +1,9 @@
 package fyodor.controller;
 
-import fyodor.model.User;
 import fyodor.model.UserLoginDto;
 import fyodor.model.UserRegistrationDto;
 import fyodor.registration.OnRegistrationCompleteEvent;
-import fyodor.service.IArticleService;
-import fyodor.service.ICategoryService;
+import fyodor.model.User;
 import fyodor.service.IUserService;
 import fyodor.service.SecurityService;
 import fyodor.validation.UserLoginValidator;
@@ -15,9 +13,12 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.LocaleResolver;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,24 +43,18 @@ public class SecurityController {
     private MessageSource messageSource;
 
     @Autowired
-    private LocaleResolver localeRsolver;
+    LocaleResolver localeRsolver;
 
     @Autowired
-    private SecurityService securityService;
+    SecurityService securityService;
 
-    @Autowired
-    private IArticleService articleService;
-
-    @Autowired
-    private ICategoryService categoryService;
-
-    @GetMapping(value = {"/login"})
+    @RequestMapping(value = {"/login"})
     public String login(Model model) {
         model.addAttribute("userLoginDto", new UserLoginDto());
         return "login";
     }
 
-    @PostMapping(value = "/login")
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String loginPost(@ModelAttribute("userLoginDto") UserLoginDto userLoginDto, Errors errors, HttpServletRequest request, Model model) {
         userLoginValidator.validate((Object) userLoginDto, errors);
         if (errors.hasErrors())
@@ -68,19 +63,19 @@ public class SecurityController {
         return "redirect:/home";
     }
 
-    @GetMapping(value = {"/logout"})
+    @RequestMapping(value = {"/logout"})
     public String logout() {
         SecurityContextHolder.getContext().setAuthentication(null);
         return "redirect:/login";
     }
 
-    @GetMapping(value = "/reg")
+    @RequestMapping(value = "/reg")
     public String registration(Model model) {
         model.addAttribute("userRegistrationDto", new UserRegistrationDto());
         return "reg";
     }
 
-    @PostMapping(value = "/reg")
+    @RequestMapping(value = "/reg", method = RequestMethod.POST)
     public String registration(@ModelAttribute("userRegistrationDto") UserRegistrationDto userRegistrationDto, Errors errors, HttpServletRequest request, Model model) {
         userRegistrationValidator.validate((Object) userRegistrationDto, errors);
         if (errors.hasErrors())
@@ -96,7 +91,7 @@ public class SecurityController {
         return "index";
     }
 
-    @GetMapping(value = "/registrationconfirm")
+    @RequestMapping(value = "/registrationconfirm", method = RequestMethod.GET)
     public String confirmRegistration(@RequestParam("username") String user, @RequestParam("hash") String hash, HttpServletRequest request, Model model) {
         String message;
         boolean confirmed = userService.confirm(user, hash);
@@ -114,19 +109,4 @@ public class SecurityController {
         return "index";
     }
 
-    @PostMapping("/checkIfUsernameNotExists")
-    @ResponseBody
-    public Boolean checkIfUsernameNotExists(@RequestBody String username) {
-        if (userService.findByUsernameIgnoreCase(username) == null)
-            return true;
-        return false;
-    }
-
-    @PostMapping("/checkIfEmailNotExists")
-    @ResponseBody
-    public Boolean checkIfEmailNotExists(@RequestBody String email) {
-        if (userService.findByEmailIgnoreCase(email) == null)
-            return true;
-        return false;
-    }
 }
