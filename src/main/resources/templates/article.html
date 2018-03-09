@@ -6,17 +6,17 @@
 
     <title th:text="#{sitename}">My Site | Home</title>
 
-    <link rel="shortcut icon" type="image/x-icon" th:href="@{favicon.ico}" />
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}"/>
 
     <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.0.0-beta-1/css/bootstrap.min.css"/>
-    <link rel="stylesheet" th:href="@{css/styles.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}"/>
 </head>
 
 <body th:class="${#themes.code('body.class')}">
 
 <div th:replace="fragments/header :: header"></div>
 
-<div class="container mt-4 pt-3 pb-5">
+<div th:class="'container mt-4 pt-3 pb-5 ' + ${#themes.code('body.class')}">
 
     <div class="row">
         <div class="text-left col">
