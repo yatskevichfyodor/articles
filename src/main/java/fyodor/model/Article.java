@@ -19,6 +19,8 @@ public class Article {
     private long id;
 
     private String title;
+
+    @Lob
     private String content;
 
     @Type(type="date")

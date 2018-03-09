@@ -29,7 +29,7 @@
                 Drop image here or click to upload.
             </div>
         </div>
-        <h6 th:text="#{category.select}">Select category:</h6>
+        <h6 class="col-md-6" th:text="#{category.select}">Select category:</h6>
         <select id="category" class="form-control mb-2 col-md-6">
             <option th:each="category : ${listOfCategories}" th:value="${category.getId()}"
                     th:text="${category.getName()}">Category name
@@ -37,7 +37,7 @@
         </select>
         <input id="title" type="text" class="form-control col-md-6" aria-describedby="basic-addon1"
                th:placeholder="#{article.title}"/>
-        <textarea id="content" class="form-control mt-1 textarea col-md-12" rows="14" maxlength="20000"
+        <textarea id="content" class="form-control mt-1 textarea col-md-12" rows="15" maxlength="40000"
                   th:placeholder="#{article.content}"></textarea>
 
         <button id="submit" class="btn btn-success btn-lg submit-btn mt-4" type="submit" th:text="#{article.create}">
