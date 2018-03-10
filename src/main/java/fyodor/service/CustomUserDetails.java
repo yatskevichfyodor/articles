@@ -44,10 +44,10 @@ public class CustomUserDetails implements UserDetails {
     }
 
     public boolean isAccountNonLocked() {
-        return user.isEnabled();
+        return !user.isBlocked();
     }
 
     public boolean isEnabled() {
-        return user.isEnabled();
+        return user.isConfirmed();
     }
 }

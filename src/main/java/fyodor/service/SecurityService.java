@@ -4,9 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.session.SessionInformation;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class SecurityService implements ISecurityService {
@@ -17,15 +21,8 @@ public class SecurityService implements ISecurityService {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    @Override
-    public String findLoggedInUsername() {
-        Object userDetails = SecurityContextHolder.getContext().getAuthentication().getDetails();
-        if (userDetails instanceof UserDetails) {
-            return ((UserDetails)userDetails).getUsername();
-        }
-
-        return null;
-    }
+    @Autowired
+    private SessionRegistry sessionRegistry;
 
     @Override
     public void autologin(String username, String password) {
@@ -36,6 +33,20 @@ public class SecurityService implements ISecurityService {
 
         if (usernamePasswordAuthenticationToken.isAuthenticated()) {
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+        }
+    }
+
+    @Override
+    public List<Object> getLoggedInUsers() {
+        List<Object> principals = sessionRegistry.getAllPrincipals();
+        return principals;
+    }
+
+    @Override
+    public void logout(Object principal) {
+        List<SessionInformation> sessionInformation = sessionRegistry.getAllSessions(principal, true);
+        for (SessionInformation el : sessionInformation) {
+            el.expireNow();
         }
     }
 }

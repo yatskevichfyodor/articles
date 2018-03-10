@@ -14,3 +14,11 @@
     background-attachment:fixed;
     color: #ffffff;
 }
+
+.blocked {
+    color: red;
+}
+
+.admin {
+    color: green;
+}

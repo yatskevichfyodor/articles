@@ -63,7 +63,7 @@ public class UserLoginValidator implements Validator {
     }
 
     public void checkIfConfirmed(User user, Errors err) {
-        if (!user.isEnabled())
+        if (!user.isConfirmed())
             err.rejectValue("username", "login.error.account.disabled");
     }
 

@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="utf-8"/>
+    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <title th:text="#{navbar.adminpage}">Page title</title>
+
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}" />
+
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.0.0-beta-1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+
+</head>
+
+<body th:class="${#themes.code('body.class')}">
+
+<div th:replace="fragments/header :: header"></div>
+
+
+<div class="container mt-4">
+
+    <h2 class="header" th:text="#{admin.listofusers}">List of users</h2><hr>
+    <table class="table table-sm mt-3">
+        <thead>
+        <tr class="d-flex">
+            <td class="col-md-11">
+                <button type="button" class="btn mybtn-del" disabled th:text="#{admin.btn.delete}">Delete</button>
+                <button type="button" class="btn mybtn-bl" disabled th:text="#{admin.btn.block}">Block</button>
+                <button type="button" class="btn mybtn-unbl" disabled th:text="#{admin.btn.unblock}">Unblock</button>
+                <button type="button" class="btn mybtn-adm" disabled th:text="#{admin.btn.makeadmin}">Make admin</button>
+                <button type="button" class="btn mybtn-disrank" disabled th:text="#{admin.btn.disrank}">Disrank</button>
+            </td>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr class="d-flex">
+            <th class="col-md-1"></th>
+            <th class="col-md-1">ID</th>
+            <th class="col-md-4" th:text="#{admin.table.username}">Name</th>
+            <th class="col-md-4" th:text="#{admin.table.email}">Email</th>
+            <th class="col-md-1" th:text="#{admin.table.confirmed}">Confirmed</th>
+        </tr>
+        <tr class="d-flex" th:each="user : ${listOfUsers}" >
+            <td class="col-md-1 text-center" >
+                <input type="checkbox" class="chkbx" th:value="${user.getId()}" th:classappend="${(user.isBlocked() ? 'blocked' : '') + (user.isAdmin() ? ' admin' : '')}">
+            </td>
+            <td class="col-md-1" th:text="${user.getId()}" th:classappend="${(user.isBlocked() ? 'blocked' : '')}"></td>
+            <td class="col-md-4" ><a th:href="@{'/user/' + ${user.getUsername()}}" th:text="${user.getUsername()}"></a><span th:if="${user.isAdmin()}" class="text-danger font-italic"> (admin)</span></td>
+            <td class="col-md-4" th:text="${user.getEmail()}">Email</td>
+            <td class="col-md-1 text-center">
+                <span th:if="${user.isConfirmed()}">&#10004;</span>
+                <span th:unless="${user.isConfirmed()}">&#10060;</span>
+            </td>
+        </tr>
+        </tbody>
+
+    </table>
+</div>
+
+<script src="/webjars/jquery/3.2.0/jquery.min.js" type="text/javascript"></script>
+<script th:src="@{/js/popper.min.js}" type="text/javascript"></script>
+<script src="/webjars/bootstrap/4.0.0-beta-1/js/bootstrap.min.js" type="text/javascript"></script>
+<script th:src="@{/js/admin.js}" type="text/javascript"></script>
+
+</body>
+</html>

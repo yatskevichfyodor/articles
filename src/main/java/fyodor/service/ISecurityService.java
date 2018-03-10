@@ -1,7 +1,11 @@
 package fyodor.service;
 
-public interface ISecurityService {
-    String findLoggedInUsername();
+import java.util.List;
 
+public interface ISecurityService {
     void autologin(String username, String password);
+
+    List<Object> getLoggedInUsers();
+
+    void logout(Object principal);
 }

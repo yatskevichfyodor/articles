@@ -28,7 +28,8 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE IF NOT EXISTS `user` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `email` varchar(255) DEFAULT NULL,
-  `enabled` tinyint(1) NOT NULL DEFAULT '0',
+  `confirmed` tinyint(1) NOT NULL DEFAULT '0',
+  `blocked` tinyint(1) NOT NULL DEFAULT '0',
   `password` varchar(255) DEFAULT NULL,
   `username` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)

@@ -30,9 +30,16 @@ INSERT INTO `role` (`id`, `name`) VALUES
 	(2, 'ROLE_USER');
 
 DELETE FROM `user`;
-INSERT INTO `user` (`id`, `email`, `enabled`, `password`, `username`) VALUES
-	(1, 'yatskevichfyodor@gmail.com', 1, '$2a$11$5v0FqJpxd6FtyTWVTHx9Ue23E6Ls/68u8y0tkK5ETLaaCL6VWUANa', 'username1');
+INSERT INTO `user` (`id`, `email`, `confirmed`, `blocked`, `password`, `username`) VALUES
+	(1, 'yatskevichfyodor@gmail.com', 1, 0, '$2a$11$5v0FqJpxd6FtyTWVTHx9Ue23E6Ls/68u8y0tkK5ETLaaCL6VWUANa', 'username1'),
+  (2, 'email1@mail.com', 1, 0, '$2a$11$5v0FqJpxd6FtyTWVTHx9Ue23E6Ls/68u8y0tkK5ETLaaCL6VWUANa', 'username2'),
+  (3, 'email2@mail.com', 0, 0, '$2a$11$5v0FqJpxd6FtyTWVTHx9Ue23E6Ls/68u8y0tkK5ETLaaCL6VWUANa', 'username3'),
+  (4, 'email3@mail.com', 1, 1, '$2a$11$5v0FqJpxd6FtyTWVTHx9Ue23E6Ls/68u8y0tkK5ETLaaCL6VWUANa', 'username4');
 
 DELETE FROM `user_role`;
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES
-	(1, 2);
+	(1, 1),
+  (1, 2),
+  (2, 2),
+  (3, 2),
+  (4, 2);
