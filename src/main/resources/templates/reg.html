@@ -24,7 +24,7 @@
         <img id="profile-img" class="profile-img-card" src="/images/sacred-icon.png"
              th:src="@{/images/sacred-icon.png}"/>
         <p id="profile-name" class="profile-name-card"></p>
-        <form class="form-signin" th:action="@{/reg}" method="post" th:object="${userRegistrationDto}"
+        <form class="form-signin" th:action="@{/reg}" method="post" th:object="${user}"
               enctype="utf8">
             <input type="text" id="username" class="form-control"
                     th:placeholder="#{form.username}" th:field="*{username}"

@@ -2,16 +2,20 @@ package fyodor.service;
 
 import fyodor.model.Role;
 import fyodor.model.User;
-import fyodor.model.UserRegistrationDto;
+import fyodor.registration.EmailConfirm;
 import fyodor.repository.RoleRepository;
 import fyodor.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.LocaleResolver;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 
@@ -30,6 +34,12 @@ public class UserService implements IUserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private LocaleResolver localeResolver;
+
+    @Autowired
+    private EmailConfirm emailConfirm;
+
     @Override
     public User findByUsernameIgnoreCase(String username) {
         return userRepository.findByUsernameIgnoreCase(username);
@@ -40,14 +50,31 @@ public class UserService implements IUserService {
         return userRepository.findByEmailIgnoreCase(email);
     }
 
+    @Transactional
     @Override
-    public User save(UserRegistrationDto userRegistrationDto) {
-        User user = new User();
-        user.setUsername(userRegistrationDto.getUsername());
-        user.setEmail(userRegistrationDto.getEmail());
-        user.setPassword(passwordEncoder.encode(userRegistrationDto.getPassword()));
-        user.setRoles(roleRepository.findByName("ROLE_USER"));
-        return userRepository.save(user);
+    public User register(User userDto, HttpServletRequest request) {
+        User user = save(userDto);
+
+        String appUrl = String.format("%s://%s:%d", request.getScheme(), request.getServerName(), request.getServerPort());
+
+        confirmRegistration(user, localeResolver.resolveLocale(request), appUrl);
+
+        return user;
+    }
+    public User save(User userDto) {
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        userDto.setRoles(roleRepository.findByName("ROLE_USER"));
+        return userRepository.save(userDto);
+    }
+    private void confirmRegistration(User user, Locale locale, String appUrl) {
+        String username = user.getUsername();
+        String hash = passwordEncoder.encode(username);
+        emailConfirm.sendMail(appUrl, locale, username, user.getEmail(), hash);
+    }
+
+    @Scheduled(initialDelay = 10000, fixedDelay = 5000)
+    private void deleteIfNotConfirmed() {
+//        System.out.println("Tasks check!");
     }
 
     @Override

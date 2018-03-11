@@ -1,8 +1,6 @@
 package fyodor.validation;
 
 import fyodor.model.User;
-import fyodor.model.UserLoginDto;
-import fyodor.model.UserRegistrationDto;
 import fyodor.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,14 +17,13 @@ public class UserLoginValidator implements Validator {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    //    private String email_regex = "^.+@.+$";
     private String username_regex = "^[a-z0-9_-]{3,15}$";
     private String email_regex = "^[_A-Za-z0-9-+]+(.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(.[A-Za-z0-9]+)*(.[A-Za-z]{2,})$";
 
 
     @Override
     public boolean supports(Class<?> aClass) {
-        return UserRegistrationDto.class.equals(aClass);
+        return User.class.equals(aClass);
     }
 
     @Override
@@ -34,7 +31,7 @@ public class UserLoginValidator implements Validator {
         checkIfEmpty(err);
         if (err.hasErrors()) return;
 
-        UserLoginDto userLoginDto = (UserLoginDto)obj;
+        User userLoginDto = (User)obj;
         String username = userLoginDto.getUsername();
         String password = userLoginDto.getPassword();
 

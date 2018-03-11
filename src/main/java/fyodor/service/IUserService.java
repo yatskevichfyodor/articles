@@ -1,13 +1,13 @@
 package fyodor.service;
 
 import fyodor.model.User;
-import fyodor.model.UserRegistrationDto;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface IUserService {
 
-    User save(UserRegistrationDto user);
+    User register(User userDto, HttpServletRequest request);
 
     void delete(User user);
 

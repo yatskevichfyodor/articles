@@ -21,6 +21,9 @@ public class User {
     private String email;
     private String password;
 
+    @Transient
+    private String confirmPassword;
+
     @Column(nullable = false, columnDefinition = "boolean default 0")
     private boolean blocked = false;
 
