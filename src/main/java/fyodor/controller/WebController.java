@@ -1,13 +1,16 @@
 package fyodor.controller;
 
 
-import fyodor.model.Article;
-import fyodor.model.Category;
-import fyodor.service.CategoryService;
+import fyodor.model.*;
 import fyodor.service.IArticleService;
+import fyodor.service.ICategoryService;
+import fyodor.service.ICommentService;
 import fyodor.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +23,13 @@ import java.util.*;
 @Controller
 public class WebController {
 
+	@Bean
+	private User anonymousUser() {
+		User user = new User();
+		user.setUsername("anonymous");
+		return user;
+	}
+
 	@Autowired
 	private IUserService userService;
 
@@ -27,13 +37,23 @@ public class WebController {
     private IArticleService articleService;
 
 	@Autowired
-	private CategoryService categoryService;
+	private ICategoryService categoryService;
+
+	@Autowired
+	private ICommentService commentService;
 
 	@Autowired
 	private MessageSource messageSource;
 
 	@Autowired
 	private LocaleResolver localeResolver;
+
+	@ModelAttribute("currentUser")
+	public User getPrincipal(Principal principal) {
+		if (principal == null) return anonymousUser();
+
+		return userService.findByUsernameIgnoreCase(principal.getName());
+	}
 
 	@GetMapping(value = { "/", "home" })
 	public String home(HttpServletRequest request, Model model) {
@@ -64,7 +84,7 @@ public class WebController {
 	}
 
 	@GetMapping("/profile")
-	public String userProfile(HttpServletRequest request, Model model, Principal principal) {
+	public String userProfile(Model model, Principal principal) {
 		String username = principal.getName();
 		List<Category> listOfCategories = categoryService.findByArticlesIn(articleService.
 				findByAuthor(userService.findByUsernameIgnoreCase((username))));
@@ -75,24 +95,19 @@ public class WebController {
 		return "profile";
 	}
 
-	@GetMapping("/ajax-test")
-	public String ajaxTest(HttpServletRequest request) {
-		return "ajax";
-	}
-
-
-	@GetMapping("add-article")
-	public String addArticle(HttpServletRequest request, Model model) {
+	@GetMapping("/add-article")
+	public String addArticle( Model model) {
 		model.addAttribute("listOfCategories", categoryService.findAll());
-		//model.addAttribute("article", new Article());
 
 		return "add-article";
 	}
 
-    @GetMapping("article/{articleName}")
-    public String article(HttpServletRequest request, Model model, @PathVariable String articleName) {
-	    Article article = articleService.findByTitle(articleName);
+    @GetMapping("/article/{articleId}")
+    public String article(Model model, @PathVariable Long articleId) {
+	    //Article article = articleService.findByTitle(articleName);
+		Article article = articleService.findById(articleId);
         model.addAttribute("article", article);
+        model.addAttribute("comments", commentService.findByArticleId(articleId));
         return "article";
     }
 
@@ -115,4 +130,33 @@ public class WebController {
 
         return true;
     }
+
+	@MessageMapping("/comment/save")
+	@SendTo("/comments")
+	public CommentDto saveComment(@RequestBody String json, Principal principal) {
+		Comment comment = commentService.save(json, principal);
+
+		CommentDto commentDto = new CommentDto();
+		commentDto.setId(comment.getId());
+		commentDto.setAuthor(comment.getAuthor().getUsername());
+		commentDto.setText(comment.getText());
+		commentDto.setTimestamp(comment.getTimestamp().toString());
+//		String jsonComment = "{\"id\":" + comment.getId()+
+//				", \"text\":\"" + comment.getText() +
+//				"\", \"author\":\"" + comment.getAuthor().getUsername() +
+//				"\", \"timestamp\":\"" + comment.getTimestamp().toString() + "\"}";
+
+		return commentDto;
+	}
+
+	@DeleteMapping("/comment")
+	@ResponseBody
+	public Boolean deleteComment(@RequestBody Long id, Principal principal) {
+		if (!commentService.findById(id).getAuthor().getUsername().equals(principal.getName()))
+			return false;
+
+		commentService.deleteComment(id);
+
+		return true;
+	}
 }

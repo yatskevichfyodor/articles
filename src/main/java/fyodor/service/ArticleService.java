@@ -1,6 +1,9 @@
 package fyodor.service;
 
-import fyodor.model.*;
+import fyodor.model.Article;
+import fyodor.model.Category;
+import fyodor.model.Image;
+import fyodor.model.User;
 import fyodor.repository.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JsonParser;
@@ -8,7 +11,6 @@ import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +39,6 @@ public class ArticleService implements IArticleService {
         article.setContent((String)data.get("content"));
         article.setCategory(categoryService.findById(Long.valueOf((String)data.get("category"))));
         article.setAuthor(user);
-        article.setDate(new Date());
 
         String imageCode = (String)data.get("picture");
 //        String base64Image = data.split(",")[1];
@@ -47,6 +48,11 @@ public class ArticleService implements IArticleService {
         article.setImage(image);
 
         articleRepository.save(article);
+    }
+
+    @Override
+    public Article findById(Long id) {
+        return articleRepository.findById(id);
     }
 
     @Override

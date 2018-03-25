@@ -3,16 +3,16 @@ package fyodor.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "article")
 @Data
-@EqualsAndHashCode(exclude={"content", "category", "author"})
-@ToString(exclude={"content", "category", "author"})
+@EqualsAndHashCode(exclude={"image", "content", "category", "author", "comments"})
+@ToString(exclude={"image", "content", "category", "author", "comments"})
 public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,17 +23,21 @@ public class Article {
     @Lob
     private String content;
 
-    @Type(type="date")
-    private Date date = new Date();
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date timestamp = new Date();
+
+    @OneToOne
+    @JoinColumn(name = "image_id", referencedColumnName = "id")
+    private Image image;
 
     @ManyToOne
-    @JoinColumn(name = "categoryid", referencedColumnName = "id")
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 
     @ManyToOne
-    @JoinColumn(name = "authorid", referencedColumnName = "id")
+    @JoinColumn(name = "author_id", referencedColumnName = "id")
     private User author;
 
-    @OneToOne
-    private Image image;
+    @OneToMany(mappedBy = "article")
+    List<Comment> comments;
 }

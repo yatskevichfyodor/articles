@@ -11,6 +11,8 @@ public interface IArticleService {
 
     void save(String json, Principal author);
 
+    Article findById(Long id);
+
     Article findByTitle(String title);
 
     List<Article> findByCategoryAndAuthor(Category category, User author);

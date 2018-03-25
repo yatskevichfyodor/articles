@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -21,6 +23,9 @@ public class User {
     private String email;
     private String password;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date timestamp = new Date();
+
     @Transient
     private String confirmPassword;
 
@@ -34,10 +39,19 @@ public class User {
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
+    @OneToMany(mappedBy = "author")
+    List<Comment> comments;
+
     public boolean isAdmin() {
         for (Role role : roles) {
             if (role.getName().equals("ROLE_ADMIN")) return true;
         }
+        return false;
+    }
+
+    public boolean isAnonymous() {
+        if (username.equals("anonymousUser"))
+            return true;
         return false;
     }
 }

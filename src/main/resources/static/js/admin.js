@@ -7,30 +7,6 @@ function disableAll() {
 		$(".mybtn-adm").attr("disabled", "disabled");
 		$(".mybtn-disrank").attr("disabled", "disabled");
 }
-//
-// function enableAll() {
-// 	$(".mybtn-del").removeAttr("disabled");
-// 		$(".mybtn-bl").removeAttr("disabled");
-// 		$(".mybtn-unbl").removeAttr("disabled");
-// 		$(".mybtn-adm").removeAttr("disabled");
-// 		$(".mybtn-disrank").removeAttr("disabled");
-// }
-//
-// $(".mainchkbx").change(function(){
-// 	if ($(".mainchkbx").is(":checked")) {
-// 		actionArr = $(".chkbx").map(function(i,el){
-//         return $(el).val();
-//     }).get();
-//     enableAll();
-// 	}
-// 	else {
-// 		actionArr=[];
-// 		disableAll();
-// 		}
-// 	$(".chkbx").prop('checked', $(this).prop('checked'));
-//
-// 	console.log(actionArr);
-// })
 
 $(".chkbx").change(function(){
 	// $(".mainchkbx").prop('checked', false);

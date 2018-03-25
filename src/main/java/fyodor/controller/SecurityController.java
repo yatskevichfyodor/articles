@@ -79,26 +79,20 @@ public class SecurityController {
 
         String message = messageSource.getMessage("registration.message.confirm", null, localeResolver.resolveLocale(request));
         model.addAttribute("message", message);
-        return "index";
+        return "message";
     }
 
     @GetMapping("/registrationconfirm")
-    @ResponseBody
     public String confirmRegistration(@RequestParam("username") String user, @RequestParam("hash") String hash, HttpServletRequest request, Model model) {
         String message;
         boolean confirmed = userService.confirm(user, hash);
         Locale locale = localeResolver.resolveLocale(request);
-        if (confirmed) {
+        if (confirmed)
             message = messageSource.getMessage("auth.message.successful", null, locale);
-            model.addAttribute("message", message);
-//            model.addAttribute("message", "auth.successful");
-            return "index";
-        }
-
-        message = messageSource.getMessage("auth.message.fail", null, locale);
+        else
+            message = messageSource.getMessage("auth.message.fail", null, locale);
         model.addAttribute("message", message);
-//        model.addAttribute("message", "auth.expired");
-        return "index";
+        return "message";
     }
 
     @PostMapping("/checkIfUsernameNotExists")
