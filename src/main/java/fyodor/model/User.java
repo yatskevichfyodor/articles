@@ -12,8 +12,8 @@ import java.util.Set;
 @Entity
 @Table(name = "user")
 @Data
-@EqualsAndHashCode(exclude={"roles"})
-@ToString(exclude={"roles"})
+@EqualsAndHashCode(exclude={"roles", "comments", "ratings"})
+@ToString(exclude={"roles", "comments", "ratings"})
 public class User {
 
     @Id
@@ -42,16 +42,13 @@ public class User {
     @OneToMany(mappedBy = "author")
     List<Comment> comments;
 
+    @OneToMany(mappedBy = "id.user")
+    List<Rating> ratings;
+
     public boolean isAdmin() {
         for (Role role : roles) {
             if (role.getName().equals("ROLE_ADMIN")) return true;
         }
-        return false;
-    }
-
-    public boolean isAnonymous() {
-        if (username.equals("anonymousUser"))
-            return true;
         return false;
     }
 }

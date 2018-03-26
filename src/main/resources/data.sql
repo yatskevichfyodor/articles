@@ -50,3 +50,8 @@ INSERT INTO `article` (`id`, `content`, `timestamp`, `title`, `author_id`, `cate
 INSERT INTO `comment` (`id`, `timestamp`, `text`, `article_id`, `author_id`) VALUES
 	(1, '2018-03-24 19:03:35', 'nice', 1, 1),
 	(2, '2018-03-24 19:03:40', 'good', 1, 1);
+
+INSERT INTO `rating` (`value`, `article_id`, `user_id`) VALUES
+	('LIKE', 2, 1),
+	('LIKE', 2, 2),
+	('DISLIKE', 2, 4);

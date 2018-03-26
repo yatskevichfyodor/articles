@@ -2,6 +2,7 @@ DROP DATABASE IF EXISTS `db1`;
 CREATE DATABASE IF NOT EXISTS `db1`;
 USE `db1`;
 
+DROP TABLE IF EXISTS `rating`;
 DROP TABLE IF EXISTS `user_role`;
 DROP TABLE IF EXISTS `role`;
 DROP TABLE IF EXISTS `user`;
@@ -77,4 +78,14 @@ CREATE TABLE IF NOT EXISTS `comment` (
   KEY `FKh1gtv412u19wcbx22177xbkjp` (`author_id`),
   CONSTRAINT `FK5yx0uphgjc6ik6hb82kkw501y` FOREIGN KEY (`article_id`) REFERENCES `article` (`id`),
   CONSTRAINT `FKh1gtv412u19wcbx22177xbkjp` FOREIGN KEY (`author_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `rating` (
+  `value` varchar(255) DEFAULT NULL,
+  `article_id` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`article_id`,`user_id`),
+  KEY `FKpn05vbx6usw0c65tcyuce4dw5` (`user_id`),
+  CONSTRAINT `FKff3wnj5681kqa2tdaimkkhx7b` FOREIGN KEY (`article_id`) REFERENCES `article` (`id`),
+  CONSTRAINT `FKpn05vbx6usw0c65tcyuce4dw5` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

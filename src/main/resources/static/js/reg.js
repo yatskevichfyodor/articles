@@ -1,7 +1,7 @@
 $(document).ready(function(){
     var errorsSet = new Set();
 
-    $('#username').keyup(function() {
+    $('#username').change(function() {
         var username = $(this).val();
         var valid = true;
 
@@ -30,7 +30,7 @@ $(document).ready(function(){
         updateButtonState();
     });
 
-    $('#email').keyup(function() {
+    $('#email').change(function() {
         var email = $(this).val();
         var valid = true;
 
@@ -59,7 +59,7 @@ $(document).ready(function(){
         updateButtonState();
     });
 
-    $('#password').keyup(function() {
+    $('#password').change(function() {
         var password = $(this).val();
         var valid = true;
 
@@ -88,8 +88,7 @@ $(document).ready(function(){
         updateButtonState();
     });
 
-    $('#confirm_password').keyup(function() {
-        var confirm_password = $(this).val();
+    $('#confirm_password').change(function() {
         var valid = true;
 
         if (comparePasswords()) {

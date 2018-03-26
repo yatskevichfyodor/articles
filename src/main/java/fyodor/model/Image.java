@@ -10,8 +10,8 @@ import javax.persistence.*;
 @Entity
 @Table(name = "image")
 @Data
-@EqualsAndHashCode(exclude={"data"})
-@ToString(exclude={"data"})
+@EqualsAndHashCode(exclude={"data", "article"})
+@ToString(exclude={"data", "article"})
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

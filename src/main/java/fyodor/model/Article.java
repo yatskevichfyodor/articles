@@ -11,8 +11,8 @@ import java.util.List;
 @Entity
 @Table(name = "article")
 @Data
-@EqualsAndHashCode(exclude={"image", "content", "category", "author", "comments"})
-@ToString(exclude={"image", "content", "category", "author", "comments"})
+@EqualsAndHashCode(exclude={"image", "content", "category", "author", "comments", "ratings"})
+@ToString(exclude={"image", "content", "category", "author", "comments", "ratings"})
 public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,4 +40,8 @@ public class Article {
 
     @OneToMany(mappedBy = "article")
     List<Comment> comments;
+
+    @OneToMany(mappedBy = "id.article")
+    List<Rating> ratings;
+
 }

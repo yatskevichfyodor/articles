@@ -1,5 +1,4 @@
 
-
 .themes-light {
     background-color:#ffffff;
 }
@@ -21,4 +20,8 @@
 
 .admin {
     color: green;
+}
+
+.clickable-icon {
+    cursor: pointer;
 }

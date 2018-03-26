@@ -4,13 +4,17 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <meta charset="utf-8"/>
+    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <title th:text="#{sitename}">My Site | Home</title>
 
     <link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}"/>
 
     <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.0.0-beta-1/css/bootstrap.min.css"/>
-    <link rel="stylesheet" type="text/css" href="/webjars/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <!--<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/4.7.0/css/font-awesome.min.css"/>-->
+    <link rel="stylesheet" type="text/css"
+          href="/webjars/font-awesome/5.0.6/web-fonts-with-css/css/fontawesome-all.css"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}"/>
 </head>
 
@@ -51,6 +55,44 @@
         </div>
     </div>
 
+    <div>
+        <h5 class="contents pt-5 mb-4" th:text="#{article.rating}">Comments</h5>
+        <div sec:authorize="isAuthenticated()">
+            <div th:if="${currentUserRating == null}" class="row">
+                <div class="col-md-1">
+                    <i class="far fa-thumbs-up clickable-icon" style="font-size:48px" id="like"></i>
+                </div>
+                <div class="col-md-1">
+                    <i class="far fa-thumbs-down clickable-icon" style="font-size:48px" id="dislike"></i>
+                </div>
+            </div>
+            <div th:if="${currentUserRating != null}" class="row">
+                <div class="col-md-1">
+                    <i th:if="${currentUserRating.getValue() == T(fyodor.model.Rating.RatingEnum).LIKE}"
+                       class="fas fa-thumbs-up clickable-icon" style="font-size:48px" id="like"></i>
+                    <i th:if="${currentUserRating.getValue() == T(fyodor.model.Rating.RatingEnum).DISLIKE}"
+                       class="far fa-thumbs-up clickable-icon" style="font-size:48px" id="like"></i>
+                </div>
+                <div class="col-md-1">
+                    <i th:if="${currentUserRating.getValue() == T(fyodor.model.Rating.RatingEnum).LIKE}"
+                       class="far fa-thumbs-down clickable-icon" style="font-size:48px" id="dislike"></i>
+                    <i th:if="${currentUserRating.getValue() == T(fyodor.model.Rating.RatingEnum).DISLIKE}"
+                       class="fas fa-thumbs-down clickable-icon" style="font-size:48px" id="dislike"></i>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-1 text-right">
+                <span id="likes-number" th:text="${likesNumber}">
+                </span><i class="fas fa-long-arrow-alt-up" style="color:#00FF00"></i>
+            </div>
+            <div class="col-md-1 text-left">
+                </span><i class="fas fa-long-arrow-alt-down" style="color:#FF0000"></i>
+                <span id="dislikes-number" th:text="${dislikesNumber}"></span>
+            </div>
+        </div>
+    </div>
+
     <div id="comment-block">
         <h5 class="contents pt-5 mb-4" th:text="#{article.comments}">Comments</h5>
         <div id="comments">
@@ -64,12 +106,13 @@
                             </span>
                         </div>
                         <span class="col-md-4" th:text="${comment.getTimestamp().toString()}"></span>
-                        <div th:if="${currentUser.isAnonymous()}">
+                        <div sec:authorize="isAuthenticated()">
                             <div th:if="${comment.getAuthor().getId() == currentUser.getId() or currentUser.isAdmin() == true}"
                                  class="col-md-4 text-right">
-                        <span onclick="delComment();" class="clickable-icon" id="btn-del" th:value="${comment.getId()}">
-                            <i class="fa fa-trash-o  mr-2 mt-2"></i>
-                        </span>
+                                <span onclick="delComment();" class="clickable-icon" id="btn-del"
+                                      th:value="${comment.getId()}">
+                                    <i class="fa fa-trash-o  mr-2 mt-2"></i>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -101,7 +144,8 @@
 <script src="/webjars/bootstrap/4.0.0-beta-1/js/bootstrap.min.js" type="text/javascript"></script>
 <script src="/webjars/sockjs-client/1.0.2/sockjs.min.js"></script>
 <script src="/webjars/stomp-websocket/2.3.3/stomp.min.js"></script>
-<script th:src="@{/js/article.js}" type="text/javascript"></script>
+<script th:src="@{/js/article-comment.js}" type="text/javascript"></script>
+<script th:src="@{/js/article-rating.js}" type="text/javascript"></script>
 
 
 </body>
