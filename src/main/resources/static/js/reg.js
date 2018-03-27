@@ -1,8 +1,26 @@
-$(document).ready(function(){
+$(document).ready(function () {
     var errorsSet = new Set();
+    errorsSet.add(LANG.password_not_match);
+    var confirmPasswordFieldWasChanged = false;
 
-    $('#username').change(function() {
-        var username = $(this).val();
+    $('#username').change(function () {
+        validateUsername();
+    });
+
+    $('#email').change(function () {
+        validateEmail();
+    });
+
+    $('#password').change(function () {
+        validatePassword();
+    });
+
+    $('#confirm_password').change(function () {
+        validateConfirmPassword();
+    });
+
+    function validateUsername() {
+        var username = $('#username').val();
         var valid = true;
 
         if (username.length < 4 || username.length > 32) {
@@ -12,7 +30,7 @@ $(document).ready(function(){
             errorsSet.delete(LANG.username_length);
         }
 
-        if (username.match(/^[a-zA-Z0-9]+$/) ) {
+        if (username.match(/^[a-zA-Z0-9]+$/)) {
             errorsSet.delete(LANG.username_regex);
         } else {
             valid = false;
@@ -27,11 +45,10 @@ $(document).ready(function(){
         }
 
         showErrors();
-        updateButtonState();
-    });
+    }
 
-    $('#email').change(function() {
-        var email = $(this).val();
+    function validateEmail() {
+        var email = $('#email').val();
         var valid = true;
 
         if (email.length < 4 || email.length > 100) {
@@ -41,7 +58,7 @@ $(document).ready(function(){
             errorsSet.delete(LANG.email_length);
         }
 
-        if (email.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) ) {
+        if (email.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)) {
             errorsSet.delete(LANG.email_regex);
         } else {
             valid = false;
@@ -56,11 +73,10 @@ $(document).ready(function(){
         }
 
         showErrors();
-        updateButtonState();
-    });
+    }
 
-    $('#password').change(function() {
-        var password = $(this).val();
+    function validatePassword() {
+        var password = $('#password').val();
         var valid = true;
 
         if (password.length < 4 || password.length > 32) {
@@ -70,12 +86,14 @@ $(document).ready(function(){
             errorsSet.delete(LANG.password_length);
         }
 
-        if (comparePasswords()) {
-            errorsSet.delete(LANG.password_not_match);
-            $('#confirm_password').removeClass('is-invalid').addClass('is-valid');
-        } else {
-            errorsSet.add(LANG.password_not_match);
-            $('#confirm_password').removeClass('is-valid').addClass('is-invalid');
+        if (confirmPasswordFieldWasChanged) {
+            if (comparePasswords()) {
+                errorsSet.delete(LANG.password_not_match);
+                $('#confirm_password').removeClass('is-invalid').addClass('is-valid');
+            } else {
+                errorsSet.add(LANG.password_not_match);
+                $('#confirm_password').removeClass('is-valid').addClass('is-invalid');
+            }
         }
 
         if (valid) {
@@ -85,10 +103,10 @@ $(document).ready(function(){
         }
 
         showErrors();
-        updateButtonState();
-    });
+    }
 
-    $('#confirm_password').change(function() {
+    function validateConfirmPassword() {
+        confirmPasswordFieldWasChanged = true;
         var valid = true;
 
         if (comparePasswords()) {
@@ -105,8 +123,7 @@ $(document).ready(function(){
         }
 
         showErrors();
-        updateButtonState();
-    });
+    }
 
     function comparePasswords() {
         if ($('#password').val() == $('#confirm_password').val()) {
@@ -117,18 +134,20 @@ $(document).ready(function(){
 
     function showErrors() {
         $('#errors_list').empty();
-        errorsSet.forEach(function(value) {
-            $('#errors_list').append('<p>' + value + '</p>');
+        errorsSet.forEach(function (value) {
+            if (value != LANG.password_not_match || confirmPasswordFieldWasChanged)
+                $('#errors_list').append('<p>' + value + '</p>');
         });
     }
 
-    function updateButtonState() {
-        if (errorsSet.size > 0) {
-            $('#submit').prop('disabled', true);
-        } else {
-            $('#submit').prop('disabled', false);
-        }
-    }
+    $('#submit').click(function(event) {
+        validateUsername();
+        validateEmail();
+        validatePassword();
+        validateConfirmPassword();
+        if (errorsSet.size > 0)
+            event.preventDefault();
+    })
 
     function ajaxCheckUsername(username) {
         var token = $('#_csrf').attr('content');
@@ -139,28 +158,26 @@ $(document).ready(function(){
             contentType: 'application/json; charset=utf-8',
             url: "/checkIfUsernameNotExists",
             data: username,
-            beforeSend: function(xhr) {
+            beforeSend: function (xhr) {
                 xhr.setRequestHeader(header, token);
             },
             dataType: 'json',
             cache: false,
             timeout: 600000,
-            success: function(result){
+            success: function (result) {
                 if (result) {
                     errorsSet.delete(LANG.username_duplicate);
                     showErrors();
                     validateUsernameField();
-                    updateButtonState();
                 } else {
                     $('#username').removeClass('is-valid').addClass('is-invalid');
                     errorsSet.add(LANG.username_duplicate);
 
                     showErrors();
-                    updateButtonState();
                 }
             },
-            error:function (xhr, ajaxOptions, thrownError){
-                if(xhr.status==404) {
+            error: function (xhr, ajaxOptions, thrownError) {
+                if (xhr.status == 404) {
                     console.log(thrownError);
                 }
             }
@@ -176,29 +193,27 @@ $(document).ready(function(){
             contentType: 'application/json; charset=utf-8',
             url: "/checkIfEmailNotExists",
             data: email,
-            beforeSend: function(xhr) {
+            beforeSend: function (xhr) {
                 xhr.setRequestHeader(header, token);
             },
             dataType: 'json',
             cache: false,
             timeout: 600000,
-            success: function(result){
+            success: function (result) {
                 if (result) {
                     errorsSet.delete(LANG.email_duplicate);
 
                     showErrors();
                     validateEmailField();
-                    updateButtonState();
                 } else {
                     $('#email').removeClass('is-valid').addClass('is-invalid');
                     errorsSet.add(LANG.email_duplicate);
 
                     showErrors();
-                    updateButtonState();
                 }
             },
-            error:function (xhr, ajaxOptions, thrownError){
-                if(xhr.status==404) {
+            error: function (xhr, ajaxOptions, thrownError) {
+                if (xhr.status == 404) {
                     console.log(thrownError);
                 }
             }

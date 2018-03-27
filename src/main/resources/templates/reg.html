@@ -36,13 +36,13 @@
                    th:field="*{password}" required="required"/>
             <input type="password" id="confirm_password" class="form-control" th:placeholder="#{form.confirmPassword}"
                    th:field="*{confirmPassword}" required="required"/>
+            <button id="submit" class="btn btn-lg btn-primary btn-block btn-signin"
+                    type="submit">Sign up
+            </button>
             <div id="errors_list"></div>
             <div th:if="${#fields.hasAnyErrors()}">
                 <p th:each="err : ${#fields.allErrors()}" th:text="${err}">...</p>
             </div>
-            <button id="submit" class="btn btn-lg btn-primary btn-block btn-signin"
-                    type="submit">Sign up
-            </button>
         </form>
         <!-- 					<a href="#" class="forgot-password"> Forgot the password? </a> -->
 
