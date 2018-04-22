@@ -1,6 +1,6 @@
 package fyodor.service;
 
-import fyodor.Dto.ArticleDto;
+import fyodor.dto.ArticleDto;
 import fyodor.model.Article;
 import fyodor.model.Category;
 import fyodor.model.Image;

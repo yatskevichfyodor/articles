@@ -3,15 +3,13 @@ package fyodor.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fyodor.Dto.ArticleDto;
+import fyodor.dto.ArticleDto;
 import fyodor.model.*;
 import fyodor.service.*;
 import fyodor.util.ListToMatrixConverter;
 import fyodor.validation.ArticleValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -21,10 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 public class ArticleController {
@@ -117,7 +112,6 @@ public class ArticleController {
     }
 
     @PutMapping("/add-article")
-//    @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public Long addArticle(@RequestBody ArticleDto articleDto, Errors errors, Principal principal) {
         articleValidator.validate(articleDto, errors);
@@ -137,7 +131,14 @@ public class ArticleController {
 
         model.addAttribute("article", updatedArticle);
         model.addAttribute("timestamp", new SimpleDateFormat("yyyy-MM-dd HH:mm").format(article.getTimestamp()));
+
+        List<Comment> comments = commentService.findByArticleId(articleId);
+        Map<Long, String> timestamps = new HashMap<>();
+        for (Comment c: comments) {
+            timestamps.put(c.getId(), new SimpleDateFormat("yyyy-MM-dd HH:mm").format(c.getTimestamp()));
+        }
         model.addAttribute("comments", commentService.findByArticleId(articleId));
+        model.addAttribute("timestamps", timestamps);
         Rating currentUserRating;
         if (principal == null)
             currentUserRating = null;
@@ -163,31 +164,6 @@ public class ArticleController {
         return titles;
     }
 
-    @MessageMapping("/comment/save")
-    @SendTo("/comments")
-    public String saveComment(@RequestBody String json, Principal principal) {
-        Comment comment = commentService.save(json, principal);
-
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectNode objectNode = mapper.createObjectNode();
-        objectNode.put("id", comment.getId());
-        objectNode.put("author", comment.getAuthor().getUsername());
-        objectNode.put("text", comment.getText());
-        objectNode.put("timestamp", comment.getTimestamp().toString());
-        return objectNode.toString();
-    }
-
-    @DeleteMapping("/comment")
-    @ResponseBody
-    public Boolean deleteComment(@RequestBody Long id, Principal principal) {
-        if (!commentService.findById(id).getAuthor().getUsername().equals(principal.getName()))
-            return false;
-
-        commentService.deleteComment(id);
-
-        return true;
-    }
-
     @GetMapping("/article/{articleId}/changeRating")
     @ResponseBody
     public String changeRating(@PathVariable Long articleId, Principal principal, @RequestParam String ratingState) {
@@ -205,7 +181,6 @@ public class ArticleController {
         return objectNode.toString();
     }
 
-
     @PostMapping("/checkIfTitleNotExists")
     @ResponseBody
     public Boolean checkIfTitleNotExists(@RequestBody String title) {
@@ -213,7 +188,6 @@ public class ArticleController {
             return true;
         return false;
     }
-
 
     @PostMapping("/image-upload")
     @ResponseBody

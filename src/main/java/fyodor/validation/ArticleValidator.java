@@ -1,6 +1,6 @@
 package fyodor.validation;
 
-import fyodor.Dto.ArticleDto;
+import fyodor.dto.ArticleDto;
 import fyodor.model.Article;
 import fyodor.service.IArticleService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -6,6 +6,7 @@ import fyodor.service.SecurityService;
 import fyodor.validation.UserLoginValidator;
 import fyodor.validation.UserRegistrationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,6 +42,9 @@ public class SecurityController {
 
     @Autowired
     private SecurityService securityService;
+
+    @Value("${emailConfirmation}")
+    private String emailConfirmation;
 
     @GetMapping("/login")
     public String login(Model model) {
@@ -78,7 +82,15 @@ public class SecurityController {
             return "reg";
         User user = userService.register(userDto, request);
 
-        String message = messageSource.getMessage("registration.message.confirm", null, localeResolver.resolveLocale(request));
+        Locale locale = localeResolver.resolveLocale(request);
+        String message;
+        if (emailConfirmation.equals("true")) {
+            message = messageSource.getMessage("registration.message.confirm", null, locale);
+            model.addAttribute("message", message);
+            return "message";
+        }
+
+        message = messageSource.getMessage("auth.message.successful", null, locale);
         model.addAttribute("message", message);
         return "message";
     }

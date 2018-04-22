@@ -102,22 +102,22 @@
     <div id="comment-block">
         <h5 class="contents pt-5 mb-2" th:text="#{article.comments}">Comments</h5>
         <div id="comments">
-            <div class="row" th:each="comment : ${article.getComments()}">
+            <div class="row" th:each="comment : ${article.getComments()}" th:id="'comment' + ${comment.getId()}">
                 <div class="col-md-6 border border-left-0 border-right-0">
                     <div class="row mt-1">
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                             <span><b>by</b>
                                 <a th:href="@{'/user/' + ${comment.getAuthor().getUsername()}}" class="font-weight-bold"
                                    th:text="${comment.getAuthor().getUsername()}"></a>
                             </span>
                         </div>
-                        <span class="col-md-4" th:text="${comment.getTimestamp().toString()}"></span>
+                        <span class="col-md-5" th:text="${timestamps.get(comment.getId())}"></span>
                         <div sec:authorize="isAuthenticated()">
                             <div th:if="${comment.getAuthor().getId() == currentUser.getId() or currentUser.isAdmin() == true}"
-                                 class="col-md-4 text-right">
+                                 class="col-md-2">
                                 <span onclick="delComment();" class="clickable-icon" id="btn-del"
                                       th:value="${comment.getId()}">
-                                    <i class="fa fa-trash-o  mr-2 mt-2"></i>
+                                    <i class="far fa-trash-alt  mr-2 mt-2"></i>
                                 </span>
                             </div>
                         </div>

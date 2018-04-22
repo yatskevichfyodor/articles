@@ -6,6 +6,7 @@ import fyodor.registration.EmailConfirm;
 import fyodor.repository.RoleRepository;
 import fyodor.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,9 @@ public class UserService implements IUserService {
     @Autowired
     private EmailConfirm emailConfirm;
 
+    @Value("${emailConfirmation}")
+    private String emailConfirmation;
+
     @Override
     public User findByUsernameIgnoreCase(String username) {
         return userRepository.findByUsernameIgnoreCase(username);
@@ -55,9 +59,10 @@ public class UserService implements IUserService {
     public User register(User userDto, HttpServletRequest request) {
         User user = save(userDto);
 
-        String appUrl = String.format("%s://%s:%d", request.getScheme(), request.getServerName(), request.getServerPort());
-
-        confirmRegistration(user, localeResolver.resolveLocale(request), appUrl);
+        if (emailConfirmation.equals("true")) {
+            String appUrl = String.format("%s://%s:%d", request.getScheme(), request.getServerName(), request.getServerPort());
+            confirmRegistration(user, localeResolver.resolveLocale(request), appUrl);
+        }
 
         return user;
     }

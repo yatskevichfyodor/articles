@@ -1,4 +1,4 @@
-package fyodor.Dto;
+package fyodor.dto;
 
 
 import lombok.Data;

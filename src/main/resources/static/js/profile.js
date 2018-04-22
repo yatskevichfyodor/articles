@@ -1,3 +1,7 @@
+
+var token = $('#_csrf').attr('content');
+var header = $('#_csrf_header').attr('content');
+
 $(document).ready(function () {
     $('#category').change(function() {
         var id = $('#category').val();
@@ -7,9 +11,6 @@ $(document).ready(function () {
 });
 
 function ajaxFindArticles(id){
-    var token = $('#_csrf').attr('content');
-    var header = $('#_csrf_header').attr('content');
-
     $.ajax({
         type: "GET",
         contentType: "application/json",

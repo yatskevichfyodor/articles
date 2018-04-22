@@ -53,7 +53,7 @@ public class CommentService implements ICommentService {
     }
 
     @Override
-    public void deleteComment(Long id) {
+    public void delete(Long id) {
         commentRepository.deleteById(id);
     }
 
