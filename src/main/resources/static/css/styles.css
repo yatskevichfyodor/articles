@@ -25,3 +25,7 @@
 .clickable-icon {
     cursor: pointer;
 }
+
+#errors_list {
+    color: red;
+}

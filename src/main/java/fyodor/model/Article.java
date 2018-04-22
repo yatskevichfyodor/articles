@@ -39,9 +39,10 @@ public class Article {
     private User author;
 
     @OneToMany(mappedBy = "article")
-    List<Comment> comments;
+    private List<Comment> comments;
 
     @OneToMany(mappedBy = "id.article")
-    List<Rating> ratings;
+    private List<Rating> ratings;
 
+    private Long popularity = Long.valueOf(0);
 }

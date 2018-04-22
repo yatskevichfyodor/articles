@@ -21,4 +21,8 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     private Set<Article> articles;
+
+    @ManyToOne
+    @JoinColumn(name = "parent_id", referencedColumnName = "id")
+    private Category parentCategory;
 }

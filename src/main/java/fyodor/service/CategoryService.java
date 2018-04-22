@@ -19,6 +19,11 @@ public class CategoryService implements ICategoryService{
     }
 
     @Override
+    public List<Category> findUsedCategories() {
+        return categoryRepository.findUsedCategories();
+    }
+
+    @Override
     public Category findByName(String name) {
         return categoryRepository.findByName(name);
     }

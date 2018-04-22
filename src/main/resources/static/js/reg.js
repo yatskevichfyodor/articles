@@ -3,16 +3,43 @@ $(document).ready(function () {
     errorsSet.add(LANG.password_not_match);
     var confirmPasswordFieldWasChanged = false;
 
+    // function isRegistration() {
+    //     if ($('#change-operation').hasClass('reg-btn')) return true;
+    //     return false;
+    // }
+    //
+    // function switchToLogin() {
+    //     $('#change-operation').removeClass('reg-btn');
+    //     $('#change-operation').addClass('login-btn');
+    //
+    //     $('#username').append('<p>' + value + '</p>');
+    // }
+    //
+    // function switchToRegistration() {
+    //     $('#change-operation').removeClass('reg-btn');
+    //     $('#change-operation').addClass('login-btn');
+    // }
+    //
+    // $('#change-operation').click(function(event) {
+    //     if (isRegistration())
+    //         switchToLogin();
+    //     else
+    //         switchToRegistration();
+    // })
+
     $('#username').change(function () {
-        validateUsername();
+        // if (isRegistration())
+            validateUsername();
     });
 
     $('#email').change(function () {
-        validateEmail();
+        // if (isRegistration())
+            validateEmail();
     });
 
     $('#password').change(function () {
-        validatePassword();
+        // if (isRegistration())
+            validatePassword();
     });
 
     $('#confirm_password').change(function () {

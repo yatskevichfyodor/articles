@@ -45,6 +45,7 @@ public class SecurityController {
     @GetMapping("/login")
     public String login(Model model) {
         model.addAttribute("userLoginDto", new User());
+        model.addAttribute("registration", false);
         return "login";
     }
 

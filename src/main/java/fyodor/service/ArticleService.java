@@ -1,5 +1,6 @@
 package fyodor.service;
 
+import fyodor.Dto.ArticleDto;
 import fyodor.model.Article;
 import fyodor.model.Category;
 import fyodor.model.Image;
@@ -29,7 +30,7 @@ public class ArticleService implements IArticleService {
     IImageService imageService;
 
     @Override
-    public void save(String json, Principal author) {
+    public Article save(String json, Principal author) {
         JsonParser springParser = JsonParserFactory.getJsonParser();
         Map<String, Object> data = springParser.parseMap(json);
 
@@ -37,17 +38,34 @@ public class ArticleService implements IArticleService {
         User user = userService.findByUsernameIgnoreCase(author.getName());
         article.setTitle((String)data.get("title"));
         article.setContent((String)data.get("content"));
-        article.setCategory(categoryService.findById(Long.valueOf((String)data.get("category"))));
+        article.setCategory(categoryService.findById(Long.valueOf((String)data.get("categoryId"))));
         article.setAuthor(user);
 
         String imageCode = (String)data.get("picture");
-//        String base64Image = data.split(",")[1];
-//        byte[] imageBytes = DatatypeConverter.parseBase64Binary(base64Image);
-//        Image image = imageService.save(imageBytes);
         Image image = imageService.save(imageCode);
         article.setImage(image);
 
-        articleRepository.save(article);
+        return articleRepository.save(article);
+    }
+
+    @Override
+    public Article save(ArticleDto articleDto, Principal author) {
+        Article article = new Article();
+        User user = userService.findByUsernameIgnoreCase(author.getName());
+        article.setTitle(articleDto.getTitle());
+        article.setContent(articleDto.getContent());
+        article.setCategory(categoryService.findById(articleDto.getCategoryId()));
+        article.setAuthor(user);
+        String imageCode = articleDto.getImageData();
+        Image image = imageService.save(imageCode);
+        article.setImage(image);
+
+        return articleRepository.save(article);
+    }
+
+    @Override
+    public Article save(Article article) {
+        return articleRepository.save(article);
     }
 
     @Override
@@ -58,6 +76,11 @@ public class ArticleService implements IArticleService {
     @Override
     public Article findByTitle(String title) {
         return articleRepository.findByTitle(title);
+    }
+
+    @Override
+    public List<Article> findByCategoryId(Long id) {
+        return articleRepository.findByCategoryId(id);
     }
 
     @Override
@@ -73,5 +96,21 @@ public class ArticleService implements IArticleService {
     @Override
     public List<Article> findAll() {
         return articleRepository.findAll();
+    }
+
+    @Override
+    public List<Article> findAllWithOrder(Long orderId) {
+        if (orderId == 1)
+            return articleRepository.findAllMostPopular();
+        if (orderId == 2)
+            return articleRepository.findAllLastAdded();
+        if (orderId == 3)
+            return articleRepository.findAllFirstAdded();
+        throw new RuntimeException("Unexpected order index");
+    }
+
+    @Override
+    public Article findByTitleIgnoreCase(String title) {
+        return articleRepository.findByTitleIgnoreCase(title);
     }
 }

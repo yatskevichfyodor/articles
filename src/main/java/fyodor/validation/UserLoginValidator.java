@@ -15,11 +15,7 @@ public class UserLoginValidator implements Validator {
     private IUserService userService;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
-
-    private String username_regex = "^[a-z0-9_-]{3,15}$";
-    private String email_regex = "^[_A-Za-z0-9-+]+(.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(.[A-Za-z0-9]+)*(.[A-Za-z]{2,})$";
-
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public boolean supports(Class<?> aClass) {

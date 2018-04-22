@@ -40,13 +40,15 @@ CREATE TABLE IF NOT EXISTS `user_role` (
 CREATE TABLE IF NOT EXISTS `category` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `parent_id` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK2y94svpmqttx80mshyny85wqr` (`parent_id`),
+  CONSTRAINT `FK2y94svpmqttx80mshyny85wqr` FOREIGN KEY (`parent_id`) REFERENCES `category` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `image` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `data` longtext,
-  `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -58,6 +60,7 @@ CREATE TABLE IF NOT EXISTS `article` (
   `author_id` bigint(20) DEFAULT NULL,
   `category_id` bigint(20) DEFAULT NULL,
   `image_id` bigint(20) DEFAULT NULL,
+  `popularity` bigint(20) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `FKgwrtdbqvt9ucntp82nd3yiuec` (`author_id`),
   KEY `FKy5kkohbk00g0w88fi05k2hcw` (`category_id`),

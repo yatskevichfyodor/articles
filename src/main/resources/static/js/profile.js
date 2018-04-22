@@ -11,10 +11,10 @@ function ajaxFindArticles(id){
     var header = $('#_csrf_header').attr('content');
 
     $.ajax({
-        type: "POST",
+        type: "GET",
         contentType: "application/json",
-        url: "/findArticlesByCategory",
-        data: id,
+        url: "/findArticlesByCategory" + "?id=" + id,
+        // data: id,
         beforeSend: function(xhr) {
             xhr.setRequestHeader(header, token);
         },

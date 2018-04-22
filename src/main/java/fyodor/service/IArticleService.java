@@ -1,5 +1,6 @@
 package fyodor.service;
 
+import fyodor.Dto.ArticleDto;
 import fyodor.model.Article;
 import fyodor.model.Category;
 import fyodor.model.User;
@@ -9,15 +10,25 @@ import java.util.List;
 
 public interface IArticleService {
 
-    void save(String json, Principal author);
+    Article save(String json, Principal author);
+
+    Article save(ArticleDto articleDto, Principal author);
+
+    Article save(Article article);
 
     Article findById(Long id);
 
     Article findByTitle(String title);
+
+    List<Article> findByCategoryId(Long id);
 
     List<Article> findByCategoryAndAuthor(Category category, User author);
 
     List<Article> findByAuthor(User Author);
 
     List<Article> findAll();
+
+    List<Article> findAllWithOrder(Long orderId);
+
+    Article findByTitleIgnoreCase(String title);
 }
