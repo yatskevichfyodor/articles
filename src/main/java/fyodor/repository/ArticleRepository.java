@@ -37,4 +37,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long>{
     List<Article> findAllFirstAdded();
 
     Article findByTitleIgnoreCase(String title);
+
+    List<Article> findArticlesByCategoryIn(List<Category> categories);
 }

@@ -127,8 +127,12 @@ function ajaxCheckTitle(title) {
 $(document).ready(function () {
 
     $("#submit").click(function () {
-        if (!validateArticle())
+        $('#submit').prop("disabled",true);
+
+        if (!validateArticle()) {
+            $('#submit').prop("disabled", false);
             return;
+        }
 
         if (methodOfStoringPictures === 'server') {
             uploadImageOnServer();
@@ -160,7 +164,7 @@ function continueArticleUpload(fileSrc) {
 function ajaxSaveArticle(article) {
 
     $.ajax({
-        type: "PUT",
+        type: "POST",
         contentType: 'application/json; charset=utf-8',
         url: "/add-article",
         data: JSON.stringify(article),
@@ -174,6 +178,7 @@ function ajaxSaveArticle(article) {
             window.location.replace('/article/' + id);
         },
         error: function () {
+            $('#submit').prop("disabled", false);
             alert("error");
         }
     });

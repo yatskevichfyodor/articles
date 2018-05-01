@@ -3,30 +3,6 @@ $(document).ready(function () {
     errorsSet.add(LANG.password_not_match);
     var confirmPasswordFieldWasChanged = false;
 
-    // function isRegistration() {
-    //     if ($('#change-operation').hasClass('reg-btn')) return true;
-    //     return false;
-    // }
-    //
-    // function switchToLogin() {
-    //     $('#change-operation').removeClass('reg-btn');
-    //     $('#change-operation').addClass('login-btn');
-    //
-    //     $('#username').append('<p>' + value + '</p>');
-    // }
-    //
-    // function switchToRegistration() {
-    //     $('#change-operation').removeClass('reg-btn');
-    //     $('#change-operation').addClass('login-btn');
-    // }
-    //
-    // $('#change-operation').click(function(event) {
-    //     if (isRegistration())
-    //         switchToLogin();
-    //     else
-    //         switchToRegistration();
-    // })
-
     $('#username').change(function () {
         // if (isRegistration())
             validateUsername();
@@ -168,12 +144,15 @@ $(document).ready(function () {
     }
 
     $('#submit').click(function(event) {
+        $('#submit').prop("disabled",true);
         validateUsername();
         validateEmail();
         validatePassword();
         validateConfirmPassword();
-        if (errorsSet.size > 0)
+        if (errorsSet.size > 0) {
+            $('#submit').prop("disabled",true);
             event.preventDefault();
+        }
     })
 
     function ajaxCheckUsername(username) {

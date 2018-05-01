@@ -44,5 +44,6 @@ public class Article {
     @OneToMany(mappedBy = "id.article")
     private List<Rating> ratings;
 
+    @Column(nullable = false, columnDefinition = "int default 0")
     private Long popularity = Long.valueOf(0);
 }

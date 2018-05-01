@@ -15,4 +15,6 @@ public interface ICategoryService {
     Category findById(Long id);
 
     List<Category> findByArticlesIn(List<Article> article);
+
+    List<Category> findCategoriesAndSubcategoriesById(Long id);
 }

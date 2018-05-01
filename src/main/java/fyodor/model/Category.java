@@ -10,8 +10,8 @@ import java.util.Set;
 @Entity
 @Table(name = "category")
 @Data
-@EqualsAndHashCode(exclude={"articles"})
-@ToString(exclude={"articles"})
+@EqualsAndHashCode(exclude={"articles", "parentCategory", "subcategories"})
+@ToString(exclude={"articles", "parentCategory", "subcategories"})
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +25,7 @@ public class Category {
     @ManyToOne
     @JoinColumn(name = "parent_id", referencedColumnName = "id")
     private Category parentCategory;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "parentCategory")
+    private Set<Category> subcategories;
 }

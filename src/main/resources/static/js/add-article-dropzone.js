@@ -51,5 +51,7 @@ function uploadImageOnServer() {
 }
 
 dropzone.on("success", function(file, serverResponse) {
+    // here should be check for errors in response
+    //$('#submit').prop("disabled", false);
     continueArticleUpload(file);
 });

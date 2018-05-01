@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fyodor.dto.ArticleDto;
 import fyodor.model.*;
 import fyodor.service.*;
+import fyodor.util.HierarchicalCategoryHierarchyToListConverter;
 import fyodor.util.ListToMatrixConverter;
+import fyodor.util.UsedCategoriesHierarchyBuilder;
 import fyodor.validation.ArticleValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,6 +47,9 @@ public class ArticleController {
     @Autowired
     private ArticleValidator articleValidator;
 
+    @Autowired
+    private UsedCategoriesHierarchyBuilder usedCategoriesHierarchyBuilder;
+
     @Value("${methodOfStoringPictures}")
     private String methodOfStoringPictures;
 
@@ -64,7 +69,9 @@ public class ArticleController {
 
         model.addAttribute("horizontalSize", horizontalSize);
         model.addAttribute("articlesMatrix", ListToMatrixConverter.convert(horizontalSize, articlesList));
-        model.addAttribute("categories", categoryService.findUsedCategories());
+        Category categoryHierarchy = usedCategoriesHierarchyBuilder.getHierarchy();
+        List<Category> categoryList = new HierarchicalCategoryHierarchyToListConverter().convert(categoryHierarchy);
+        model.addAttribute("categories", categoryList);
 
         return "index";
     }
@@ -77,7 +84,8 @@ public class ArticleController {
         if (categoryId == 0)
             articles = articleService.findAll();
         else
-            articles = articleService.findByCategoryId(categoryId);
+//            articles = articleService.findByCategoryId(categoryId);
+            articles = articleService.findByCategoryIdHierarchically(categoryId);
 
         List<ArticleDto> articleDtoList = new LinkedList<>();
 
@@ -111,7 +119,7 @@ public class ArticleController {
         return "add-article";
     }
 
-    @PutMapping("/add-article")
+    @PostMapping("/add-article")
     @ResponseBody
     public Long addArticle(@RequestBody ArticleDto articleDto, Errors errors, Principal principal) {
         articleValidator.validate(articleDto, errors);

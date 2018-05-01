@@ -1,14 +1,17 @@
 package fyodor.service;
 
 import fyodor.dto.ArticleDto;
+import fyodor.events.ArticleCreatedEvent;
 import fyodor.model.Article;
 import fyodor.model.Category;
 import fyodor.model.Image;
 import fyodor.model.User;
 import fyodor.repository.ArticleRepository;
+import fyodor.util.UsedCategoriesHierarchyBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -18,16 +21,21 @@ import java.util.Map;
 @Service
 public class ArticleService implements IArticleService {
     @Autowired
-    ArticleRepository articleRepository;
+    private ArticleRepository articleRepository;
 
     @Autowired
-    IUserService userService;
+    private IUserService userService;
 
     @Autowired
-    ICategoryService categoryService;
+    private ICategoryService categoryService;
 
     @Autowired
-    IImageService imageService;
+    private IImageService imageService;
+
+    private ApplicationEventPublisher publisher;
+
+    @Autowired
+    private UsedCategoriesHierarchyBuilder usedCategoriesHierarchyBuilder;
 
     @Override
     public Article save(String json, Principal author) {
@@ -60,7 +68,11 @@ public class ArticleService implements IArticleService {
         Image image = imageService.save(imageCode);
         article.setImage(image);
 
-        return articleRepository.save(article);
+        Article savedArticle = articleRepository.save(article);
+
+        this.publisher.publishEvent(new ArticleCreatedEvent(savedArticle));
+
+        return savedArticle;
     }
 
     @Override
@@ -81,6 +93,12 @@ public class ArticleService implements IArticleService {
     @Override
     public List<Article> findByCategoryId(Long id) {
         return articleRepository.findByCategoryId(id);
+    }
+
+    @Override
+    public List<Article> findByCategoryIdHierarchically(Long id) {
+        List<Category> categories = categoryService.findCategoriesAndSubcategoriesById(id);
+        return articleRepository.findArticlesByCategoryIn(categories);
     }
 
     @Override

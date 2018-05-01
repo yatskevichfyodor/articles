@@ -22,6 +22,8 @@ public interface IArticleService {
 
     List<Article> findByCategoryId(Long id);
 
+    List<Article> findByCategoryIdHierarchically(Long id);
+
     List<Article> findByCategoryAndAuthor(Category category, User author);
 
     List<Article> findByAuthor(User Author);
