@@ -1,3 +1,9 @@
 # articles
 Web site for articles on different themes.
-Lombok is used since 03.03.2018 22:30.
+
+Technologies: 
+  Java: Spring, Spring Boot, Sring Data JPA, Websocket (SockJS, STOMP)
+  HTML: Thymeleaf
+  Javascript: jQuery
+  CSS: Bootstrap 4
+  DB: MySQL
