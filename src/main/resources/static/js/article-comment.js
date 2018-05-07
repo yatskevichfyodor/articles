@@ -2,6 +2,7 @@
 var token = $('#_csrf').attr('content');
 var header = $('#_csrf_header').attr('content');
 var isAdmin = $('#isAdmin').attr('content');
+var articleId = $('#articleId').attr('content');
 
 var stompClient = null;
 
@@ -12,7 +13,7 @@ function connect() {
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/comments', function (comment) {
+        stompClient.subscribe('/comments/' + articleId, function (comment) {
             addComment(JSON.parse(comment.body));
         });
     });

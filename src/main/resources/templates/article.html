@@ -7,6 +7,7 @@
     <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
     <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
     <meta id="isAdmin" th:content="${isAdmin}"/>
+    <meta id="articleId" th:content="${article.getId()}" />
 
     <title th:text="${article.getTitle()}"></title>
 

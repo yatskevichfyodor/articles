@@ -81,17 +81,13 @@ public class CommentController {
         savedCommentDto.setAuthor(comment.getAuthor().getUsername());
         savedCommentDto.setTimestamp(String.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(comment.getTimestamp())));
         savedCommentDto.setText(comment.getText());
-        simpMessagingTemplate.convertAndSend("/comments" , savedCommentDto);
+        simpMessagingTemplate.convertAndSend("/comments/" + commentDto.getArticleId() , savedCommentDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/comment")
     @ResponseBody
     public String deleteComment(@RequestBody Long commentId) {
-        //JsonParser springParser = JsonParserFactory.getJsonParser();
-       //Map<String, Object> data = springParser.parseMap(requestBody);
-
-        //Long commentId = Long.valueOf((Integer) data.get("id"));
         commentService.delete(commentId);
         return String.valueOf(commentId);
     }
