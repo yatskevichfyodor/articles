@@ -32,4 +32,6 @@ public interface IArticleService {
     List<Article> findAllWithOrder(Long orderId);
 
     Article findByTitleIgnoreCase(String title);
+
+    List<Article> findByCategoryIdAndOrderId(Long categoryId, int orderId);
 }

@@ -39,4 +39,10 @@ public interface ArticleRepository extends JpaRepository<Article, Long>{
     Article findByTitleIgnoreCase(String title);
 
     List<Article> findArticlesByCategoryIn(List<Category> categories);
+
+//    List<Article> findSortByPopularityDescByCategoryIn(List<Category> categories);
+//
+//    List<Article> findSortByTimestampAscByCategoryIn(List<Category> categories);
+//
+//    List<Article> findSortByTimestampDescByCategoryIn(List<Category> categories);
 }

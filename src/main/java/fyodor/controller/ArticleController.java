@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fyodor.dto.ArticleDto;
 import fyodor.model.*;
+import fyodor.repository.ArticleDao;
 import fyodor.service.*;
+import fyodor.util.ArticleDtoConverter;
 import fyodor.util.HierarchicalCategoryHierarchyToListConverter;
 import fyodor.util.ListToMatrixConverter;
 import fyodor.util.UsedCategoriesHierarchyBuilder;
@@ -65,10 +67,11 @@ public class ArticleController {
 
     @GetMapping(value = { "/", "home" })
     public String home(Model model) {
-        List<Article> articlesList = articleService.findAll();
+//        List<Article> articlesList = articleService.findAll();
+        List<Article> articleList = articleService.findByCategoryIdAndOrderId(0L, 1);
 
         model.addAttribute("horizontalSize", horizontalSize);
-        model.addAttribute("articlesMatrix", ListToMatrixConverter.convert(horizontalSize, articlesList));
+        model.addAttribute("articlesMatrix", ListToMatrixConverter.convert(horizontalSize, articleList));
         Category categoryHierarchy = usedCategoriesHierarchyBuilder.getHierarchy();
         List<Category> categoryList = new HierarchicalCategoryHierarchyToListConverter().convert(categoryHierarchy);
         model.addAttribute("categories", categoryList);
@@ -87,15 +90,7 @@ public class ArticleController {
 //            articles = articleService.findByCategoryId(categoryId);
             articles = articleService.findByCategoryIdHierarchically(categoryId);
 
-        List<ArticleDto> articleDtoList = new LinkedList<>();
-
-        for (Article article: articles) {
-            ArticleDto articleDto = new ArticleDto();
-            articleDto.setId(article.getId());
-            articleDto.setTitle(article.getTitle());
-            articleDto.setImageData(article.getImage().getData());
-            articleDtoList.add(articleDto);
-        }
+        List<ArticleDto> articleDtoList = ArticleDtoConverter.covert(articles);
 
         return ListToMatrixConverter.convert(horizontalSize, articleDtoList);
     }
@@ -109,6 +104,16 @@ public class ArticleController {
         List<Article> list = articleService.findByCategoryId(orderId);
 
         return ListToMatrixConverter.convert(horizontalSize, list);
+    }
+
+    @GetMapping("/getArticleMatrixByCategoryIdAndOrderId")
+    @ResponseBody
+    public List<List<ArticleDto>> getArticleMatrixByCategoryIdAndOrderId(@RequestParam("categoryId") Long categoryId,
+                                                                      @RequestParam("orderId") int orderId) {
+        List<Article> articleList = articleService.findByCategoryIdAndOrderId(categoryId, orderId);
+        List<ArticleDto> articleDtoList = ArticleDtoConverter.covert(articleList);
+
+        return ListToMatrixConverter.convert(horizontalSize, articleDtoList);
     }
 
     @GetMapping("/add-article")

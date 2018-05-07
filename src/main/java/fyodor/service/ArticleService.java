@@ -6,7 +6,9 @@ import fyodor.model.Article;
 import fyodor.model.Category;
 import fyodor.model.Image;
 import fyodor.model.User;
+import fyodor.repository.ArticleDao;
 import fyodor.repository.ArticleRepository;
+import fyodor.util.CategoryHierarchyToListConverter;
 import fyodor.util.UsedCategoriesHierarchyBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JsonParser;
@@ -15,6 +17,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +40,9 @@ public class ArticleService implements IArticleService {
 
     @Autowired
     private UsedCategoriesHierarchyBuilder usedCategoriesHierarchyBuilder;
+
+    @Autowired
+    private ArticleDao articleDao;
 
     @Override
     public Article save(String json, Principal author) {
@@ -138,5 +144,29 @@ public class ArticleService implements IArticleService {
     @Override
     public Article findByTitleIgnoreCase(String title) {
         return articleRepository.findByTitleIgnoreCase(title);
+    }
+
+    @Override
+    public List<Article> findByCategoryIdAndOrderId(Long categoryId, int orderId) {
+        List<Category> categories = null;
+        if (categoryId == 0) {
+            categories = categoryService.findAll();
+        } else {
+            Category subhierarchy = usedCategoriesHierarchyBuilder.getSubhierarchy(categoryService.findById(categoryId));
+            categories = new CategoryHierarchyToListConverter().convert(subhierarchy);
+        }
+        try {
+            switch (orderId) {
+                case 1:
+                    return articleDao.getArticlesByCategoriesSortedByPopularity(categories);
+                case 2:
+                    return articleDao.getArticlesByCategoriesSortedByDateDesc(categories);
+                case 3:
+                    return articleDao.getArticlesByCategoriesSortedByDateAsc(categories);
+            }
+        } catch(SQLException e) {
+            throw new RuntimeException(e);
+        }
+        throw new RuntimeException("Unsupported order");
     }
 }
