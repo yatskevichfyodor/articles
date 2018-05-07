@@ -17,4 +17,6 @@ public interface ICategoryService {
     List<Category> findByArticlesIn(List<Article> article);
 
     List<Category> findCategoriesAndSubcategoriesById(Long id);
+
+    List<Category> getHierarchicalListOfUsedCategories();
 }

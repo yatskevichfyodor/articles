@@ -1,5 +1,6 @@
 package fyodor.service;
 
+import fyodor.dto.CommentDto;
 import fyodor.model.Comment;
 import fyodor.model.User;
 import fyodor.repository.CommentRepository;
@@ -38,6 +39,16 @@ public class CommentService implements ICommentService {
         comment.setAuthor(user);
         comment.setText((String)data.get("text"));
         comment.setArticle(articleService.findById(Long.valueOf((String)data.get("articleId"))));
+
+        return commentRepository.save(comment);
+    }
+
+    @Override
+    public Comment save(CommentDto commentDto, User author) {
+        Comment comment = new Comment();
+        comment.setAuthor(author);
+        comment.setText(commentDto.getText());
+        comment.setArticle(articleService.findById(commentDto.getArticleId()));
 
         return commentRepository.save(comment);
     }

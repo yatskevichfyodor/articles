@@ -1,5 +1,7 @@
 DELETE FROM `user_role`;
+DELETE FROM `user_param`;
 DELETE FROM `role`;
+DELETE FROM `user_attribute`;
 DELETE FROM `user`;
 DELETE FROM `comment`;
 DELETE FROM `article`;
@@ -27,6 +29,14 @@ INSERT INTO `user` (`id`, `email`, `confirmed`, `blocked`, `password`, `username
    '2018-03-24 00:46:37');
 
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES (1, 1), (1, 2), (2, 2), (3, 2), (4, 2);
+
+INSERT INTO `user_attribute` (`id`, `name`) VALUES
+	(1, 'First name'),
+	(2, 'Last name');
+	
+INSERT INTO `user_param` (`value`, `user_id`, `attribute_id`) VALUES
+	('Fyodor', 1, 1),
+	('Yatskevich', 1, 2);
 
 INSERT INTO `category` (`id`, `name`, `parent_id`)
 VALUES (1, 'science', NULL), (2, 'films', NULL), (3, 'science fiction', 2), (4, 'computer games', NULL),

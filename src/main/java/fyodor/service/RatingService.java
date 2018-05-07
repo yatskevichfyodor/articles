@@ -3,7 +3,6 @@ package fyodor.service;
 
 import fyodor.model.Article;
 import fyodor.model.Rating;
-import fyodor.model.RatingId;
 import fyodor.model.User;
 import fyodor.repository.RatingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,7 @@ public class RatingService implements IRatingService {
 
 
         Rating rating = new Rating();
-        RatingId ratingId = new RatingId();
+        Rating.RatingId ratingId = new Rating.RatingId();
         ratingId.setArticle(article);
         ratingId.setUser(user);
         rating.setId(ratingId);
@@ -54,6 +53,11 @@ public class RatingService implements IRatingService {
     @Override
     public Rating findRatingByUsernameAndArticleId(String username, Long articleId) {
         return ratingRepository.findByUserIdAndArticleId(userService.findByUsernameIgnoreCase(username).getId(), articleId);
+    }
+
+    @Override
+    public Rating findRatingByUserAndArticleId(User user, Long articleId) {
+        return ratingRepository.findByUserIdAndArticleId(user.getId(), articleId);
     }
 
     @Override

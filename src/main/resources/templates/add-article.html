@@ -7,7 +7,7 @@
     <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
     <meta id="methodOfStoringPictures"th:content="${methodOfStoringPictures}" />
 
-    <title th:text="#{sitename}">My Site | Home</title>
+    <title th:text="#{article.add}">Add article</title>
 
     <link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}"/>
 
@@ -40,10 +40,11 @@
         <textarea id="content" class="form-control mt-1 textarea col-md-12" rows="15" maxlength="40000"
                   th:placeholder="#{article.content}"></textarea>
 
+        <div id="errors_list"></div>
+
         <button id="submit" class="btn btn-success btn-lg submit-btn mt-4 mb-2" type="submit" th:text="#{article.create}">
             Submit
         </button>
-        <div id="errors_list"></div>
     </row>
 </div>
 

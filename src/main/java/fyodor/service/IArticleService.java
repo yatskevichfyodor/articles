@@ -2,7 +2,6 @@ package fyodor.service;
 
 import fyodor.dto.ArticleDto;
 import fyodor.model.Article;
-import fyodor.model.Category;
 import fyodor.model.User;
 
 import java.security.Principal;
@@ -24,7 +23,7 @@ public interface IArticleService {
 
     List<Article> findByCategoryIdHierarchically(Long id);
 
-    List<Article> findByCategoryAndAuthor(Category category, User author);
+    List<Article> findByCategoryIdAndAuthor(Long categoryId, User author);
 
     List<Article> findByAuthor(User Author);
 

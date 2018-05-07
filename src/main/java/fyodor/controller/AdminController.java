@@ -25,33 +25,48 @@ public class AdminController {
     }
 
     @GetMapping("/admin/action/delete")
-    public @ResponseBody
-    String delete(@RequestParam(value="idArray[]") String[] idArray) {
+    @ResponseBody
+    public String delete(@RequestParam(value="idArray[]") String[] idArray) {
         userService.delete(idArray);
         return "done";
     }
 
     @GetMapping("/admin/action/block")
-    public @ResponseBody String block(@RequestParam(value="idArray[]") String[] idArray) {
+    @ResponseBody
+    public String block(@RequestParam(value="idArray[]") String[] idArray) {
         userService.block(idArray);
         return "done";
     }
 
     @GetMapping("/admin/action/unblock")
-    public @ResponseBody String unblock(@RequestParam(value="idArray[]") String[] idArray) {
+    @ResponseBody
+    public String unblock(@RequestParam(value="idArray[]") String[] idArray) {
         userService.unblock(idArray);
         return "done";
     }
 
     @GetMapping("/admin/action/admin")
-    public @ResponseBody String makeAdmin(@RequestParam(value="idArray[]") String[] idArray) {
+    @ResponseBody
+    public String makeAdmin(@RequestParam(value="idArray[]") String[] idArray) {
         userService.addRole(idArray, "ROLE_ADMIN");
         return "done";
     }
 
     @GetMapping("/admin/action/disrank")
-    public @ResponseBody String disrank(@RequestParam(value="idArray[]") String[] idArray) {
+    @ResponseBody
+    public String disrank(@RequestParam(value="idArray[]") String[] idArray) {
         userService.deleteRole(idArray, "ROLE_ADMIN");
         return "done";
+    }
+
+    @GetMapping("/sql-terminal")
+    public String sqlTerminal() {
+        return "sql-terminal";
+    }
+
+    @GetMapping("/sql-request")
+    @ResponseBody
+    public String sqlRequest(@RequestParam("request") String request) {
+        return "sql-terminal";
     }
 }

@@ -7,9 +7,9 @@
     <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
     <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
 
-    <title th:text="#{navbar.adminpage}">Page title</title>
+    <title th:text="#{navbar.adminpage}">Admin page</title>
 
-    <link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}" />
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}"/>
 
     <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.0.0-beta-1/css/bootstrap.min.css"/>
     <link rel="stylesheet" th:href="@{/css/styles.css}"/>
@@ -23,7 +23,17 @@
 
 <div class="container mt-4">
 
-    <h2 class="header" th:text="#{admin.listofusers}">List of users</h2><hr>
+    <row>
+        <h2 class="header text-left" th:text="#{admin.listofusers}">List of users</h2>
+        <div class="text-right">
+            <a th:href="@{'/sql-terminal'}">
+                <button class="btn btn-secondary btn-lg mw-100" th:text="#{admin.terminal}">SQL terminal</button>
+            </a>
+        </div>
+    </row>
+
+    <hr>
+
     <table class="table table-sm mt-3">
         <thead>
         <tr class="d-flex">
@@ -31,7 +41,8 @@
                 <button type="button" class="btn mybtn-del" disabled th:text="#{admin.btn.delete}">Delete</button>
                 <button type="button" class="btn mybtn-bl" disabled th:text="#{admin.btn.block}">Block</button>
                 <button type="button" class="btn mybtn-unbl" disabled th:text="#{admin.btn.unblock}">Unblock</button>
-                <button type="button" class="btn mybtn-adm" disabled th:text="#{admin.btn.makeadmin}">Make admin</button>
+                <button type="button" class="btn mybtn-adm" disabled th:text="#{admin.btn.makeadmin}">Make admin
+                </button>
                 <button type="button" class="btn mybtn-disrank" disabled th:text="#{admin.btn.disrank}">Disrank</button>
             </td>
         </tr>
@@ -45,12 +56,16 @@
             <th class="col-md-4" th:text="#{admin.table.email}">Email</th>
             <th class="col-md-1" th:text="#{admin.table.confirmed}">Confirmed</th>
         </tr>
-        <tr class="d-flex" th:each="user : ${listOfUsers}" >
-            <td class="col-md-1 text-center" >
-                <input type="checkbox" class="chkbx" th:value="${user.getId()}" th:classappend="${(user.isBlocked() ? 'blocked' : '') + (user.isAdmin() ? ' admin' : '')}">
+        <tr class="d-flex" th:each="user : ${listOfUsers}">
+            <td class="col-md-1 text-center">
+                <input type="checkbox" class="chkbx" th:value="${user.getId()}"
+                       th:classappend="${(user.isBlocked() ? 'blocked' : '') + (user.isAdmin() ? ' admin' : '')}">
             </td>
             <td class="col-md-1" th:text="${user.getId()}" th:classappend="${(user.isBlocked() ? 'blocked' : '')}"></td>
-            <td class="col-md-4" ><a th:href="@{'/user/' + ${user.getUsername()}}" th:text="${user.getUsername()}"></a><span th:if="${user.isAdmin()}" class="text-danger font-italic"> (admin)</span></td>
+            <td class="col-md-4"><a th:href="@{'/user/' + ${user.getUsername()}}"
+                                    th:text="${user.getUsername()}"></a><span th:if="${user.isAdmin()}"
+                                                                              class="text-danger font-italic"> (admin)</span>
+            </td>
             <td class="col-md-4" th:text="${user.getEmail()}">Email</td>
             <td class="col-md-1 text-center">
                 <span th:if="${user.isConfirmed()}">&#10004;</span>

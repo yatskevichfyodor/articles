@@ -109,7 +109,7 @@ public class UsedCategoriesHierarchyBuilder {
                 return subcategory;
         }
 
-        return null;
+        throw new RuntimeException("Subhierarchy wasn't found");
     }
 
     @EventListener

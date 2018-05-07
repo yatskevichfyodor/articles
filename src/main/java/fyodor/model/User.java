@@ -12,13 +12,14 @@ import java.util.Set;
 @Entity
 @Table(name = "user")
 @Data
-@EqualsAndHashCode(exclude={"roles", "comments", "ratings"})
-@ToString(exclude={"roles", "comments", "ratings"})
+@EqualsAndHashCode(exclude={"roles", "comments", "ratings", "params", "confirmPassword", "blocked", "confirmed"})
+@ToString(exclude={"roles", "comments", "ratings", "params", "confirmPassword", "blocked", "confirmed"})
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String username;
     private String email;
     private String password;
@@ -44,6 +45,9 @@ public class User {
 
     @OneToMany(mappedBy = "id.user")
     List<Rating> ratings;
+
+    @OneToMany(mappedBy = "id.user")
+    List<UserParam> params;
 
     public boolean isAdmin() {
         for (Role role : roles) {

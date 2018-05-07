@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class CustomUserDetails implements UserDetails {
     private User user;
-    Set<GrantedAuthority> grantedAuthorities;
+    private Set<GrantedAuthority> grantedAuthorities;
 
     public CustomUserDetails() {
     }
@@ -26,30 +26,37 @@ public class CustomUserDetails implements UserDetails {
         return user.getId();
     }
 
+    @Override
     public String getPassword() {
         return user.getPassword();
     }
 
+    @Override
     public String getUsername() {
         return user.getUsername();
     }
 
+    @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
+    @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+    @Override
     public Set<GrantedAuthority> getAuthorities() {
         return grantedAuthorities;
     }
 
+    @Override
     public boolean isAccountNonLocked() {
         return !user.isBlocked();
     }
 
+    @Override
     public boolean isEnabled() {
         return user.isConfirmed();
     }

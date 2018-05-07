@@ -1,9 +1,11 @@
 package fyodor.service;
 
 import fyodor.model.User;
+import fyodor.model.UserAttribute;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 public interface IUserService {
 
@@ -28,4 +30,6 @@ public interface IUserService {
     void addRole(String[] roleArray, String role);
 
     void deleteRole(String[] roleArray, String role);
+
+    Map<UserAttribute, String> getUserParams(Long userId);
 }

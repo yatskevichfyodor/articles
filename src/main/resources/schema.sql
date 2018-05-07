@@ -6,6 +6,8 @@ DROP TABLE IF EXISTS `rating`;
 DROP TABLE IF EXISTS `user_role`;
 DROP TABLE IF EXISTS `role`;
 DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `user_attribute`;
+DROP TABLE IF EXISTS `user_param`;
 DROP TABLE IF EXISTS `comment`;
 DROP TABLE IF EXISTS `article`;
 DROP TABLE IF EXISTS `image`;
@@ -35,6 +37,22 @@ CREATE TABLE IF NOT EXISTS `user_role` (
   KEY `FKa68196081fvovjhkek5m97n3y` (`role_id`),
   CONSTRAINT `FK859n2jvi8ivhui0rl0esws6o` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   CONSTRAINT `FKa68196081fvovjhkek5m97n3y` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `user_attribute` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `user_param` (
+  `value` varchar(255) DEFAULT NULL,
+  `user_id` bigint(20) NOT NULL,
+  `attribute_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`attribute_id`,`user_id`),
+  KEY `FKh1qr7ndeb36sygrht5pofdc0l` (`user_id`),
+  CONSTRAINT `FKew0d5dgmru3u3y9ly1qla9ytf` FOREIGN KEY (`attribute_id`) REFERENCES `user_attribute` (`id`),
+  CONSTRAINT `FKh1qr7ndeb36sygrht5pofdc0l` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `category` (

@@ -2,24 +2,33 @@ package fyodor.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.sun.deploy.net.HttpResponse;
+import fyodor.dto.CommentDto;
 import fyodor.model.Comment;
 import fyodor.model.User;
+import fyodor.model.UserParam;
+import fyodor.service.CustomUserDetails;
 import fyodor.service.ICommentService;
 import fyodor.service.IUserService;
+import fyodor.validation.CommentValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 @Controller
 public class CommentController {
@@ -30,37 +39,77 @@ public class CommentController {
     @Autowired
     private ICommentService commentService;
 
+    @Autowired
+    private CommentValidator commentValidator;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @ModelAttribute("currentUser")
-    public User getPrincipal(Principal principal) {
-        if (principal == null) return null;
-
-        return userService.findByUsernameIgnoreCase(principal.getName());
+    public User getPrincipal(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) return null;
+        return userDetails.getUser();
     }
 
-    @MessageMapping("/comment/save")
-    @SendTo("/comments")
-    public String saveComment(@RequestBody String json, Principal principal) {
-        Comment comment = commentService.save(json, principal);
+//    @MessageMapping("/comment/save")
+//    @SendTo("/comments")
+//    public CommentDto saveComment(@RequestBody CommentDto commentDto, Principal principal) {
+//        CommentDto response = new CommentDto();
+//
+//        Set<Integer> errorsSet = commentValidator.validate(commentDto.getText());
+//        if (errorsSet.size() == 0) {
+//            return response;
+//        }
+//        Comment comment = commentService.save(commentDto, userService.findByUsernameIgnoreCase(principal.getName()));
+//        response.setId(comment.getId());
+//        response.setAuthor(comment.getAuthor().getUsername());
+//        response.setText(comment.getText());
+//        response.setTimestamp(String.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(comment.getTimestamp())));
+//        return response;
+//    }
 
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectNode objectNode = mapper.createObjectNode();
-        objectNode.put("id", comment.getId());
-        objectNode.put("author", comment.getAuthor().getUsername());
-        objectNode.put("text", comment.getText());
-        objectNode.put("timestamp", String.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(comment.getTimestamp())));
-        return objectNode.toString();
+    @PostMapping("comment/save")
+    @ResponseBody
+    public ResponseEntity<?> saveComment(@RequestBody CommentDto commentDto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Set<Integer> errorsSet = commentValidator.validate(commentDto.getText());
+        if (errorsSet.size() != 0) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+        Comment comment = commentService.save(commentDto, userService.findByUsernameIgnoreCase(userDetails.getUser().getUsername()));
+        CommentDto savedCommentDto = new CommentDto();
+        savedCommentDto.setId(comment.getId());
+        savedCommentDto.setAuthor(comment.getAuthor().getUsername());
+        savedCommentDto.setTimestamp(String.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(comment.getTimestamp())));
+        savedCommentDto.setText(comment.getText());
+        simpMessagingTemplate.convertAndSend("/comments" , savedCommentDto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/comment")
-//    @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public String deleteComment(@RequestBody String requestBody) {
-        JsonParser springParser = JsonParserFactory.getJsonParser();
-        Map<String, Object> data = springParser.parseMap(requestBody);
+    public String deleteComment(@RequestBody Long commentId) {
+        //JsonParser springParser = JsonParserFactory.getJsonParser();
+       //Map<String, Object> data = springParser.parseMap(requestBody);
 
-        Long commentId = Long.valueOf((String)data.get("id"));
+        //Long commentId = Long.valueOf((Integer) data.get("id"));
         commentService.delete(commentId);
         return String.valueOf(commentId);
+    }
+
+    @PostMapping("/updateComment")
+    @ResponseBody
+    public ResponseEntity<?> updateComment(@RequestBody CommentDto commentDto) {
+        Set<Integer> errorsSet = commentValidator.validate(commentDto.getText());
+        if (errorsSet.size() == 0) {
+            Comment editableComment = commentService.findById(commentDto.getId());
+            editableComment.setText(commentDto.getText());
+            Date newTimestamp = new Date();
+            editableComment.setTimestamp(newTimestamp);
+            commentService.save(editableComment);
+
+            commentDto.setTimestamp(String.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(newTimestamp)));
+            return new ResponseEntity<>(commentDto, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(errorsSet, HttpStatus.NOT_ACCEPTABLE);
     }
 }

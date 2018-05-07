@@ -2,8 +2,12 @@ package fyodor.service;
 
 import fyodor.model.Role;
 import fyodor.model.User;
+import fyodor.model.UserAttribute;
+import fyodor.model.UserParam;
 import fyodor.registration.EmailConfirm;
 import fyodor.repository.RoleRepository;
+import fyodor.repository.UserAttributeRepository;
+import fyodor.repository.UserParamRepository;
 import fyodor.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,10 +18,7 @@ import org.springframework.web.servlet.LocaleResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 
 @Service
@@ -25,13 +26,19 @@ public class UserService implements IUserService {
 
     @Autowired
     private ISecurityService securityService;
-	
+
     @Autowired
     private UserRepository userRepository;
-    
+
     @Autowired
     private RoleRepository roleRepository;
-    
+
+    @Autowired
+    private UserAttributeRepository userAttributeRepository;
+
+    @Autowired
+    private UserParamRepository userParamRepository;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -66,11 +73,13 @@ public class UserService implements IUserService {
 
         return user;
     }
+
     public User save(User userDto) {
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         userDto.setRoles(roleRepository.findByName("ROLE_USER"));
         return userRepository.save(userDto);
     }
+
     private void confirmRegistration(User user, Locale locale, String appUrl) {
         String username = user.getUsername();
         String hash = passwordEncoder.encode(username);
@@ -106,7 +115,7 @@ public class UserService implements IUserService {
     @Transactional
     public void delete(String[] users) {
         long[] idArray = Arrays.asList(users).stream().mapToLong(Long::parseLong).toArray();
-        for (int i=0; i<idArray.length; i++) {
+        for (int i = 0; i < idArray.length; i++) {
             logoutUser(idArray[i]);
             userRepository.deleteById(idArray[i]);
         }
@@ -116,7 +125,7 @@ public class UserService implements IUserService {
     @Transactional
     public void block(String[] users) {
         long[] idArray = Arrays.asList(users).stream().mapToLong(Long::parseLong).toArray();
-        for (int i=0; i<idArray.length; i++) {
+        for (int i = 0; i < idArray.length; i++) {
             logoutUser(idArray[i]);
             userRepository.block(idArray[i]);
         }
@@ -126,7 +135,7 @@ public class UserService implements IUserService {
     @Transactional
     public void unblock(String[] users) {
         long[] idArray = Arrays.asList(users).stream().mapToLong(Long::parseLong).toArray();
-        for (int i=0; i<idArray.length; i++) {
+        for (int i = 0; i < idArray.length; i++) {
             userRepository.unblock(idArray[i]);
         }
     }
@@ -136,7 +145,7 @@ public class UserService implements IUserService {
     public void addRole(String[] users, String role) {
         User user;
         long[] idArray = Arrays.asList(users).stream().mapToLong(Long::parseLong).toArray();
-        for (int i=0; i<idArray.length; i++) {
+        for (int i = 0; i < idArray.length; i++) {
             user = userRepository.findById(idArray[i]);
             Set<Role> roles = user.getRoles();
             roles.add(roleRepository.findByName(role).iterator().next());
@@ -150,7 +159,7 @@ public class UserService implements IUserService {
     public void deleteRole(String[] users, String role) {
         User user;
         long[] idArray = Arrays.asList(users).stream().mapToLong(Long::parseLong).toArray();
-        for (int i=0; i<idArray.length; i++) {
+        for (int i = 0; i < idArray.length; i++) {
             user = userRepository.findById(idArray[i]);
             Set<Role> roles = user.getRoles();
             roles.remove(roleRepository.findByName(role).iterator().next());
@@ -166,5 +175,27 @@ public class UserService implements IUserService {
                 securityService.logout(principal);
                 return;
             }
+    }
+
+    @Override
+    public Map<UserAttribute, String> getUserParams(Long userId) {
+        User user = userRepository.findById(userId);
+        List<UserParam> params = user.getParams();
+        List<UserAttribute> attributes = userAttributeRepository.findAll();
+        Map<UserAttribute, String> paramsMap = new HashMap<>();
+        for (UserAttribute attribute : attributes) {
+            boolean paramExists = false;
+            for (UserParam param : params) {
+                if (param.getId().getAttribute().equals(attribute)) {
+                    paramExists = true;
+                    paramsMap.put(attribute, param.getValue());
+                    break;
+                }
+            }
+            if (!paramExists)
+                paramsMap.put(attribute, "");
+        }
+
+        return paramsMap;
     }
 }

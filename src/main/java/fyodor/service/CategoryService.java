@@ -4,6 +4,7 @@ import fyodor.model.Article;
 import fyodor.model.Category;
 import fyodor.repository.CategoryRepository;
 import fyodor.util.CategoryHierarchyToListConverter;
+import fyodor.util.HierarchicalCategoryHierarchyToListConverter;
 import fyodor.util.UsedCategoriesHierarchyBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ public class CategoryService implements ICategoryService {
     private CategoryRepository categoryRepository;
 
     @Autowired
-    private UsedCategoriesHierarchyBuilder categoriesHierarchyBuilder;
+    private UsedCategoriesHierarchyBuilder usedCategoriesHierarchyBuilder;
 
     @Override
     public List<Category> findAll() {
@@ -47,9 +48,16 @@ public class CategoryService implements ICategoryService {
     @Override
     public List<Category> findCategoriesAndSubcategoriesById(Long id) {
         Category primaryCategory = categoryRepository.findById(id);
-        Category subhierarchy = categoriesHierarchyBuilder.getSubhierarchy(primaryCategory);
+        Category subhierarchy = usedCategoriesHierarchyBuilder.getSubhierarchy(primaryCategory);
         CategoryHierarchyToListConverter categoryHierarchyToListConverter = new CategoryHierarchyToListConverter();
         List<Category> categories = categoryHierarchyToListConverter.convert(subhierarchy);
         return categories;
+    }
+
+    @Override
+    public List<Category> getHierarchicalListOfUsedCategories() {
+        List<Category> hierarchicalList = new HierarchicalCategoryHierarchyToListConverter()
+                .convert(usedCategoriesHierarchyBuilder.getHierarchy());
+        return hierarchicalList;
     }
 }

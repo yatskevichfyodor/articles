@@ -15,6 +15,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -102,8 +103,15 @@ public class ArticleService implements IArticleService {
     }
 
     @Override
-    public List<Article> findByCategoryAndAuthor(Category category, User author) {
-        return articleRepository.findByCategoryAndAuthor(category, author);
+    public List<Article> findByCategoryIdAndAuthor(Long categoryId, User author) {
+        List<Article> articles = findByCategoryIdHierarchically(categoryId);
+        List<Article> filteredArticles = new ArrayList<>();
+        for (Article article: articles) {
+            if (article.getAuthor().equals(author)) {
+                filteredArticles.add(article);
+            }
+        }
+        return filteredArticles;
     }
 
     @Override

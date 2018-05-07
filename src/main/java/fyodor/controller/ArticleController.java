@@ -12,6 +12,7 @@ import fyodor.util.UsedCategoriesHierarchyBuilder;
 import fyodor.validation.ArticleValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -57,10 +58,9 @@ public class ArticleController {
     private int horizontalSize;
 
     @ModelAttribute("currentUser")
-    public User getPrincipal(Principal principal) {
-        if (principal == null) return null;
-
-        return userService.findByUsernameIgnoreCase(principal.getName());
+    public User getPrincipal(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) return null;
+        return userDetails.getUser();
     }
 
     @GetMapping(value = { "/", "home" })
@@ -130,8 +130,7 @@ public class ArticleController {
     }
 
     @GetMapping("/article/{id}")
-    public String article(Model model, @PathVariable String id, Principal principal) {
-        Long articleId = new Long(id);
+    public String article(Model model, @PathVariable("id") Long articleId, @AuthenticationPrincipal CustomUserDetails userDetails) {
         Article article = articleService.findById(articleId);
 
         article.setPopularity(article.getPopularity() + 1);
@@ -148,28 +147,32 @@ public class ArticleController {
         model.addAttribute("comments", commentService.findByArticleId(articleId));
         model.addAttribute("timestamps", timestamps);
         Rating currentUserRating;
-        if (principal == null)
+        if (userDetails == null) {
             currentUserRating = null;
-        else
-            currentUserRating = ratingService.findRatingByUsernameAndArticleId(principal.getName(), articleId);
-        model.addAttribute("currentUserRating", currentUserRating);
+            model.addAttribute("isAdmin", false);
+        } else {
+            currentUserRating = ratingService.findRatingByUserAndArticleId(userDetails.getUser(), articleId);
+            model.addAttribute("currentUserRating", currentUserRating);
+            model.addAttribute("isAdmin", userDetails.getUser().isAdmin());
+        }
         model.addAttribute("likesNumber", ratingService.getValuesNumberByArticleId(articleId, "LIKE"));
         model.addAttribute("dislikesNumber", ratingService.getValuesNumberByArticleId(articleId, "DISLIKE"));
-
 
         return "article";
     }
 
     @GetMapping("/findArticlesByCategory")
     @ResponseBody
-    public Set<String> findArticlesByCategory(@RequestParam("id") String id, Principal principal) {
-        List<Article> articles = articleService.findByCategoryAndAuthor(categoryService.findById(Long.valueOf(id)),
-                userService.findByUsernameIgnoreCase(principal.getName()));
-        Set<String> titles = new HashSet<>();
+    public Set<ArticleDto> findArticlesByCategory(@RequestParam("id") Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        List<Article> articles = articleService.findByCategoryIdAndAuthor(id, userDetails.getUser());
+        Set<ArticleDto> articleDtos = new HashSet<>();
         for (Article article: articles) {
-            titles.add(article.getTitle());
+            ArticleDto articleDto = new ArticleDto();
+            articleDto.setId(article.getId());
+            articleDto.setTitle(article.getTitle());
+            articleDtos.add(articleDto);
         }
-        return titles;
+        return articleDtos;
     }
 
     @GetMapping("/article/{articleId}/changeRating")
