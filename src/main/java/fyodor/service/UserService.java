@@ -184,6 +184,7 @@ public class UserService implements IUserService {
         List<UserAttribute> attributes = userAttributeRepository.findAll();
         Map<UserAttribute, String> paramsMap = new HashMap<>();
         for (UserAttribute attribute : attributes) {
+            if (!attribute.isEnabled()) continue;
             boolean paramExists = false;
             for (UserParam param : params) {
                 if (param.getId().getAttribute().equals(attribute)) {

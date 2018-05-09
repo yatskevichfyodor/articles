@@ -1,7 +1,9 @@
 package fyodor.util;
 
 
-import fyodor.events.ArticleCreatedEvent;
+import fyodor.events.ArticleAddedEvent;
+import fyodor.events.ArticleDeletedEvent;
+import fyodor.events.CategoryDeletedEvent;
 import fyodor.model.Article;
 import fyodor.model.Category;
 import fyodor.repository.CategoryRepository;
@@ -113,20 +115,14 @@ public class UsedCategoriesHierarchyBuilder {
     }
 
     @EventListener
-    private void handleArticleCreateEvent(ArticleCreatedEvent articleCreatedEvent) {
-        Article createdArticle = articleCreatedEvent.getArticle();
+    private void handleArticleAddedEvent(ArticleAddedEvent articleAddedEvent) {
+        Article createdArticle = articleAddedEvent.getArticle();
         Category createdArticleCategory = createdArticle.getCategory();
-        boolean categoryAmongUsedCategories = false;
-        for (Category usedCategory: usedCategories) {
-            if (usedCategory.equals(createdArticleCategory)) categoryAmongUsedCategories = true;
-            break;
-        }
-        if (categoryAmongUsedCategories) return;
+        if (categoryIsAmongUsedCategories(createdArticleCategory)) return;
 
         usedCategories.add(createdArticleCategory);
 
         attachBrachToTree(createdArticleCategory);
-
     }
 
     private void attachBrachToTree(Category c) {
@@ -151,5 +147,46 @@ public class UsedCategoriesHierarchyBuilder {
         }
 
         attachBrachToTree(parentCategory);
+    }
+
+    @EventListener
+    private void handleArticleDeletedEvent(ArticleDeletedEvent articleDeletedEvent) {
+        Article deletedArticle = articleDeletedEvent.getArticle();
+        Category deletedArticleCategory = deletedArticle.getCategory();
+
+        if (!categoryIsAmongUsedCategories(deletedArticleCategory)) return;
+
+        usedCategories.remove(deletedArticleCategory);
+
+        cutOffBranchFromTree(deletedArticleCategory);
+    }
+
+    private void cutOffBranchFromTree(Category c) {
+        if (categoryIsAmongUsedCategories(c))
+            return;
+        Category parentCategory = c.getParentCategory();
+        if (parentCategory == null) {
+            hierarchy.getSubcategories().remove(c);
+            return;
+        } else {
+            cutOffBranchFromTree(parentCategory);
+        }
+    }
+
+    @EventListener
+    private void handleCategoryDeletedEvent(CategoryDeletedEvent categoryDeletedEvent) {
+        Category deletedCategory = categoryDeletedEvent.getCategory();
+
+        if (!categoryIsAmongUsedCategories(deletedCategory)) return;
+
+        usedCategories.remove(deletedCategory);
+    }
+
+    private boolean categoryIsAmongUsedCategories(Category category) {
+        for (Category usedCategory: usedCategories) {
+            if (usedCategory.equals(category))
+                return true;
+        }
+        return false;
     }
 }

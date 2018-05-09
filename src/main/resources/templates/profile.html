@@ -6,6 +6,7 @@
     <meta charset="utf-8"/>
     <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
     <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta id="isAdmin" th:content="${currentUser.isAdmin()}"/>
 
     <title th:text="${user.getUsername()}">Username</title>
 
@@ -100,23 +101,31 @@
                         <h2 th:text="#{user.data.additional}">Basic data</h2>
                     </div>
                     <div sec:authorize="hasRole('ROLE_ADMIN')" class="col-md-6 text-center" id="add-attribute-area">
-                        <button id="add-attribute" class="btn btn-secondary" onclick="attributesShowInputForm()"
+                        <button id="add-attribute" class="btn btn-secondary" onclick="attributeShowInputForm()"
                                 th:text="#{user.data.additional.attribute.add}">Add attribute
                         </button>
                     </div>
                 </div>
 
                 <div id="attribute-param">
-                    <div class="row" th:each="entry : ${paramsMap}">
+                    <div class="row" th:each="entry : ${paramsMap}" th:id="|attr-param-${entry.getKey().getId()}|">
                         <div class="col-md-4" th:text="${entry.getKey().getName()}"></div>
                         <div class="col-md-8" th:id="'edit-param-area-' + ${entry.getKey().getId()}">
                             <div class="row">
                                 <div class="col-md-9" th:text="${entry.getValue()}"
                                      th:id="'param-label-' + ${entry.getKey().getId()}"></div>
-                                <span sec:authorize="hasRole('ROLE_ADMIN')" class="col-md-3 edit-param-btn"
-                                      th:onclick="|paramsShowInputForm(${entry.getKey().getId()})|" th:id="${entry.getKey().getId()}">
-                                <i class="fas fa-edit"></i>
-                            </span>
+                                <span sec:authorize="hasRole('ROLE_ADMIN')" class="text-right">
+                                    <span class="clickable-icon">
+                                        <i th:id="${entry.getKey().getId()}"
+                                           th:onclick="|paramShowInputForm(${entry.getKey().getId()})|"
+                                           class="fas fa-edit"></i>
+                                    </span>
+                                    <span class="clickable-icon">
+                                        <i th:id="|btn-attr-del-${entry.getKey().getId()}|"
+                                           th:onclick="|delAttribute(${entry.getKey().getId()})|"
+                                           class="fas fa-trash-alt  mr-2 mt-2"></i>
+                                    </span>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -126,10 +135,12 @@
     </div>
 </div>
 
-<script th:src="@{'/js/i18n/profile_lang_' + #{locale} + '.js'}" type="text/javascript"></script>
 <script src="/webjars/jquery/3.2.0/jquery.min.js" type="text/javascript"></script>
 <script th:src="@{/js/popper.min.js}" type="text/javascript"></script>
 <script src="/webjars/bootstrap/4.0.0-beta-1/js/bootstrap.min.js" type="text/javascript"></script>
+
+<script th:src="@{'/js/i18n/lang_' + #{locale} + '.js'}" type="text/javascript"></script>
+
 <script th:src="@{/js/profile-articles.js}" type="text/javascript"></script>
 <script th:src="@{/js/profile-attributes.js}" type="text/javascript"></script>
 <script th:src="@{/js/profile-params.js}" type="text/javascript"></script>

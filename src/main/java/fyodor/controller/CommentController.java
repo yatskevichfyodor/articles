@@ -51,23 +51,6 @@ public class CommentController {
         return userDetails.getUser();
     }
 
-//    @MessageMapping("/comment/save")
-//    @SendTo("/comments")
-//    public CommentDto saveComment(@RequestBody CommentDto commentDto, Principal principal) {
-//        CommentDto response = new CommentDto();
-//
-//        Set<Integer> errorsSet = commentValidator.validate(commentDto.getText());
-//        if (errorsSet.size() == 0) {
-//            return response;
-//        }
-//        Comment comment = commentService.save(commentDto, userService.findByUsernameIgnoreCase(principal.getName()));
-//        response.setId(comment.getId());
-//        response.setAuthor(comment.getAuthor().getUsername());
-//        response.setText(comment.getText());
-//        response.setTimestamp(String.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(comment.getTimestamp())));
-//        return response;
-//    }
-
     @PostMapping("comment/save")
     @ResponseBody
     public ResponseEntity<?> saveComment(@RequestBody CommentDto commentDto, @AuthenticationPrincipal CustomUserDetails userDetails) {

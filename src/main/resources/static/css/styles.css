@@ -26,10 +26,6 @@
     cursor: pointer;
 }
 
-#errors_list {
-    color: red;
-}
-
 .errors {
     color: red;
 }

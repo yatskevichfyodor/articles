@@ -9,4 +9,8 @@ public interface IUserAttributeService {
     UserAttribute save(UserAttribute attribute);
 
     boolean attributeExists(String attribute);
+
+    void delete(Long id);
+
+    void disable(Long id);
 }

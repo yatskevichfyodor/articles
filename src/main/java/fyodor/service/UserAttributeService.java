@@ -5,6 +5,8 @@ import fyodor.repository.UserAttributeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 public class UserAttributeService implements IUserAttributeService {
     @Autowired
@@ -19,8 +21,12 @@ public class UserAttributeService implements IUserAttributeService {
 
     @Override
     public UserAttribute save(String name) {
-        UserAttribute attribute = new UserAttribute();
-        attribute.setName(name);
+        UserAttribute attribute = userAttributeRepository.findByNameIgnoreCase(name);
+        if (attribute == null) {
+            attribute = new UserAttribute();
+            attribute.setName(name);
+        }
+        attribute.setEnabled(true);
 
         return userAttributeRepository.save(attribute);
     }
@@ -28,5 +34,19 @@ public class UserAttributeService implements IUserAttributeService {
     @Override
     public UserAttribute save(UserAttribute attribute) {
         return userAttributeRepository.save(attribute);
+    }
+
+    @Transactional
+    @Override
+    public void delete(Long id) {
+        userAttributeRepository.delete(id);
+    }
+
+    @Override
+    public void disable(Long id) {
+        UserAttribute userAttribute = userAttributeRepository.findById(id);
+        userAttribute.setEnabled(false);
+
+        userAttributeRepository.save(userAttribute);
     }
 }

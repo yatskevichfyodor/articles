@@ -26,7 +26,7 @@ public class UserAttributeValidator {
 
     private boolean validNameLength(String name) {
         int length = name.length();
-        return (length >= 3 && length <=32);
+        return (length >= 3 && length <= 32);
     }
 
     private boolean attributeExists(String name) {

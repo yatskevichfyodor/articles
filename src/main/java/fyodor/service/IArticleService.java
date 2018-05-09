@@ -9,15 +9,11 @@ import java.util.List;
 
 public interface IArticleService {
 
-    Article save(String json, Principal author);
-
     Article save(ArticleDto articleDto, Principal author);
 
-    Article save(Article article);
+    Article edit(Article article);
 
     Article findById(Long id);
-
-    Article findByTitle(String title);
 
     List<Article> findByCategoryId(Long id);
 
@@ -34,4 +30,6 @@ public interface IArticleService {
     Article findByTitleIgnoreCase(String title);
 
     List<Article> findByCategoryIdAndOrderId(Long categoryId, int orderId);
+
+    void delete(Long id);
 }

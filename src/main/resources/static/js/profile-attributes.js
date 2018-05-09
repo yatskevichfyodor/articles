@@ -2,20 +2,14 @@
 var token = $('#_csrf').attr('content');
 var header = $('#_csrf_header').attr('content');
 
-var attributesErrorsSet = new Set();
+var attributeErrorsSet = new Set();
 
-var attributesErrorsMap = {
+var attributeErrorsMap = {
     1: 'attribute_length',
     2: 'attribute_duplicate'
 }
 
-$(document).ready(function () {
-    // $('#add-attribute').click(function () {
-    //     attributesShowInputForm();
-    // })
-});
-
-function attributesShowInputForm() {
+function attributeShowInputForm() {
     $('#add-attribute-area').empty();
     $('#add-attribute-area').append('' +
         '<div class="row">' +
@@ -33,44 +27,43 @@ function attributesShowInputForm() {
 }
 
 function addAttributeSubmit() {
-// $('#add-attribute-submit').click(function () {
     validateAttribute();
-    if (attributesErrorsSet.size == 0) {
+    addAttributeUpdateInput();
+    updateAttributeErrorsArea();
+    if (attributeErrorsSet.size == 0) {
         ajaxSaveAttribute($('#add-attribute-input').val());
     }
 }
 
 function addAttributeCancel() {
-// $('#add-attribute-cancel').click(function () {
-    attributesCloseInput();
+    attributeCloseInput();
 }
 
-// }
-
 function validateAttribute() {
+    attributeErrorsSet.clear();
+
     var attribute = $('#add-attribute-input').val();
-    var valid = true;
 
     if (attribute.length < 3 || attribute.length > 32) {
-        valid = false;
-        attributesErrorsSet.add(1);
+        attributeErrorsSet.add(1);
     } else {
-        attributesErrorsSet.delete(1);
+        attributeErrorsSet.delete(1);
     }
 
-    if (valid) {
+}
+
+function addAttributeUpdateInput() {
+    if (attributeErrorsSet.size == 0) {
         $('#add-attribute-input').removeClass('is-invalid').addClass('is-valid');
     } else {
         $('#add-attribute-input').removeClass('is-valid').addClass('is-invalid');
     }
-
-    updateErrorsArea();
 }
 
-function updateErrorsArea() {
+function updateAttributeErrorsArea() {
     $('#attributeErrors').empty();
-    attributesErrorsSet.forEach(function (value) {
-        $('#attributeErrors').append('<p>' + LANG[attributesErrorsMap[value]] + '</p>');
+    attributeErrorsSet.forEach(function (value) {
+        $('#attributeErrors').append('<p>' + LANG[attributeErrorsMap[value]] + '</p>');
     });
 }
 
@@ -88,27 +81,81 @@ function ajaxSaveAttribute(attribute) {
         timeout: 600000,
         success: function (attribute) {
             displayAttribute(attribute);
-            attributesCloseInput();
+            attributeCloseInput();
         },
         error: function (errors) {
+            var errors = errors.responseJSON;
             errors.forEach(function (value) {
-                attributesErrorsSet.add(value);
+                attributeErrorsSet.add(value);
             });
-            updateErrorsArea()
+            addAttributeUpdateInput();
+            updateAttributeErrorsArea();
         }
     });
 }
 
 function displayAttribute(attribute) {
     $('#attribute-param').append('\n' +
-        '                    <div class="row">\n' +
-        '                        <div class="col-md-5">' + attribute.name + '</div>\n' +
-        '                        <div class="col-md-7"></div>\n' +
+        '                    <div class="row" id="attr-param-' + attribute.id + '">\n' +
+        '                        <div class="col-md-4">' + attribute.name + '</div>\n' +
+        '                        <div class="col-md-8" id="edit-param-area-' + attribute.id + '">\n' +
+        '                            <div class="row">\n' +
+        '                                <div class="col-md-9"\n' +
+        '                                     id="param-label-' + attribute.id + '"></div>\n' +
+        '                                <span class="text-right">\n' +
+        '                                    <span class="clickable-icon">\n' +
+        '                                        <i id="' + attribute.id + '"\n' +
+        '                                           onclick="paramShowInputForm(' + attribute.id + ')"\n' +
+        '                                           class="fas fa-edit"></i>\n' +
+        '                                    </span>\n' +
+        '                                    <span class="clickable-icon">\n' +
+        '                                        <i id="btn-attr-del-' + attribute.id + '"\n' +
+        '                                           onclick="delAttribute(' + attribute.id + ')"\n' +
+        '                                           class="fas fa-trash-alt  mr-2 mt-2"></i>\n' +
+        '                                    </span>\n' +
+        '                                </span>\n' +
+        '                            </div>\n' +
+        '                        </div>\n' +
         '                    </div>')
 }
 
-function attributesCloseInput() {
+function attributeCloseInput() {
     $('#add-attribute-area').empty();
-    $('#add-attribute-area').append('<button id="add-attribute" class="btn btn-secondary" onclick="attributesShowInputForm()">' + LANG.add_attribute +
+    $('#add-attribute-area').append('<button id="add-attribute" class="btn btn-secondary" onclick="attributeShowInputForm()">' + LANG.add_attribute +
         '                        </button>');
+}
+
+
+
+//////////////// delete attribute area is below ////////////////////
+
+var deletedAttributeId;
+
+function delAttribute(attrId) {
+    deletedAttributeId = attrId;
+    ajaxDeleteAttribute(attrId);
+}
+
+function ajaxDeleteAttribute(attributeId) {
+    $.ajax({
+        type: "DELETE",
+        contentType: 'application/json; charset=utf-8',
+        url: "/userAttribute",
+        data: JSON.stringify(attributeId),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader(header, token);
+        },
+        cache: false,
+        timeout: 600000,
+        success: function () {
+            clearAttrParamRow();
+        },
+        error: function (e) {
+            console.log('ERROR while deleting attribute ' + e);
+        }
+    });
+}
+
+function clearAttrParamRow() {
+    $('#attr-param-' + deletedAttributeId).empty();
 }

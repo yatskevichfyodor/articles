@@ -30,9 +30,9 @@ INSERT INTO `user` (`id`, `email`, `confirmed`, `blocked`, `password`, `username
 
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES (1, 1), (1, 2), (2, 2), (3, 2), (4, 2);
 
-INSERT INTO `user_attribute` (`id`, `name`) VALUES
-	(1, 'First name'),
-	(2, 'Last name');
+INSERT INTO `user_attribute` (`id`, `name`, `enabled`) VALUES
+	(1, 'First name', '1'),
+	(2, 'Last name', '1');
 	
 INSERT INTO `user_param` (`value`, `user_id`, `attribute_id`) VALUES
 	('Fyodor', 1, 1),

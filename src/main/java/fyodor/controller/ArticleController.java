@@ -139,7 +139,7 @@ public class ArticleController {
         Article article = articleService.findById(articleId);
 
         article.setPopularity(article.getPopularity() + 1);
-        Article updatedArticle = articleService.save(article);
+        Article updatedArticle = articleService.edit(article);
 
         model.addAttribute("article", updatedArticle);
         model.addAttribute("timestamp", new SimpleDateFormat("yyyy-MM-dd HH:mm").format(article.getTimestamp()));
@@ -154,11 +154,9 @@ public class ArticleController {
         Rating currentUserRating;
         if (userDetails == null) {
             currentUserRating = null;
-            model.addAttribute("isAdmin", false);
         } else {
             currentUserRating = ratingService.findRatingByUserAndArticleId(userDetails.getUser(), articleId);
             model.addAttribute("currentUserRating", currentUserRating);
-            model.addAttribute("isAdmin", userDetails.getUser().isAdmin());
         }
         model.addAttribute("likesNumber", ratingService.getValuesNumberByArticleId(articleId, "LIKE"));
         model.addAttribute("dislikesNumber", ratingService.getValuesNumberByArticleId(articleId, "DISLIKE"));

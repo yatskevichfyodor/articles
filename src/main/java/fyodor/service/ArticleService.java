@@ -1,7 +1,8 @@
 package fyodor.service;
 
 import fyodor.dto.ArticleDto;
-import fyodor.events.ArticleCreatedEvent;
+import fyodor.events.ArticleAddedEvent;
+import fyodor.events.ArticleDeletedEvent;
 import fyodor.model.Article;
 import fyodor.model.Category;
 import fyodor.model.Image;
@@ -11,16 +12,14 @@ import fyodor.repository.ArticleRepository;
 import fyodor.util.CategoryHierarchyToListConverter;
 import fyodor.util.UsedCategoriesHierarchyBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.json.JsonParser;
-import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.security.Principal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ArticleService implements IArticleService {
@@ -45,25 +44,6 @@ public class ArticleService implements IArticleService {
     private ArticleDao articleDao;
 
     @Override
-    public Article save(String json, Principal author) {
-        JsonParser springParser = JsonParserFactory.getJsonParser();
-        Map<String, Object> data = springParser.parseMap(json);
-
-        Article article = new Article();
-        User user = userService.findByUsernameIgnoreCase(author.getName());
-        article.setTitle((String)data.get("title"));
-        article.setContent((String)data.get("content"));
-        article.setCategory(categoryService.findById(Long.valueOf((String)data.get("categoryId"))));
-        article.setAuthor(user);
-
-        String imageCode = (String)data.get("picture");
-        Image image = imageService.save(imageCode);
-        article.setImage(image);
-
-        return articleRepository.save(article);
-    }
-
-    @Override
     public Article save(ArticleDto articleDto, Principal author) {
         Article article = new Article();
         User user = userService.findByUsernameIgnoreCase(author.getName());
@@ -77,24 +57,20 @@ public class ArticleService implements IArticleService {
 
         Article savedArticle = articleRepository.save(article);
 
-        this.publisher.publishEvent(new ArticleCreatedEvent(savedArticle));
+        this.publisher.publishEvent(new ArticleAddedEvent(savedArticle));
 
         return savedArticle;
     }
 
     @Override
-    public Article save(Article article) {
+    public Article edit(Article article) {
         return articleRepository.save(article);
     }
+
 
     @Override
     public Article findById(Long id) {
         return articleRepository.findById(id);
-    }
-
-    @Override
-    public Article findByTitle(String title) {
-        return articleRepository.findByTitle(title);
     }
 
     @Override
@@ -168,5 +144,14 @@ public class ArticleService implements IArticleService {
             throw new RuntimeException(e);
         }
         throw new RuntimeException("Unsupported order");
+    }
+
+    @Transactional
+    @Override
+    public void delete(Long id) {
+        Article article = articleRepository.findById(id);
+        articleRepository.delete(id);
+
+        this.publisher.publishEvent(new ArticleDeletedEvent(article));
     }
 }

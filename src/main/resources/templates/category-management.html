@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="utf-8"/>
+    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <title th:text="#{category.management}">Category management</title>
+
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}"/>
+
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.0.0-beta-1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" th:href="@{css/styles.css}"/>
+</head>
+
+<body th:class="${#themes.code('body.class')}">
+
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container text-center mb-4 mt-4">
+
+    <div class="row mt-2 mb-4 mb-2">
+        <div class="col-md-12">
+            <h1 class="header mx-auto text-center" th:text="#{category.management}">Username</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5 border pt-3 pb-3">
+            <div class="row">
+                <div class="text-left ml-3 mb-2">
+                    <h3 th:text="#{category.add}"></h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="text-left ml-3 mb-2">
+                    <select class="form-control" id="add-category-dropdown">
+                        <option selected="" th:text="#{category.noparent}" value="0"></option>
+                        <option th:each="category : ${limitedListOfCategories}"
+                                th:value="${category.getId()}" th:text="${category.getName()}">Category name
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="text-left ml-3 mb-2">
+                    <input class="form-control" id="add-category-input"/>
+                </div>
+            </div>
+            <div class="row errors ml-3 mb-2" id="addCategoryErrors">
+            </div>
+            <div class="row">
+                <div class="text-left ml-3 mb-2">
+                    <button id="add-category" class="btn btn-secondary" onclick="addCategorySubmit()"
+                            th:text="#{category.add}">Add category
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2"></div>
+
+        <div class="col-md-5 border pt-3 pb-3 pl-2">
+            <div class="row">
+                <div class="text-left ml-3 mb-2">
+                    <h3 th:text="#{category.delete}"></h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="text-left ml-3 mb-2">
+                    <select class="form-control" id="delete-category-dropdown">
+                        <option selected="" th:text="#{category.select}" value="0"></option>
+                        <option th:each="category : ${allCategories}"
+                                th:value="${category.getId()}" th:text="${category.getName()}">Category name
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="row errors ml-3 mb-2" id="deleteCategoryErrors"></div>
+            <div class="row">
+                <div class="text-left ml-3 mb-2">
+                    <button id="delete-category" class="btn btn-secondary"
+                            onclick="deleteCategorySubmit()"
+                            th:text="#{category.delete}">Add category
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/webjars/jquery/3.2.0/jquery.min.js" type="text/javascript"></script>
+<script th:src="@{/js/popper.min.js}" type="text/javascript"></script>
+<script src="/webjars/bootstrap/4.0.0-beta-1/js/bootstrap.min.js" type="text/javascript"></script>
+
+<script th:src="@{'/js/i18n/lang_' + #{locale} + '.js'}" type="text/javascript"></script>
+
+<script th:src="@{/js/category-management-add.js}" type="text/javascript"></script>
+<script th:src="@{/js/category-management-delete.js}" type="text/javascript"></script>
+
+</body>
+</html>

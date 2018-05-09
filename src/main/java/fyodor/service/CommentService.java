@@ -67,5 +67,4 @@ public class CommentService implements ICommentService {
     public void delete(Long id) {
         commentRepository.deleteById(id);
     }
-
 }

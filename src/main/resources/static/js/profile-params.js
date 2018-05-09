@@ -1,9 +1,9 @@
 var token = $('#_csrf').attr('content');
 var header = $('#_csrf_header').attr('content');
 
-var ParamsErrorsSet = new Set();
+var paramErrorsSet = new Set();
 
-var paramsErrorsMap = {
+var paramErrorsMap = {
     1: 'param_length'
 }
 
@@ -13,7 +13,7 @@ var initialParamValue;
 var paramValue;
 var ajaxInProcess = false;
 
-function paramsShowInputForm(attributeIdParam) {
+function paramShowInputForm(attributeIdParam) {
     if (editStarted) return;
     editStarted = true;
 
@@ -43,7 +43,7 @@ function addParamSubmit() {
     if (ajaxInProcess) return;
 
     validateParam();
-    if (ParamsErrorsSet.size == 0) {
+    if (paramErrorsSet.size == 0) {
         var updateUserParamDto = {
             attributeId: attributeId,
             paramValue: $('#update-param-input').val()
@@ -61,10 +61,10 @@ function addParamCancel() {
     closeInput();
 }
 
-function updateErrorsArea() {
+function updateParamErrorsArea() {
     $('#update-param-errors').empty();
-    ParamsErrorsSet.forEach(function (value) {
-        $('#update-param-errors').append('<p>' + LANG[paramsErrorsMap[value]] + '</p>');
+    paramErrorsSet.forEach(function (value) {
+        $('#update-param-errors').append('<p>' + LANG[paramErrorsMap[value]] + '</p>');
     });
 }
 
@@ -74,9 +74,9 @@ function validateParam() {
 
     if (attribute.length < 3 || attribute.length > 32) {
         valid = false;
-        ParamsErrorsSet.add(1);
+        paramErrorsSet.add(1);
     } else {
-        ParamsErrorsSet.delete(1);
+        paramErrorsSet.delete(1);
     }
 
     if (valid) {
@@ -85,7 +85,7 @@ function validateParam() {
         $('#update-param-input').removeClass('is-valid').addClass('is-invalid');
     }
 
-    updateErrorsArea();
+    updateParamErrorsArea();
 }
 
 function ajaxUpdateParam(updateUserParamDto) {
@@ -109,10 +109,11 @@ function ajaxUpdateParam(updateUserParamDto) {
         error: function (errors) {
             ajaxInProcess = false;
 
+            var errors = errors.responseJSON;
             errors.forEach(function (value) {
-                ParamsErrorsSet.add(value);
+                paramErrorsSet.add(value);
             });
-            updateErrorsArea()
+            updateParamErrorsArea()
         }
     });
 }
@@ -124,10 +125,17 @@ function closeInput() {
     $('#edit-param-area-' + attributeId).append('\n' +
         '                            <div class="row">\n' +
         '                                <div class="col-md-9"  id="param-label-' + attributeId + '">' + paramValue + '</div>\n' +
-        '                                <span class="col-md-3 edit-param-btn"\n' +
-        '                                      onclick="paramsShowInputForm(' + attributeId + ')" id="' + attributeId + '">\n' +
-        '                                <i class="fas fa-edit"></i>\n' +
-        '                            </span>\n' +
+        '                                <span class="text-right">' +
+        '                                  <span class="edit-param-btn"\n' +
+        '                                        onclick="paramShowInputForm(' + attributeId + ')" id="' + attributeId + '">\n' +
+        '                                    <i class="fas fa-edit"></i>\n' +
+        '                                  </span>\n' +
+        '                                  <span class="clickable-icon">\n' +
+        '                                      <i id="btn-attr-del-' + attributeId + '"\n' +
+        '                                         onclick="delAttribute(' + attributeId + ')"\n' +
+        '                                         class="fas fa-trash-alt  mr-2 mt-2"></i>\n' +
+        '                                  </span>\n' +
+        '                                </span>' +
         '                            </div>');
     ;
 }
