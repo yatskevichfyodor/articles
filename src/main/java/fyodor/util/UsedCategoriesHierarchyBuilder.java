@@ -77,6 +77,8 @@ public class UsedCategoriesHierarchyBuilder {
         Set<Category> subcategories = primaryCategory.getSubcategories();
         Set<Category> notUsedSubcategories = new HashSet<>();
         for (Category subcategory : subcategories) {
+            // don't replace the code below in method, because it uses usedCategoriesAndParentsSet - not List
+            // so it's not usable at runtime
             boolean isAmongUsedCategoriesAndParents = false;
             for (Category usedCategoryOrParent : usedCategoriesAndParentsSet) {
                 if (usedCategoryOrParent.equals(subcategory)) {
@@ -177,9 +179,14 @@ public class UsedCategoriesHierarchyBuilder {
         Category deletedArticleCategory = deletedArticle.getCategory();
         Category subhierarchy = getSubhierarchy(deletedArticleCategory);
 
-        if (subhierarchy.getArticles().size() != 0) return;
-
+        Category actualCategory = categoryService.findById(deletedArticleCategory.getId());
+        Set<Article> articlesWithDeletedArticleCategory = actualCategory.getArticles();
+        articlesWithDeletedArticleCategory.remove(deletedArticle);
+        if (articlesWithDeletedArticleCategory.size() != 0) return;
         usedCategories.remove(subhierarchy);
+
+        if (isParentCategory(subhierarchy))
+            return;
         usedCategoriesAndParentsList.remove(subhierarchy);
 
         cutOffBranchFromTree(subhierarchy);
@@ -200,5 +207,10 @@ public class UsedCategoriesHierarchyBuilder {
         if (parentCategory.getParentCategory() == null) return;
 
         cutOffBranchFromTree(parentCategory);
+    }
+
+    private boolean isParentCategory(Category category) {
+        if (category.getSubcategories().size() == 0) return false;
+        return true;
     }
 }

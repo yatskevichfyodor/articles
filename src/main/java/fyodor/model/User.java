@@ -12,8 +12,8 @@ import java.util.Set;
 @Entity
 @Table(name = "user")
 @Data
-@EqualsAndHashCode(exclude={"roles", "comments", "ratings", "params", "confirmPassword", "blocked", "confirmed"})
-@ToString(exclude={"roles", "comments", "ratings", "params", "confirmPassword", "blocked", "confirmed"})
+@EqualsAndHashCode(of={"id", "username", "email", "password"})
+@ToString(of={"id", "username", "email", "password"})
 public class User {
 
     @Id

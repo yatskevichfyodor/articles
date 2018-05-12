@@ -20,22 +20,6 @@ public class UserParam {
         @ManyToOne
         @JoinColumn(name = "attribute_id")
         private UserAttribute attribute;
-//
-//        public User getUser() {
-//            return user;
-//        }
-//
-//        public void setUser(User user) {
-//            this.user = user;
-//        }
-//
-//        public UserAttribute getAttribute() {
-//            return attribute;
-//        }
-//
-//        public void setAttribute(UserAttribute attribute) {
-//            this.attribute = attribute;
-//        }
     }
 
     @EmbeddedId

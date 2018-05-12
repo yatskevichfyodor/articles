@@ -10,8 +10,8 @@ import java.util.Date;
 @Entity
 @Table(name="comment")
 @Data
-@EqualsAndHashCode(exclude={"author", "article"})
-@ToString(exclude={"author", "article"})
+@EqualsAndHashCode(of={"id", "text"})
+@ToString(of={"id", "text"})
 public class Comment {
     @Id
     @GeneratedValue

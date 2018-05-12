@@ -10,8 +10,8 @@ import java.util.Set;
 @Entity
 @Table(name = "role")
 @Data
-@EqualsAndHashCode(exclude={"users"})
-@ToString(exclude={"users"})
+@EqualsAndHashCode(of={"id", "name"})
+@ToString(of={"id", "name"})
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

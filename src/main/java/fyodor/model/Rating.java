@@ -8,8 +8,6 @@ import java.io.Serializable;
 @Entity
 @Table(name = "rating")
 @Data
-//@EqualsAndHashCode(exclude={"id"})
-//@ToString(exclude={"id"})
 public class Rating {
     public enum RatingEnum {
         LIKE,
@@ -26,25 +24,6 @@ public class Rating {
         @ManyToOne
         @JoinColumn(name = "user_id")
         private User user;
-
-//        public RatingId() {
-//        }
-//
-//        public Article getArticle() {
-//            return article;
-//        }
-//
-//        public void setArticle(Article article) {
-//            this.article = article;
-//        }
-//
-//        public User getUser() {
-//            return user;
-//        }
-//
-//        public void setUser(User user) {
-//            this.user = user;
-//        }
     }
 
     @EmbeddedId

@@ -11,8 +11,6 @@ import java.util.List;
 @Entity
 @Table(name = "article")
 @Data
-//@EqualsAndHashCode(exclude={"image", "content", "content", "category", "author", "comments", "ratings"})
-//@ToString(exclude={"image", "content", "" "content", "category", "author", "comments", "ratings"})
 @EqualsAndHashCode(of={"id", "title"})
 @ToString(of={"id", "title"})
 public class Article {
@@ -47,5 +45,5 @@ public class Article {
     private List<Rating> ratings;
 
     @Column(nullable = false, columnDefinition = "int default 0")
-    private Long popularity = Long.valueOf(0);
+    private Long popularity = 0L;
 }

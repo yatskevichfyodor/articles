@@ -10,8 +10,8 @@ import java.util.Set;
 @Entity
 @Table(name = "category")
 @Data
-@EqualsAndHashCode(exclude={"articles", "parentCategory", "subcategories"})
-@ToString(exclude={"articles", "parentCategory", "subcategories"})
+@EqualsAndHashCode(of={"id", "name"})
+@ToString(of={"id", "name"})
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
