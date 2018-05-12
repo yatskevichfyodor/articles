@@ -13,6 +13,7 @@ import fyodor.util.UsedCategoriesHierarchyBuilder;
 import fyodor.validation.ArticleValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.LocaleResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
@@ -49,6 +51,12 @@ public class ArticleController {
 
     @Autowired
     private UsedCategoriesHierarchyBuilder usedCategoriesHierarchyBuilder;
+
+    @Autowired
+    private LocaleResolver localeResolver;
+
+    @Autowired
+    private MessageSource messageSource;
 
     @Value("${methodOfStoringPictures}")
     private String methodOfStoringPictures;
@@ -86,7 +94,14 @@ public class ArticleController {
     }
 
     @GetMapping("/article/add")
-    public String addArticle( Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public String addArticle(HttpServletRequest request, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (articleService.checkIfUserAddedArticleRecently(userDetails.getUser())) {
+            Locale locale = localeResolver.resolveLocale(request);
+            String message = messageSource.getMessage("article.add.tooEarly", null, locale);
+            model.addAttribute("message", message);
+            return "message";
+        }
+
         model.addAttribute("listOfCategories", categoryService.findAll());
         model.addAttribute("methodOfStoringPictures", methodOfStoringPictures);
 
@@ -95,11 +110,12 @@ public class ArticleController {
 
     @PostMapping("/article/add")
     @ResponseBody
-    public Long addArticle(@RequestBody ArticleDto articleDto, Errors errors, Principal principal) {
+    public Long addArticle(@RequestBody ArticleDto articleDto, Errors errors,
+                           @AuthenticationPrincipal CustomUserDetails userDetails) {
         articleValidator.validate(articleDto, errors);
         if (errors.hasErrors())
             throw new RuntimeException(("Article validation error.\n" + errors.getAllErrors().toString()));
-        Article article = articleService.save(articleDto, principal);
+        Article article = articleService.save(articleDto, userDetails.getUser());
         return article.getId();
     }
 

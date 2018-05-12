@@ -14,9 +14,12 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.security.Principal;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -49,13 +52,12 @@ public class ArticleService implements IArticleService {
     private ArticleDao articleDao;
 
     @Override
-    public Article save(ArticleDto articleDto, Principal author) {
+    public Article save(ArticleDto articleDto, User author) {
         Article article = new Article();
-        User user = userService.findByUsernameIgnoreCase(author.getName());
         article.setTitle(articleDto.getTitle());
         article.setContent(articleDto.getContent());
         article.setCategory(categoryService.findById(articleDto.getCategoryId()));
-        article.setAuthor(user);
+        article.setAuthor(author);
         String imageCode = articleDto.getImageData();
         Image image = imageService.save(imageCode);
         article.setImage(image);
@@ -68,6 +70,19 @@ public class ArticleService implements IArticleService {
     }
 
     @Override
+    public boolean checkIfUserAddedArticleRecently(User user) {
+        Date lastTimeUserAddedArticle = null;
+        try {
+            lastTimeUserAddedArticle = articleDao.getLastTimeUserAddedArticle(user);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        Date currentTime = new Date();
+
+        return (currentTime.getTime() - lastTimeUserAddedArticle.getTime()) < 1000 * 60 * 60 * 2;
+    }
+
+    @Override
     public Article edit(Article article) {
         return articleRepository.save(article);
     }
@@ -76,11 +91,6 @@ public class ArticleService implements IArticleService {
     @Override
     public Article findById(Long id) {
         return articleRepository.findById(id).get();
-    }
-
-    @Override
-    public List<Article> findByCategoryId(Long id) {
-        return articleRepository.findByCategoryId(id);
     }
 
     @Override
@@ -99,27 +109,6 @@ public class ArticleService implements IArticleService {
             }
         }
         return filteredArticles;
-    }
-
-    @Override
-    public List<Article> findByAuthor(User author) {
-        return articleRepository.findByAuthor(author);
-    }
-
-    @Override
-    public List<Article> findAll() {
-        return articleRepository.findAll();
-    }
-
-    @Override
-    public List<Article> findAllWithOrder(Long orderId) {
-        if (orderId == 1)
-            return articleRepository.findAllMostPopular();
-        if (orderId == 2)
-            return articleRepository.findAllLastAdded();
-        if (orderId == 3)
-            return articleRepository.findAllFirstAdded();
-        throw new RuntimeException("Unexpected order index");
     }
 
     @Override

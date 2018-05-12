@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -137,5 +138,19 @@ public class ArticleDao {
             ps.close();
 
         return result;
+    }
+
+    public Date getLastTimeUserAddedArticle(User user) throws SQLException {
+        PreparedStatement ps = connect.prepareStatement("\n" +
+                "SELECT timestamp\n" +
+                "FROM article\n" +
+                "WHERE author_id = ?\n" +
+                "ORDER BY timestamp DESC\n" +
+                "LIMIT 1");
+        ps.setLong(1, user.getId());
+        ResultSet rs = ps.executeQuery();
+
+        rs.next();
+        return rs.getTimestamp(1);
     }
 }

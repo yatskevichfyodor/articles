@@ -166,7 +166,7 @@ function ajaxSaveArticle(article) {
     $.ajax({
         type: "POST",
         contentType: 'application/json; charset=utf-8',
-        url: "/add-article",
+        url: "/article/add",
         data: JSON.stringify(article),
         dataType: 'json',
         beforeSend: function (xhr) {

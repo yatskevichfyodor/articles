@@ -116,6 +116,14 @@ public class UsedCategoriesHierarchyBuilder {
         return false;
     }
 
+    private boolean categoryIsAmongUsedCategoriesAndParentCategories(Category category) {
+        for (Category usedCategory : usedCategoriesAndParentsList) {
+            if (usedCategory.equals(category))
+                return true;
+        }
+        return false;
+    }
+
     @EventListener
     private void handleArticleAddedEvent(ArticleAddedEvent articleAddedEvent) {
         processArticleAddedEvent(articleAddedEvent.getArticle());
@@ -152,25 +160,22 @@ public class UsedCategoriesHierarchyBuilder {
     }
 
     private void attachBrachToTree(Category c) {
-        Category parentCategory = c.getParentCategory();
-
-        Set<Category> cSet = new HashSet<>();
-        cSet.add(c);
-        parentCategory.setSubcategories(cSet);
-
         usedCategoriesAndParentsList.add(c);
+        Category parentCategory = c.getParentCategory();
 
         if (parentCategory == null) {
             hierarchy.getSubcategories().add(c);
             return;
         }
 
-        for (Category usedCategory : usedCategories) {
-            if (usedCategory.equals(parentCategory)) {
-                usedCategory.getSubcategories().add(c);
-                return;
-            }
+        for (Category usedCategoryOrParentCategory: usedCategoriesAndParentsList) {
+            if (usedCategoryOrParentCategory.equals(parentCategory))
+                usedCategoryOrParentCategory.getSubcategories().add(c);
         }
+
+        Set<Category> cSet = new HashSet<>();
+        cSet.add(c);
+        parentCategory.setSubcategories(cSet);
 
         attachBrachToTree(parentCategory);
     }

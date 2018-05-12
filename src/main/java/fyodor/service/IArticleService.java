@@ -9,23 +9,17 @@ import java.util.List;
 
 public interface IArticleService {
 
-    Article save(ArticleDto articleDto, Principal author);
+    Article save(ArticleDto articleDto, User author);
+
+    boolean checkIfUserAddedArticleRecently(User user);
 
     Article edit(Article article);
 
     Article findById(Long id);
 
-    List<Article> findByCategoryId(Long id);
-
     List<Article> findByCategoryIdHierarchically(Long id);
 
     List<Article> findByCategoryIdAndAuthor(Long categoryId, User author);
-
-    List<Article> findByAuthor(User Author);
-
-    List<Article> findAll();
-
-    List<Article> findAllWithOrder(Long orderId);
 
     Article findByTitleIgnoreCase(String title);
 
