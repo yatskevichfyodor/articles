@@ -20,10 +20,9 @@ function connect() {
 }
 
 $('#btn-comment-add').click(function() {
-    $(this).prop('disabled', true);
-
-
     if (!$.trim($('#textarea-comment').val())) return;
+
+    $(this).prop('disabled', true);
 
     var comment = {
         text: $("#textarea-comment").val(),
@@ -37,7 +36,7 @@ $('#btn-comment-add').click(function() {
 function ajaxSaveComment(comment) {
     $.ajax({
         type: 'POST',
-        url: '/comment/save',
+        url: '/comment/add',
         data: JSON.stringify(comment),
         contentType: 'application/json; charset=utf-8',
         beforeSend: function(xhr) {
@@ -63,7 +62,7 @@ function ajaxSaveComment(comment) {
 function delComment(commentId) {
     $.ajax({
         type: 'DELETE',
-        url: '/comment',
+        url: '/comment/delete',
         data: JSON.stringify(commentId),
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',

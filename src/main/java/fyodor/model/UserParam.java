@@ -7,7 +7,10 @@ import java.io.Serializable;
 
 @Data
 @Entity
+@Table(name = "user_param")
 public class UserParam {
+
+    @Data
     @Embeddable
     public static class UserParamId implements Serializable {
         @ManyToOne
@@ -17,22 +20,22 @@ public class UserParam {
         @ManyToOne
         @JoinColumn(name = "attribute_id")
         private UserAttribute attribute;
-
-        public User getUser() {
-            return user;
-        }
-
-        public void setUser(User user) {
-            this.user = user;
-        }
-
-        public UserAttribute getAttribute() {
-            return attribute;
-        }
-
-        public void setAttribute(UserAttribute attribute) {
-            this.attribute = attribute;
-        }
+//
+//        public User getUser() {
+//            return user;
+//        }
+//
+//        public void setUser(User user) {
+//            this.user = user;
+//        }
+//
+//        public UserAttribute getAttribute() {
+//            return attribute;
+//        }
+//
+//        public void setAttribute(UserAttribute attribute) {
+//            this.attribute = attribute;
+//        }
     }
 
     @EmbeddedId

@@ -3,10 +3,8 @@ package fyodor.service;
 import fyodor.dto.ArticleDto;
 import fyodor.events.ArticleAddedEvent;
 import fyodor.events.ArticleDeletedEvent;
-import fyodor.model.Article;
-import fyodor.model.Category;
-import fyodor.model.Image;
-import fyodor.model.User;
+import fyodor.events.ArticleEditedEvent;
+import fyodor.model.*;
 import fyodor.repository.ArticleDao;
 import fyodor.repository.ArticleRepository;
 import fyodor.util.CategoryHierarchyToListConverter;
@@ -35,6 +33,13 @@ public class ArticleService implements IArticleService {
     @Autowired
     private IImageService imageService;
 
+    @Autowired
+    private ICommentService commentService;
+
+    @Autowired
+    private IRatingService ratingService;
+
+    @Autowired
     private ApplicationEventPublisher publisher;
 
     @Autowired
@@ -70,7 +75,7 @@ public class ArticleService implements IArticleService {
 
     @Override
     public Article findById(Long id) {
-        return articleRepository.findById(id);
+        return articleRepository.findById(id).get();
     }
 
     @Override
@@ -149,9 +154,29 @@ public class ArticleService implements IArticleService {
     @Transactional
     @Override
     public void delete(Long id) {
-        Article article = articleRepository.findById(id);
+        Article article = articleRepository.findById(id).get();
+        List<Comment> comments = article.getComments();
+        if (comments.size() > 0)
+            commentService.deleteComments(comments);
+        List<Rating> ratings = article.getRatings();
+        if (ratings.size() > 0)
+            ratingService.deleteRatings(ratings);
         articleRepository.delete(id);
+        imageService.delete(article.getImage());
 
         this.publisher.publishEvent(new ArticleDeletedEvent(article));
+    }
+
+    @Override
+    public Article edit(ArticleDto articleDto) {
+        Article article = articleRepository.findById(articleDto.getId()).get();
+        article.setCategory(categoryService.findById(articleDto.getCategoryId()));
+        article.setContent(articleDto.getContent());
+
+        Article editedArticle = articleRepository.save(article);
+
+        this.publisher.publishEvent(new ArticleEditedEvent(article));
+
+        return editedArticle;
     }
 }

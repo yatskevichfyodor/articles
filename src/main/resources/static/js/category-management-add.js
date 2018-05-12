@@ -53,7 +53,7 @@ function ajaxSaveCategory(category) {
     $.ajax({
         type: "POST",
         contentType: 'application/json; charset=utf-8',
-        url: "/saveCategory",
+        url: "/category/add",
         data: JSON.stringify(category),
         dataType: 'json',
         beforeSend: function(xhr) {

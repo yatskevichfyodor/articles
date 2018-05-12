@@ -1,33 +1,22 @@
 package fyodor.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.sun.deploy.net.HttpResponse;
 import fyodor.dto.CommentDto;
 import fyodor.model.Comment;
 import fyodor.model.User;
-import fyodor.model.UserParam;
 import fyodor.service.CustomUserDetails;
 import fyodor.service.ICommentService;
 import fyodor.service.IUserService;
 import fyodor.validation.CommentValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.json.JsonParser;
-import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
 import java.util.Set;
 
 @Controller
@@ -51,7 +40,7 @@ public class CommentController {
         return userDetails.getUser();
     }
 
-    @PostMapping("comment/save")
+    @PostMapping("comment/add")
     @ResponseBody
     public ResponseEntity<?> saveComment(@RequestBody CommentDto commentDto, @AuthenticationPrincipal CustomUserDetails userDetails) {
         Set<Integer> errorsSet = commentValidator.validate(commentDto.getText());
@@ -68,14 +57,14 @@ public class CommentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/comment")
+    @DeleteMapping("/comment/delete")
     @ResponseBody
     public String deleteComment(@RequestBody Long commentId) {
         commentService.delete(commentId);
         return String.valueOf(commentId);
     }
 
-    @PostMapping("/updateComment")
+    @PostMapping("/comment/edit")
     @ResponseBody
     public ResponseEntity<?> updateComment(@RequestBody CommentDto commentDto) {
         Set<Integer> errorsSet = commentValidator.validate(commentDto.getText());

@@ -50,4 +50,10 @@ public class ImageService implements IImageService {
         }
         return null;
     }
+
+    @Transactional
+    @Override
+    public void delete(Image image) {
+        imageRepository.delete(image);
+    }
 }

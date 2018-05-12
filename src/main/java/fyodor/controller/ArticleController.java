@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fyodor.dto.ArticleDto;
 import fyodor.model.*;
-import fyodor.repository.ArticleDao;
 import fyodor.service.*;
 import fyodor.util.ArticleDtoConverter;
 import fyodor.util.HierarchicalCategoryHierarchyToListConverter;
@@ -14,6 +13,7 @@ import fyodor.util.UsedCategoriesHierarchyBuilder;
 import fyodor.validation.ArticleValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,9 +28,6 @@ import java.util.*;
 
 @Controller
 public class ArticleController {
-
-    @Autowired
-    private IUserService userService;
 
     @Autowired
     private IArticleService articleService;
@@ -67,7 +64,6 @@ public class ArticleController {
 
     @GetMapping(value = { "/", "home" })
     public String home(Model model) {
-//        List<Article> articlesList = articleService.findAll();
         List<Article> articleList = articleService.findByCategoryIdAndOrderId(0L, 1);
 
         model.addAttribute("horizontalSize", horizontalSize);
@@ -77,33 +73,6 @@ public class ArticleController {
         model.addAttribute("categories", categoryList);
 
         return "index";
-    }
-
-    @GetMapping("/getArticleMatrixByCategoryId")
-    @ResponseBody
-    public List<List<ArticleDto>> getArticleMatrixByCategoryId(@RequestParam("id") String id) {
-        Long categoryId = Long.valueOf(id);
-        List<Article> articles;
-        if (categoryId == 0)
-            articles = articleService.findAll();
-        else
-//            articles = articleService.findByCategoryId(categoryId);
-            articles = articleService.findByCategoryIdHierarchically(categoryId);
-
-        List<ArticleDto> articleDtoList = ArticleDtoConverter.covert(articles);
-
-        return ListToMatrixConverter.convert(horizontalSize, articleDtoList);
-    }
-
-    @GetMapping("/getArticleMatrixByOrderId")
-    @ResponseBody
-    public List<List<Article>> getArticleMatrixByOrderId(@RequestParam("id") String id) {
-        Long orderId = Long.valueOf(id);
-        if (orderId == 0)
-            return ListToMatrixConverter.convert(horizontalSize, articleService.findAllWithOrder(orderId));
-        List<Article> list = articleService.findByCategoryId(orderId);
-
-        return ListToMatrixConverter.convert(horizontalSize, list);
     }
 
     @GetMapping("/getArticleMatrixByCategoryIdAndOrderId")
@@ -116,15 +85,15 @@ public class ArticleController {
         return ListToMatrixConverter.convert(horizontalSize, articleDtoList);
     }
 
-    @GetMapping("/add-article")
-    public String addArticle( Model model) {
+    @GetMapping("/article/add")
+    public String addArticle( Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
         model.addAttribute("listOfCategories", categoryService.findAll());
         model.addAttribute("methodOfStoringPictures", methodOfStoringPictures);
 
         return "add-article";
     }
 
-    @PostMapping("/add-article")
+    @PostMapping("/article/add")
     @ResponseBody
     public Long addArticle(@RequestBody ArticleDto articleDto, Errors errors, Principal principal) {
         articleValidator.validate(articleDto, errors);
@@ -137,6 +106,11 @@ public class ArticleController {
     @GetMapping("/article/{id}")
     public String article(Model model, @PathVariable("id") Long articleId, @AuthenticationPrincipal CustomUserDetails userDetails) {
         Article article = articleService.findById(articleId);
+
+        if (article == null) {
+            model.addAttribute("message", "Can't find article with id " + articleId);
+            return "message";
+        }
 
         article.setPopularity(article.getPopularity() + 1);
         Article updatedArticle = articleService.edit(article);
@@ -156,8 +130,9 @@ public class ArticleController {
             currentUserRating = null;
         } else {
             currentUserRating = ratingService.findRatingByUserAndArticleId(userDetails.getUser(), articleId);
-            model.addAttribute("currentUserRating", currentUserRating);
         }
+        model.addAttribute("currentUserRating", currentUserRating);
+
         model.addAttribute("likesNumber", ratingService.getValuesNumberByArticleId(articleId, "LIKE"));
         model.addAttribute("dislikesNumber", ratingService.getValuesNumberByArticleId(articleId, "DISLIKE"));
 
@@ -178,20 +153,16 @@ public class ArticleController {
         return articleDtos;
     }
 
-    @GetMapping("/article/{articleId}/changeRating")
+    @GetMapping("/article/changeRating")
     @ResponseBody
-    public String changeRating(@PathVariable Long articleId, Principal principal, @RequestParam String ratingState) {
+    public String changeRating(@RequestParam Long articleId, @RequestParam String ratingState, Principal principal) {
         ratingService.changeState(articleId, principal.getName(), ratingState);
 
-        Article article = articleService.findById(articleId);
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode objectNode = mapper.createObjectNode();
         objectNode.put("value", ratingState);
-//        objectNode.put("likesNumber", article.getLikesNumber());
-//        objectNode.put("dislikesNumber", article.getDislikesNumber());
         objectNode.put("likesNumber", ratingService.getValuesNumberByArticleId(articleId, "LIKE"));
         objectNode.put("dislikesNumber", ratingService.getValuesNumberByArticleId(articleId, "DISLIKE"));
-        String str = objectNode.toString();
         return objectNode.toString();
     }
 
@@ -211,4 +182,32 @@ public class ArticleController {
         return file;
     }
 
+    @DeleteMapping("/article/delete")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteArticle(@RequestBody Long articleId) {
+        articleService.delete(articleId);
+    }
+
+    @GetMapping("article/edit/{articleId}")
+    public String editArticle(@PathVariable("articleId") Long articleId, Model model,
+                              @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Article article = articleService.findById(articleId);
+        if (!article.getAuthor().equals(userDetails.getUser())) {
+            model.addAttribute("message", "Access denied!");
+            return "message";
+        }
+        model.addAttribute("listOfCategories", categoryService.findAll());
+        model.addAttribute("article", articleService.findById(articleId));
+        return "article-edit";
+    }
+
+    @PostMapping("article/edit")
+    @ResponseStatus(HttpStatus.OK)
+    public void editArticle(@RequestBody ArticleDto articleDto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Article article = articleService.findById(articleDto.getId());
+        if (!article.getAuthor().equals(userDetails.getUser()))
+            return;
+
+        articleService.edit(articleDto);
+    }
 }

@@ -19,14 +19,14 @@ public class SecurityService implements ISecurityService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserDetailsService customUserDetailsService;
 
     @Autowired
     private SessionRegistry sessionRegistry;
 
     @Override
     public void autologin(String username, String password) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
 
         authenticationManager.authenticate(usernamePasswordAuthenticationToken);

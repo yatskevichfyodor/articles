@@ -5,6 +5,7 @@ import fyodor.model.User;
 import fyodor.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component
+@Order(1)
 public class CustomUserDetailsService implements UserDetailsService {
 	
     @Autowired

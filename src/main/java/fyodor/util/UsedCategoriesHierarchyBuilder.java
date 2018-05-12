@@ -1,9 +1,7 @@
 package fyodor.util;
 
 
-import fyodor.events.ArticleAddedEvent;
-import fyodor.events.ArticleDeletedEvent;
-import fyodor.events.CategoryDeletedEvent;
+import fyodor.events.*;
 import fyodor.model.Article;
 import fyodor.model.Category;
 import fyodor.repository.CategoryRepository;
@@ -14,6 +12,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -23,52 +22,45 @@ import java.util.List;
 import java.util.Set;
 
 @Component
-//@DependsOn(value = {"categoryRepository", "categoryService"})
+@Order(100)
 @Data
 public class UsedCategoriesHierarchyBuilder {
 
     @Autowired
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
     private CategoryRepository categoryRepository;
 
     @Autowired
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
     private ICategoryService categoryService;
 
-    @Setter(AccessLevel.NONE)
     private final Category hierarchy = new Category();
-
-    @Setter(AccessLevel.NONE)
     private Set<Category> usedCategories;
-
-    @Setter(AccessLevel.NONE)
     private Set<Category> usedCategoriesAndParentsSet; // used on building stage
-
-    @Setter(AccessLevel.NONE)
     private List<Category> usedCategoriesAndParentsList; // used after building stage
 
     @PostConstruct
     private void build() {
         usedCategories = new HashSet<>(categoryRepository.findUsedCategories());
         usedCategoriesAndParentsSet = new HashSet<>(usedCategories);
-        for (Category category: usedCategories) {
+        for (Category category : usedCategories) {
             insertParentCategories(category);
         }
 
         Set<Category> rootCategories = new HashSet<>();
-        for (Category category: usedCategoriesAndParentsSet) {
+        for (Category category : usedCategoriesAndParentsSet) {
             if (category.getParentCategory() == null)
                 rootCategories.add(category);
         }
 
         hierarchy.setSubcategories(rootCategories);
 
+        for (Category rootCategory: hierarchy.getSubcategories()) {
+            rootCategory.setParentCategory(hierarchy);
+        }
+
         usedCategoriesAndParentsList = new ArrayList<>();
         usedCategoriesAndParentsList.addAll(rootCategories);
 
-        for (Category category: hierarchy.getSubcategories()) {
+        for (Category category : hierarchy.getSubcategories()) {
             filterSubcategories(category);
         }
     }
@@ -106,7 +98,7 @@ public class UsedCategoriesHierarchyBuilder {
     }
 
     public Category getSubhierarchy(Category primaryCategory) {
-        for (Category subcategory: usedCategoriesAndParentsList) {
+        for (Category subcategory : usedCategoriesAndParentsList) {
             if (subcategory.equals(primaryCategory))
                 return subcategory;
         }
@@ -114,13 +106,45 @@ public class UsedCategoriesHierarchyBuilder {
         throw new RuntimeException("Subhierarchy wasn't found");
     }
 
+    private boolean categoryIsAmongUsedCategories(Category category) {
+        for (Category usedCategory : usedCategories) {
+            if (usedCategory.equals(category))
+                return true;
+        }
+        return false;
+    }
+
     @EventListener
     private void handleArticleAddedEvent(ArticleAddedEvent articleAddedEvent) {
-        Article createdArticle = articleAddedEvent.getArticle();
+        processArticleAddedEvent(articleAddedEvent.getArticle());
+    }
+
+    @EventListener
+    private void handleArticleDeletedEvent(ArticleDeletedEvent articleDeletedEvent) {
+        processArticleDeletedEvent(articleDeletedEvent.getArticle());
+    }
+
+    @EventListener
+    private void handleArticleEditedEvent(ArticleEditedEvent articleEditedEvent) {
+        processArticleDeletedEvent(articleEditedEvent.getArticle());
+        processArticleAddedEvent(articleEditedEvent.getArticle());
+    }
+
+    @EventListener
+    private void handleCategoryDeletedEvent(CategoryDeletedEvent categoryDeletedEvent) {
+        Category deletedCategory = categoryDeletedEvent.getCategory();
+
+        if (!categoryIsAmongUsedCategories(deletedCategory)) return;
+
+        usedCategories.remove(deletedCategory);
+    }
+
+    private void processArticleAddedEvent(Article createdArticle) {
         Category createdArticleCategory = createdArticle.getCategory();
         if (categoryIsAmongUsedCategories(createdArticleCategory)) return;
 
         usedCategories.add(createdArticleCategory);
+//        usedCategoriesAndParentsList.add(createdArticleCategory);
 
         attachBrachToTree(createdArticleCategory);
     }
@@ -149,44 +173,32 @@ public class UsedCategoriesHierarchyBuilder {
         attachBrachToTree(parentCategory);
     }
 
-    @EventListener
-    private void handleArticleDeletedEvent(ArticleDeletedEvent articleDeletedEvent) {
-        Article deletedArticle = articleDeletedEvent.getArticle();
+    private void processArticleDeletedEvent(Article deletedArticle) {
         Category deletedArticleCategory = deletedArticle.getCategory();
+        Category subhierarchy = getSubhierarchy(deletedArticleCategory);
 
-        if (!categoryIsAmongUsedCategories(deletedArticleCategory)) return;
+        if (subhierarchy.getArticles().size() != 0) return;
 
-        usedCategories.remove(deletedArticleCategory);
+        usedCategories.remove(subhierarchy);
+        usedCategoriesAndParentsList.remove(subhierarchy);
 
-        cutOffBranchFromTree(deletedArticleCategory);
+        cutOffBranchFromTree(subhierarchy);
     }
 
-    private void cutOffBranchFromTree(Category c) {
-        if (categoryIsAmongUsedCategories(c))
-            return;
+    private void cutOffBranchFromTree(Category c) { // if category comes here then it's not among used categories - obviously
         Category parentCategory = c.getParentCategory();
-        if (parentCategory == null) {
-            hierarchy.getSubcategories().remove(c);
+
+        Set<Category> subcategories = parentCategory.getSubcategories();
+        if (subcategories.size() > 1) {
+            subcategories.remove(c);
             return;
-        } else {
-            cutOffBranchFromTree(parentCategory);
         }
-    }
 
-    @EventListener
-    private void handleCategoryDeletedEvent(CategoryDeletedEvent categoryDeletedEvent) {
-        Category deletedCategory = categoryDeletedEvent.getCategory();
+        usedCategories.remove(parentCategory);
+        usedCategoriesAndParentsList.remove(parentCategory);
 
-        if (!categoryIsAmongUsedCategories(deletedCategory)) return;
+        if (parentCategory.getParentCategory() == null) return;
 
-        usedCategories.remove(deletedCategory);
-    }
-
-    private boolean categoryIsAmongUsedCategories(Category category) {
-        for (Category usedCategory: usedCategories) {
-            if (usedCategory.equals(category))
-                return true;
-        }
-        return false;
+        cutOffBranchFromTree(parentCategory);
     }
 }

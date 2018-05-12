@@ -42,7 +42,7 @@ function ajaxDeleteCategory(categoryId) {
     $.ajax({
         type: "DELETE",
         contentType: 'application/json; charset=utf-8',
-        url: "/category",
+        url: "/category/delete",
         data: categoryId,
         dataType: 'json',
         beforeSend: function (xhr) {

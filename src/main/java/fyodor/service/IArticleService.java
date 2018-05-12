@@ -32,4 +32,6 @@ public interface IArticleService {
     List<Article> findByCategoryIdAndOrderId(Long categoryId, int orderId);
 
     void delete(Long id);
+
+    Article edit(ArticleDto articleDto);
 }

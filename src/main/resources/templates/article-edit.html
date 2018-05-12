@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="utf-8"/>
+    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta id="articleId" th:content="${article.getId()}" />
+
+    <title th:text="#{article.edit}">Edit article</title>
+
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}"/>
+
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.0.0-beta-1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+
+</head>
+
+<body th:class="${#themes.code('body.class')}">
+
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container mt-4">
+    <div class="row">
+        <h2 class="mb-3 col-md-6" th:text="#{article.editing}">Edit article</h2>
+    </div>
+    <div class="row">
+        <h6 class="col-md-6" th:text="#{category.select}">Select category:</h6>
+    </div>
+    <div class="row">
+        <select id="category" class="form-control mb-2 col-md-6">
+            <option th:value="${article.getCategory().getId()}" th:text="${article.getCategory().getName()}">
+                Actual category name
+            </option>
+            <option th:each="category : ${listOfCategories}" th:value="${category.getId()}"
+                    th:text="${category.getName()}">Category name
+            </option>
+        </select>
+        <button sec:authorize="hasRole('ROLE_ADMIN')" class="ml-3 text-left btn submit-btn" id="add-category">
+            <a href="/categoryManagement" th:text="#{category.management}">Category management</a>
+        </button>
+    </div>
+    <div class="row">
+        <input disabled="disabled" id="title" type="text" class="col-md-6" aria-describedby="basic-addon1"
+               th:value="${article.getTitle()}"/>
+    </div>
+    <div class="row">
+        <textarea id="content" class="form-control mt-1 textarea col-md-12" rows="15" maxlength="40000"
+                  th:text="${article.getContent()}"></textarea>
+    </div>
+    <div class="row">
+        <div id="errors_list"></div>
+    </div>
+    <div class="row">
+        <button id="submit" class="btn btn-success btn-lg submit-btn mt-4 mb-2" type="submit"
+                th:text="#{article.edit}">
+            Submit
+        </button>
+    </div>
+</div>
+
+<script src="/webjars/jquery/3.2.0/jquery.min.js" type="text/javascript"></script>
+<script th:src="@{/js/popper.min.js}" type="text/javascript"></script>
+<script src="/webjars/bootstrap/4.0.0-beta-1/js/bootstrap.min.js" type="text/javascript"></script>
+
+<script th:src="@{'/js/i18n/lang_' + #{locale} + '.js'}" type="text/javascript"></script>
+
+<script th:src="@{/js/article-edit.js}"></script>
+</body>
+</html>

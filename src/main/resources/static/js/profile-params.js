@@ -92,7 +92,7 @@ function ajaxUpdateParam(updateUserParamDto) {
     $.ajax({
         type: "POST",
         contentType: 'application/json; charset=utf-8',
-        url: "/updateUserParam",
+        url: "/userParam/edit",
         data: JSON.stringify(updateUserParamDto),
         dataType: 'json',
         beforeSend: function (xhr) {

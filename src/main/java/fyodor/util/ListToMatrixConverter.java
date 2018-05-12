@@ -7,6 +7,7 @@ import java.util.List;
 public class ListToMatrixConverter {
         public static <T> List<List<T>> convert(int horizontalSize, List<T> list) {
                 List<List<T>> articlesMatrix = new LinkedList<>();
+                if (list == null) return articlesMatrix;
                 Iterator<T> iterator = list.iterator();
 
                 int i = 0;

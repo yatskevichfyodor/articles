@@ -5,7 +5,9 @@ import fyodor.model.Comment;
 import fyodor.model.User;
 
 import java.security.Principal;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public interface ICommentService {
 
@@ -20,4 +22,6 @@ public interface ICommentService {
     List<Comment> findByArticleId(Long id);
 
     void delete(Long id);
+
+    void deleteComments(List<Comment> comments);
 }

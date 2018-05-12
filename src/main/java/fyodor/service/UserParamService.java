@@ -1,6 +1,6 @@
 package fyodor.service;
 
-import fyodor.dto.UpdateUserParamDto;
+import fyodor.dto.EditUserParamDto;
 import fyodor.model.User;
 import fyodor.model.UserParam;
 import fyodor.repository.UserAttributeRepository;
@@ -18,13 +18,23 @@ public class UserParamService implements IUserParamService {
     private UserParamRepository userParamRepository;
 
     @Override
-    public UserParam save(UpdateUserParamDto updateUserParamDto, User user) {
+    public UserParam edit(EditUserParamDto editUserParamDto, User user) {
+        if (editUserParamDto.getParamValue().equals("")) {
+            UserParam.UserParamId userParamId = new UserParam.UserParamId();
+            userParamId.setAttribute(userAttributeRepository.findById(editUserParamDto.getAttributeId()).get());
+            userParamId.setUser(user);
+            UserParam userParam = userParamRepository.findById(userParamId);
+            userParamRepository.delete(userParam);
+
+            return null;
+        }
+
         UserParam userParam = new UserParam();
         UserParam.UserParamId userParamId = new UserParam.UserParamId();
-        userParamId.setAttribute(userAttributeRepository.findById(updateUserParamDto.getAttributeId()));
+        userParamId.setAttribute(userAttributeRepository.findById(editUserParamDto.getAttributeId()).get());
         userParamId.setUser(user);
         userParam.setId(userParamId);
-        userParam.setValue(updateUserParamDto.getParamValue());
+        userParam.setValue(editUserParamDto.getParamValue());
 
         return userParamRepository.save(userParam);
     }

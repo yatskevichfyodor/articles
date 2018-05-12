@@ -99,7 +99,7 @@ function ajaxUpdateComment() {
     $.ajax({
         type: "POST",
         contentType: 'application/json; charset=utf-8',
-        url: "/updateComment",
+        url: "/comment/edit",
         data: JSON.stringify(comment),
         dataType: 'json',
         beforeSend: function (xhr) {

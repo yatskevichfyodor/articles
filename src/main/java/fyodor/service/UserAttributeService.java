@@ -39,12 +39,12 @@ public class UserAttributeService implements IUserAttributeService {
     @Transactional
     @Override
     public void delete(Long id) {
-        userAttributeRepository.delete(id);
+        userAttributeRepository.delete(userAttributeRepository.findById(id).get());
     }
 
     @Override
     public void disable(Long id) {
-        UserAttribute userAttribute = userAttributeRepository.findById(id);
+        UserAttribute userAttribute = userAttributeRepository.findById(id).get();
         userAttribute.setEnabled(false);
 
         userAttributeRepository.save(userAttribute);

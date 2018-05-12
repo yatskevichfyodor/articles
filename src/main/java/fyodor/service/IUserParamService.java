@@ -1,9 +1,9 @@
 package fyodor.service;
 
-import fyodor.dto.UpdateUserParamDto;
+import fyodor.dto.EditUserParamDto;
 import fyodor.model.User;
 import fyodor.model.UserParam;
 
 public interface IUserParamService {
-    UserParam save(UpdateUserParamDto updateUserParamDto, User user);
+    UserParam edit(EditUserParamDto editUserParamDto, User user);
 }

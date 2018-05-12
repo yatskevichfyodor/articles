@@ -10,8 +10,7 @@ import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class CommentService implements ICommentService {
@@ -55,7 +54,7 @@ public class CommentService implements ICommentService {
 
     @Override
     public Comment findById(Long id) {
-        return commentRepository.findById(id);
+        return commentRepository.findById(id).get();
     }
 
     @Override
@@ -66,5 +65,14 @@ public class CommentService implements ICommentService {
     @Override
     public void delete(Long id) {
         commentRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteComments(List<Comment> comments) {
+        Set<Long> commentIds = new HashSet<>();
+        for (Comment comment: comments) {
+            commentIds.add(comment.getId());
+        }
+        commentRepository.deleteComments(commentIds);
     }
 }

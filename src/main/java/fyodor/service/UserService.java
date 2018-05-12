@@ -103,7 +103,7 @@ public class UserService implements IUserService {
 
     @Override
     public void delete(User user) {
-        userRepository.delete(user.getId());
+        userRepository.delete(userRepository.findById(user.getId()).get());
     }
 
     @Override
@@ -146,7 +146,7 @@ public class UserService implements IUserService {
         User user;
         long[] idArray = Arrays.asList(users).stream().mapToLong(Long::parseLong).toArray();
         for (int i = 0; i < idArray.length; i++) {
-            user = userRepository.findById(idArray[i]);
+            user = userRepository.findById(idArray[i]).get();
             Set<Role> roles = user.getRoles();
             roles.add(roleRepository.findByName(role).iterator().next());
 //            user.setRoles(roles);
@@ -160,7 +160,7 @@ public class UserService implements IUserService {
         User user;
         long[] idArray = Arrays.asList(users).stream().mapToLong(Long::parseLong).toArray();
         for (int i = 0; i < idArray.length; i++) {
-            user = userRepository.findById(idArray[i]);
+            user = userRepository.findById(idArray[i]).get();
             Set<Role> roles = user.getRoles();
             roles.remove(roleRepository.findByName(role).iterator().next());
 //            user.setRoles(roles);
@@ -179,7 +179,7 @@ public class UserService implements IUserService {
 
     @Override
     public Map<UserAttribute, String> getUserParams(Long userId) {
-        User user = userRepository.findById(userId);
+        User user = userRepository.findById(userId).get();
         List<UserParam> params = user.getParams();
         List<UserAttribute> attributes = userAttributeRepository.findAll();
         Map<UserAttribute, String> paramsMap = new HashMap<>();

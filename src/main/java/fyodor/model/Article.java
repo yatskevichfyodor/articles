@@ -11,8 +11,10 @@ import java.util.List;
 @Entity
 @Table(name = "article")
 @Data
-@EqualsAndHashCode(exclude={"image", "content", "category", "author", "comments", "ratings"})
-@ToString(exclude={"image", "content", "category", "author", "comments", "ratings"})
+//@EqualsAndHashCode(exclude={"image", "content", "content", "category", "author", "comments", "ratings"})
+//@ToString(exclude={"image", "content", "" "content", "category", "author", "comments", "ratings"})
+@EqualsAndHashCode(of={"id", "title"})
+@ToString(of={"id", "title"})
 public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

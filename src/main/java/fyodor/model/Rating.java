@@ -16,6 +16,7 @@ public class Rating {
         DISLIKE
     }
 
+    @Data
     @Embeddable
     public static class RatingId implements Serializable {
         @ManyToOne
@@ -26,24 +27,24 @@ public class Rating {
         @JoinColumn(name = "user_id")
         private User user;
 
-        public RatingId() {
-        }
-
-        public Article getArticle() {
-            return article;
-        }
-
-        public void setArticle(Article article) {
-            this.article = article;
-        }
-
-        public User getUser() {
-            return user;
-        }
-
-        public void setUser(User user) {
-            this.user = user;
-        }
+//        public RatingId() {
+//        }
+//
+//        public Article getArticle() {
+//            return article;
+//        }
+//
+//        public void setArticle(Article article) {
+//            this.article = article;
+//        }
+//
+//        public User getUser() {
+//            return user;
+//        }
+//
+//        public void setUser(User user) {
+//            this.user = user;
+//        }
     }
 
     @EmbeddedId

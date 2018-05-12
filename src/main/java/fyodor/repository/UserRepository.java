@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByEmailIgnoreCase(String email);
     User findByUsernameIgnoreCase(String username);
-    User findById(Long id);
     void deleteById(Long id);
 
     @Modifying

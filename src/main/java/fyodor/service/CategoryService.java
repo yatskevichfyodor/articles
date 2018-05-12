@@ -34,12 +34,12 @@ public class CategoryService implements ICategoryService {
 
     @Override
     public Category findById(Long id) {
-        return categoryRepository.findById(id);
+        return categoryRepository.findById(id).get();
     }
 
     @Override
     public List<Category> findCategoriesAndSubcategoriesById(Long id) {
-        Category primaryCategory = categoryRepository.findById(id);
+        Category primaryCategory = categoryRepository.findById(id).get();
         Category subhierarchy = usedCategoriesHierarchyBuilder.getSubhierarchy(primaryCategory);
         CategoryHierarchyToListConverter categoryHierarchyToListConverter = new CategoryHierarchyToListConverter();
         List<Category> categories = categoryHierarchyToListConverter.convert(subhierarchy);
@@ -126,6 +126,6 @@ public class CategoryService implements ICategoryService {
     @Transactional
     @Override
     public void delete(Long id) {
-        categoryRepository.delete(id);
+        categoryRepository.delete(categoryRepository.findById(id).get());
     }
 }

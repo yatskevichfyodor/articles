@@ -42,11 +42,11 @@ public class ArticleDao {
         article.setContent(rs.getString(2));
         article.setTimestamp(rs.getDate(3));
         article.setTitle(rs.getString(4));
-        User author = userRepository.findById(rs.getLong(5));
+        User author = userRepository.findById(rs.getLong(5)).get();
         article.setAuthor(author);
-        Category category = categoryRepository.findById(rs.getLong(6));
+        Category category = categoryRepository.findById(rs.getLong(6)).get();
         article.setCategory(category);
-        Image image = imageRepository.findById(rs.getLong(7));
+        Image image = imageRepository.findById(rs.getLong(7)).get();
         article.setImage(image);
         article.setPopularity(rs.getLong(8));
 
@@ -54,6 +54,8 @@ public class ArticleDao {
     }
 
     public List<Article> getArticlesByCategoriesSortedByPopularity(List<Category> categories) throws SQLException {
+        if (categories.size() == 0) return null;
+
         StringBuilder statement = new StringBuilder("" +
                 "SELECT *\n" +
                 "FROM article a\n" +

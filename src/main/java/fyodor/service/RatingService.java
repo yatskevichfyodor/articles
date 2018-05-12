@@ -9,6 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class RatingService implements IRatingService {
@@ -51,11 +55,6 @@ public class RatingService implements IRatingService {
     }
 
     @Override
-    public Rating findRatingByUsernameAndArticleId(String username, Long articleId) {
-        return ratingRepository.findByUserIdAndArticleId(userService.findByUsernameIgnoreCase(username).getId(), articleId);
-    }
-
-    @Override
     public Rating findRatingByUserAndArticleId(User user, Long articleId) {
         return ratingRepository.findByUserIdAndArticleId(user.getId(), articleId);
     }
@@ -63,5 +62,14 @@ public class RatingService implements IRatingService {
     @Override
     public Long getValuesNumberByArticleId(Long id, String value) {
         return ratingRepository.getValuesNumberByArticleId(String.valueOf(id), value);
+    }
+
+    @Override
+    public void deleteRatings(List<Rating> ratings) {
+        Set<Rating.RatingId> ratingIds = new HashSet<>();
+        for (Rating rating: ratings) {
+            ratingIds.add(rating.getId());
+        }
+        ratingRepository.deleteRatings(ratingIds);
     }
 }

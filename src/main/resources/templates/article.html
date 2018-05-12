@@ -101,10 +101,31 @@
             </div>
         </div>
 
-        <div class="text-right col">
-            <button class="btn btn-success btn-lg text-right" id="pdf-btn" th:text="#{article.btn.saveAsPdf}">Save as
-                PDF
-            </button>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-8"></div>
+                <div class="col-md-4">
+                    <button class="btn btn-success btn-lg mb-2" id="pdf-btn" th:text="#{article.btn.saveAsPdf}">Save as
+                        PDF
+                    </button>
+                </div>
+            </div>
+            <div th:if="${(currentUser != null) and (currentUser.getId() == article.getAuthor().getId() or currentUser.isAdmin())}"
+                 class="row">
+                <div class="col-md-6">
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-secondary mb-2">
+                        <a th:text="#{article.edit}" th:href="@{'/article/edit/' + ${article.getId()}}">Edit article</a>
+                    </button>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-danger mb-2" id="btn-article-delete"
+                            th:text="#{article.delete}">
+                        Delete article
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -167,6 +188,8 @@
 <script src="/webjars/bootstrap/4.0.0-beta-1/js/bootstrap.min.js" type="text/javascript"></script>
 
 <script th:src="@{'/js/i18n/lang_' + #{locale} + '.js'}" type="text/javascript"></script>
+
+<script th:src="@{/js/article.js}" type="text/javascript"></script>
 
 <script src="/webjars/sockjs-client/1.0.2/sockjs.min.js"></script>
 <script src="/webjars/stomp-websocket/2.3.3/stomp.min.js"></script>

@@ -18,18 +18,10 @@ import java.util.Set;
 public class CategoryController {
 
     @Autowired
-    private UsedCategoriesHierarchyBuilder usedCategoriesHierarchyBuilder;
-
-    @Autowired
     private CategoryService categoryService;
 
     @Autowired
     private CategoryValidator categoryValidator;
-
-//    @GetMapping(value = { "/getCategoryHierarchy" })
-//    public List<CategoryDto> getCategoryHierarchy() {
-//        return categoryService.getDtoHierarchy();
-//    }
 
     @GetMapping("/categoryManagement")
     public String categoryManagement(Model model) {
@@ -39,7 +31,7 @@ public class CategoryController {
         return "category-management";
     }
 
-    @PostMapping("/saveCategory")
+    @PostMapping("/category/add")
     @ResponseBody
     public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) {
         Set<Integer> errorsSet = categoryValidator.validateAdd(categoryDto.getName());
@@ -52,7 +44,7 @@ public class CategoryController {
         return new ResponseEntity<>(categoryDto, HttpStatus.OK);
     }
 
-    @DeleteMapping("/category")
+    @DeleteMapping("/category/delete")
     @ResponseBody
     public ResponseEntity<?> deleteCategory(@RequestBody Long categoryId) {
         Set<Integer> errorsSet = categoryValidator.validateDelete(categoryId);

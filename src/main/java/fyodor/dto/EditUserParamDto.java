@@ -3,7 +3,7 @@ package fyodor.dto;
 import lombok.Data;
 
 @Data
-public class UpdateUserParamDto {
+public class EditUserParamDto {
     private Long attributeId;
     private String paramValue;
 }

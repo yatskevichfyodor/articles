@@ -4,14 +4,14 @@ import fyodor.model.Article;
 import fyodor.model.Category;
 import fyodor.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 public interface ArticleRepository extends JpaRepository<Article, Long>{
-    Article findById(Long id);
-
     Article findByTitle(String title);
 
     List<Article> findByCategoryAndAuthor(Category category, User author);
@@ -40,9 +40,8 @@ public interface ArticleRepository extends JpaRepository<Article, Long>{
 
     List<Article> findArticlesByCategoryIn(List<Category> categories);
 
-//    List<Article> findSortByPopularityDescByCategoryIn(List<Category> categories);
-//
-//    List<Article> findSortByTimestampAscByCategoryIn(List<Category> categories);
-//
-//    List<Article> findSortByTimestampDescByCategoryIn(List<Category> categories);
+    @Modifying
+    @Transactional
+    @Query(value="DELETE FROM article WHERE id=:id", nativeQuery = true)
+    void delete(@Param("id") Long id);
 }

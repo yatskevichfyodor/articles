@@ -24,7 +24,7 @@ function sendNewState(state) {
     var header = $('#_csrf_header').attr('content');
 
     $.ajax({
-        url: '/article/' + getArticleId() + '/changeRating?ratingState=' + state,
+        url: '/article/changeRating?articleId=' + getArticleId() + '&ratingState=' + state,
         dataType: 'json',
         beforeSend: function(xhr) {
             xhr.setRequestHeader(header, token);

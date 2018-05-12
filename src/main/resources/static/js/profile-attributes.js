@@ -71,7 +71,7 @@ function ajaxSaveAttribute(attribute) {
     $.ajax({
         type: "POST",
         contentType: 'application/json; charset=utf-8',
-        url: "/add-attribute",
+        url: "/userAttribute/add",
         data: attribute,
         dataType: 'json',
         beforeSend: function (xhr) {
@@ -140,7 +140,7 @@ function ajaxDeleteAttribute(attributeId) {
     $.ajax({
         type: "DELETE",
         contentType: 'application/json; charset=utf-8',
-        url: "/userAttribute",
+        url: "/userAttribute/delete",
         data: JSON.stringify(attributeId),
         beforeSend: function (xhr) {
             xhr.setRequestHeader(header, token);
