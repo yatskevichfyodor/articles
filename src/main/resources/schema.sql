@@ -106,6 +106,7 @@ CREATE TABLE IF NOT EXISTS `rating` (
   `value` varchar(255) DEFAULT NULL,
   `article_id` bigint(20) NOT NULL,
   `user_id` bigint(20) NOT NULL,
+  `timestamp` datetime DEFAULT NULL,
   PRIMARY KEY (`article_id`,`user_id`),
   KEY `FKpn05vbx6usw0c65tcyuce4dw5` (`user_id`),
   CONSTRAINT `FKff3wnj5681kqa2tdaimkkhx7b` FOREIGN KEY (`article_id`) REFERENCES `article` (`id`),

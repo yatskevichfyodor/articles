@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Table(name = "rating")
@@ -32,4 +33,6 @@ public class Rating {
     @Enumerated(EnumType.STRING)
     private RatingEnum value;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date timestamp = new Date();
 }
