@@ -37,7 +37,7 @@ public class ArticleDao {
         }
     }
 
-    private Article covertResultSetToArticle(ResultSet rs) throws SQLException {
+    private Article convertResultSetToArticle(ResultSet rs) throws SQLException {
         Article article = new Article();
         article.setId(rs.getInt(1));
         article.setContent(rs.getString(2));
@@ -75,7 +75,7 @@ public class ArticleDao {
 
         List<Article> result = new ArrayList<>();
         while (rs.next()) {
-            result.add(covertResultSetToArticle(rs));
+            result.add(convertResultSetToArticle(rs));
         }
 
         if (ps != null)
@@ -103,7 +103,7 @@ public class ArticleDao {
 
         List<Article> result = new ArrayList<>();
         while (rs.next()) {
-            result.add(covertResultSetToArticle(rs));
+            result.add(convertResultSetToArticle(rs));
         }
 
         if (ps != null)
@@ -131,7 +131,7 @@ public class ArticleDao {
 
         List<Article> result = new ArrayList<>();
         while (rs.next()) {
-            result.add(covertResultSetToArticle(rs));
+            result.add(convertResultSetToArticle(rs));
         }
 
         if (ps != null)

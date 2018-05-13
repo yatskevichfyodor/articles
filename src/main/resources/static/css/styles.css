@@ -29,3 +29,10 @@
 .errors {
     color: red;
 }
+
+.scrollable {
+    overflow: scroll;
+    overflow-y: scroll;
+    height: 300px;
+    resize: none; /* Remove this if you want the user to resize the textarea */
+}

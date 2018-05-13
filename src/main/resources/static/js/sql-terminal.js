@@ -13,15 +13,19 @@ function ajaxSendQuery(query) {
     $.ajax({
         type: "GET",
         contentType: "application/json",
-        url: "/sqlRequest" + "?query=" + query,
+        url: "/sql-request" + "?request=" + query,
         beforeSend: function (xhr) {
             xhr.setRequestHeader(header, token);
         },
-        dataType: 'json',
+        // dataType: 'json',
         cache: false,
         timeout: 600000,
         success: function (response) {
-            $('#query').value = response;
+            $('#response').empty();
+            $('#response').append(response);
+        },
+        error: function (e) {
+            console.log("ERROR " + e);
         }
     });
 }

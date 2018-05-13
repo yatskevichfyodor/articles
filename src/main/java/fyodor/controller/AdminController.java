@@ -1,6 +1,7 @@
 package fyodor.controller;
 
 
+import fyodor.repository.OverallDao;
 import fyodor.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,9 @@ public class AdminController {
 
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private OverallDao overallDao;
 
     @GetMapping("/admin")
     public String admin(HttpServletRequest request, Model model) {
@@ -67,6 +71,6 @@ public class AdminController {
     @GetMapping("/sql-request")
     @ResponseBody
     public String sqlRequest(@RequestParam("request") String request) {
-        return "sql-terminal";
+        return overallDao.sqlRequest(request);
     }
 }
