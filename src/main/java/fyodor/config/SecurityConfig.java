@@ -16,7 +16,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-//@EnableAutoConfiguration
 @Order(1)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -24,23 +23,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(11);
     }
-//
-//	@Override
-//	public UserDetailsService userDetailsService() {
-//		return new CustomUserDetailsService();
-//	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 				.antMatchers("/admin", "/admin/**", "/sql-terminal", "/sql-request",
-						"categoryManagement", "category/add", "category/delete",
-						"userAttribute/add", "userAttribute/delete").hasRole("ADMIN")
+						"/categoryManagement", "category/add", "category/delete",
+						"/userAttribute/add", "/userAttribute/delete").hasRole("ADMIN")
 
-				.antMatchers("profile", "/article/add", "/article/delete", "/article/changeRating",
+				.antMatchers("/profile", "/article/add", "/article/delete", "/article/changeRating",
 						"/article/edit/**", "/article/edit",
-						"commentAdd", "comment/delete", "comment/edit",
-						"userParam/edit").authenticated()
+						"/commentAdd", "/comment/delete", "/comment/edit",
+						"/userParam/edit").authenticated()
 		.and()
 				.logout().logoutSuccessUrl("/index.html").permitAll()
 		.and()

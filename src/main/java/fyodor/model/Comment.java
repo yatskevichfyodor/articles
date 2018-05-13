@@ -14,7 +14,7 @@ import java.util.Date;
 @ToString(of={"id", "text"})
 public class Comment {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String text;

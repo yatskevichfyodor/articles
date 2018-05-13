@@ -150,7 +150,8 @@ public class ArticleDao {
         ps.setLong(1, user.getId());
         ResultSet rs = ps.executeQuery();
 
-        rs.next();
-        return rs.getTimestamp(1);
+        while (rs.next())
+            return rs.getTimestamp(1);
+        return null;
     }
 }

@@ -14,11 +14,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.io.IOException;
-import java.security.Principal;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -26,9 +23,6 @@ import java.util.List;
 public class ArticleService implements IArticleService {
     @Autowired
     private ArticleRepository articleRepository;
-
-    @Autowired
-    private IUserService userService;
 
     @Autowired
     private ICategoryService categoryService;
@@ -74,6 +68,7 @@ public class ArticleService implements IArticleService {
         Date lastTimeUserAddedArticle = null;
         try {
             lastTimeUserAddedArticle = articleDao.getLastTimeUserAddedArticle(user);
+            if (lastTimeUserAddedArticle == null) return false;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -86,7 +81,6 @@ public class ArticleService implements IArticleService {
     public Article edit(Article article) {
         return articleRepository.save(article);
     }
-
 
     @Override
     public Article findById(Long id) {
@@ -105,6 +99,18 @@ public class ArticleService implements IArticleService {
         List<Article> filteredArticles = new ArrayList<>();
         for (Article article: articles) {
             if (article.getAuthor().equals(author)) {
+                filteredArticles.add(article);
+            }
+        }
+        return filteredArticles;
+    }
+
+    @Override
+    public List<Article> findByCategoryIdAndAuthorId(Long categoryId, Long authorId) {
+        List<Article> articles = findByCategoryIdHierarchically(categoryId);
+        List<Article> filteredArticles = new ArrayList<>();
+        for (Article article: articles) {
+            if (article.getAuthor().getId() == authorId) {
                 filteredArticles.add(article);
             }
         }

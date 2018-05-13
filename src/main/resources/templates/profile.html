@@ -6,7 +6,9 @@
     <meta charset="utf-8"/>
     <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
     <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <meta id="isAdmin" th:content="${currentUser.isAdmin()}"/>
+    <meta id="isAdmin" th:if="${currentUser != null}" th:content="${currentUser.isAdmin()}"/>
+    <meta id="isProfilePage" th:content="${isProfilePage}"/>
+    <meta id="userId" th:content="${user.getId()}"/>
 
     <title th:text="${user.getUsername()}">Username</title>
 
@@ -26,17 +28,18 @@
 <div class="container mt-4">
     <div class="row mt-2 mb-4">
         <div class="col-md-12">
-            <h1 class="header mx-auto text-center" sec:authentication="name">Username</h1>
+            <h1 class="header mx-auto text-center" th:text="${user.getUsername()}">Username</h1>
         </div>
     </div>
     <div class="row">
         <div class="col-md-5 border pt-2">
             <div class="row">
                 <div class="col-md-6">
-                    <h2 class="subheader text-left" th:text="#{articles.yours}">Your articles</h2>
+                    <h2 th:if="${isProfilePage}" class="subheader text-left" th:text="#{articles.yours}">Your articles</h2>
+                    <h2 th:if="${!isProfilePage}" class="subheader text-left" th:text="#{articles.user}">User articles</h2>
                 </div>
                 <div class="col-md-6">
-                    <a th:href="@{'/article/add'}">
+                    <a th:if="${isProfilePage}" th:href="@{'/article/add'}">
                         <button class="btn btn-secondary btn-lg mw-100" th:text="#{article.add}">Add article</button>
                     </a>
                 </div>
@@ -84,7 +87,7 @@
                     <div class="col-md-7" th:text="${user.getEmail()}"></div>
                 </div>
 
-                <div class="row">
+                <div th:if="${isProfilePage}" class="row">
                     <div class="col-md-5" th:text="#{user.data.basic.password}"></div>
                     <div class="col-md-7" th:text="'**********'"></div>
                 </div>
@@ -100,7 +103,7 @@
                     <div class="col-md-6">
                         <h2 th:text="#{user.data.additional}">Basic data</h2>
                     </div>
-                    <div sec:authorize="hasRole('ROLE_ADMIN')" class="col-md-6 text-center" id="add-attribute-area">
+                    <div th:if="${isProfilePage}" sec:authorize="hasRole('ROLE_ADMIN')" class="col-md-6 text-center" id="add-attribute-area">
                         <button id="add-attribute" class="btn btn-secondary" onclick="attributeShowInputForm()"
                                 th:text="#{user.data.additional.attribute.add}">Add attribute
                         </button>
@@ -114,7 +117,7 @@
                             <div class="row">
                                 <div class="col-md-9" th:text="${entry.getValue()}"
                                      th:id="'param-label-' + ${entry.getKey().getId()}"></div>
-                                <span sec:authorize="hasRole('ROLE_ADMIN')" class="text-right">
+                                <span th:if="${isProfilePage}" sec:authorize="hasRole('ROLE_ADMIN')" class="text-right">
                                     <span class="clickable-icon">
                                         <i th:id="${entry.getKey().getId()}"
                                            th:onclick="|paramShowInputForm(${entry.getKey().getId()})|"

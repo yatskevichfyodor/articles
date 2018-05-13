@@ -21,6 +21,8 @@ public interface IArticleService {
 
     List<Article> findByCategoryIdAndAuthor(Long categoryId, User author);
 
+    List<Article> findByCategoryIdAndAuthorId(Long categoryId, Long authorId);
+
     Article findByTitleIgnoreCase(String title);
 
     List<Article> findByCategoryIdAndOrderId(Long categoryId, int orderId);

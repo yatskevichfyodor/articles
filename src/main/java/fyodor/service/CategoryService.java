@@ -3,10 +3,12 @@ package fyodor.service;
 import fyodor.dto.CategoryDto;
 import fyodor.model.Article;
 import fyodor.model.Category;
+import fyodor.model.User;
 import fyodor.repository.CategoryRepository;
 import fyodor.util.CategoryHierarchyToListConverter;
 import fyodor.util.HierarchicalCategoryHierarchyToListConverter;
 import fyodor.util.UsedCategoriesHierarchyBuilder;
+import fyodor.util.UserCategoriesHierarchyBuilder;
 import org.hibernate.jpa.event.internal.jpa.ListenerCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,9 @@ import java.util.Set;
 
 @Service
 public class CategoryService implements ICategoryService {
+
+    @Autowired
+    private ICategoryService categoryService;
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -53,6 +58,16 @@ public class CategoryService implements ICategoryService {
         return hierarchicalList;
     }
 
+    @Override
+    public List<Category> getHierarchicalListOfUserCategories(User user) {
+        UserCategoriesHierarchyBuilder userCategoriesHierarchyBuilder = new UserCategoriesHierarchyBuilder();
+        userCategoriesHierarchyBuilder.setCategoryService(categoryService);
+        userCategoriesHierarchyBuilder.build(user);
+        List<Category> hierarchicalList = new HierarchicalCategoryHierarchyToListConverter()
+                .convert(userCategoriesHierarchyBuilder.getHierarchy());
+        return hierarchicalList;
+    }
+
     private List<CategoryDto> convertToDtoList(List<Category> categories) {
         List<CategoryDto> categoryDtoList = new ArrayList<>();
         for (Category category: categories) {
@@ -78,7 +93,8 @@ public class CategoryService implements ICategoryService {
         Category category = new Category();
         category.setId(categoryDto.getId());
         category.setName(categoryDto.getName());
-        category.setParentCategory(findById(categoryDto.getParentId()));
+        if (categoryDto.getParentId() != 0)
+            category.setParentCategory(findById(categoryDto.getParentId()));
         return categoryRepository.save(category);
     }
 
@@ -127,5 +143,10 @@ public class CategoryService implements ICategoryService {
     @Override
     public void delete(Long id) {
         categoryRepository.delete(categoryRepository.findById(id).get());
+    }
+
+    @Override
+    public List<Category> findUsedCategoriesByUser(User user) {
+        return categoryRepository.findUsedCategoriesByUserId(user.getId());
     }
 }

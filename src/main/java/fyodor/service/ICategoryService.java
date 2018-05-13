@@ -3,6 +3,7 @@ package fyodor.service;
 import fyodor.dto.CategoryDto;
 import fyodor.model.Article;
 import fyodor.model.Category;
+import fyodor.model.User;
 
 import java.util.List;
 
@@ -14,6 +15,8 @@ public interface ICategoryService {
     List<Category> findCategoriesAndSubcategoriesById(Long id);
 
     List<Category> getHierarchicalListOfUsedCategories();
+
+    List<Category> getHierarchicalListOfUserCategories(User user);
 
     boolean categoryExists(String name);
 
@@ -30,5 +33,7 @@ public interface ICategoryService {
     List<Category> getFullHierarchicalList();
 
     List<Category> getFullParentsHierarchicalList();
+
+    List<Category> findUsedCategoriesByUser(User user);
 
 }

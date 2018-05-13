@@ -13,6 +13,8 @@ public interface IUserService {
 
     void delete(User user);
 
+    User findById(Long id);
+
     List<User> findAll();
 
     User findByUsernameIgnoreCase(String username);

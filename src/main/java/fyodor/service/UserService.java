@@ -86,11 +86,6 @@ public class UserService implements IUserService {
         emailConfirm.sendMail(appUrl, locale, username, user.getEmail(), hash);
     }
 
-    @Scheduled(initialDelay = 10000, fixedDelay = 5000)
-    private void deleteIfNotConfirmed() {
-//        System.out.println("Tasks check!");
-    }
-
     @Override
     @Transactional
     public boolean confirm(String username, String hash) {
@@ -109,6 +104,11 @@ public class UserService implements IUserService {
     @Override
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public User findById(Long id) {
+        return userRepository.findById(id).get();
     }
 
     @Override

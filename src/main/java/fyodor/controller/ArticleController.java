@@ -155,10 +155,11 @@ public class ArticleController {
         return "article";
     }
 
-    @GetMapping("/findArticlesByCategory")
+    @GetMapping("/findArticlesByCategoryIdAndAuthorId")
     @ResponseBody
-    public Set<ArticleDto> findArticlesByCategory(@RequestParam("id") Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        List<Article> articles = articleService.findByCategoryIdAndAuthor(id, userDetails.getUser());
+    public Set<ArticleDto> findArticlesByCategoryIdAndAuthorId(@RequestParam("categoryId") Long categoryId, @RequestParam("authorId") Long authorId,
+                                                      @AuthenticationPrincipal CustomUserDetails userDetails) {
+        List<Article> articles = articleService.findByCategoryIdAndAuthorId(categoryId, authorId);
         Set<ArticleDto> articleDtos = new HashSet<>();
         for (Article article: articles) {
             ArticleDto articleDto = new ArticleDto();
