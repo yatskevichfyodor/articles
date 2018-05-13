@@ -14,6 +14,7 @@ LANG = {
     param_length: "Parameter's length must be more than 2 characters and less than 33",
 
     comment_length: "Comment length must be more than 0 characters and less than 1000",
+    comment_forbidden: "Access denied",
     comment_deleted: "Comment was deleted",
 
     title_length: "Title's length must be more than 4 characters and less than 32",

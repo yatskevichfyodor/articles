@@ -5,7 +5,8 @@ var header = $('#_csrf_header').attr('content');
 var updateCommentErrorsSet = new Set();
 
 var updateCommentErrorsMap = {
-    1: 'comment_length'
+    1: 'comment_length',
+    2: 'comment_forbidden'
 }
 
 var editStarted = false;
@@ -115,7 +116,7 @@ function ajaxUpdateComment() {
         },
         error: function (errors) {
             ajaxInProcess = false;
-
+            errors = errors.responseJSON;
             errors.forEach(function (value) {
                 updateCommentErrorsSet.add(value);
             });

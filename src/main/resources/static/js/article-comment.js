@@ -3,6 +3,7 @@ var token = $('#_csrf').attr('content');
 var header = $('#_csrf_header').attr('content');
 var isAdmin = $('#isAdmin').attr('content');
 var articleId = $('#articleId').attr('content');
+var currentUsername = $('#currentUsername').attr('content');
 
 var stompClient = null;
 
@@ -26,11 +27,10 @@ $('#btn-comment-add').click(function() {
 
     var comment = {
         text: $("#textarea-comment").val(),
-        articleId: getId()
+        articleId: articleId
     }
 
     ajaxSaveComment(comment);
-    //stompSaveComment(comment);
 });
 
 function ajaxSaveComment(comment) {
@@ -57,25 +57,24 @@ function ajaxSaveComment(comment) {
         }
     });
 }
-
-//$('#btn-del').click(function() {
+var deletedCommentId;
 function delComment(commentId) {
+    deletedCommentId = commentId;
     $.ajax({
         type: 'DELETE',
         url: '/comment/delete',
         data: JSON.stringify(commentId),
         contentType: 'application/json; charset=utf-8',
-        dataType: 'json',
         beforeSend: function(xhr) {
             xhr.setRequestHeader(header, token);
         },
-        success : function(id) {
-            $('#comment-' + id).append('' +
+        success : function() {
+            $('#comment-' + deletedCommentId).append('' +
                 '<div class="col-md-6">' +
                 '  <span style="color: #FF0000">' + LANG.comment_deleted + '</span>' +
                 '</div>');
-            $('#btn-edit-' + id).empty();
-            $('#btn-del-' + id).empty();
+            $('#btn-edit-' + deletedCommentId).empty();
+            $('#btn-del-' + deletedCommentId).empty();
             console.log("Comment was deleted successfully");
         },
         error : function(e) {
@@ -83,22 +82,10 @@ function delComment(commentId) {
             console.log("ERROR: ", e);
         }
     });
-//});
-}
-
-function getId() {
-    var url = window.location.pathname;
-    var segments = url.split('/');
-    console.log(segments);
-    return segments[2];
-}
-
-function stompSaveComment(comment) {
-    stompClient.send("/comment/save", {}, JSON.stringify(comment));
 }
 
 function addComment(comment) {
-    $("#comments").append('\n\n' +
+    var commentHtml = '\n\n' +
         '            <div class="row" id="comment-' + comment.id + '">' +
         '                <div class="col-md-6 border border-left-0 border-right-0">\n' +
         '                    <div class="row mt-1">\n' +
@@ -108,23 +95,31 @@ function addComment(comment) {
         '                            </span>\n' +
         '                        </div>\n' +
         '                        <span id="comment-timestamp-' + comment.timestamp + '" class="col-md-5">' + comment.timestamp + '</span>\n' +
-        '                        <div class="text-right">\n' +
+        '                        <div class="text-right">\n';
+    if (comment.author == currentUsername) {
+        commentHtml += '' +
         '                            <span onclick="editComment(' + comment.id + ')" class="clickable-icon" id="btn-edit-' + comment.id + '">\n' +
         '                                <i class="fas fa-edit"></i>\n' +
-        '                            </span>\n' +
+        '                            </span>\n';
+    }
+
+    if (comment.author == currentUsername || isAdmin == 'true') {
+        commentHtml += '' +
         '                            <span \n' +
         '                                      onclick="delComment(' + comment.id + ')" class="clickable-icon" id="btn-del-' + comment.id + '"\n' +
         '                                      value="' + comment.id + '">\n' +
         '                                <i class="fas fa-trash-alt  mr-2 mt-2"></i>\n' +
-        '                            </span>\n' +
+        '                            </span>\n';
+    }
+    commentHtml += '' +
         '                        </div>\n' +
         '                    </div>\n' +
         '                    <div class="pl-3 row">\n' +
         '                        <p class="mt-1" id="comment-text-' + comment.id + '">' + comment.text + '</p>\n' +
         '                    </div>\n' +
         '                </div>' +
-        '              </div>');
+        '              </div>';
+    $("#comments").append(commentHtml);
 
-    // $("#textarea-comment").value = '';
     document.getElementById('textarea-comment').value = "";
 }

@@ -1,6 +1,7 @@
 package fyodor.controller;
 
 import fyodor.dto.CommentDto;
+import fyodor.exception.ForbiddenException;
 import fyodor.model.Comment;
 import fyodor.model.User;
 import fyodor.service.CustomUserDetails;
@@ -58,16 +59,28 @@ public class CommentController {
     }
 
     @DeleteMapping("/comment/delete")
-    @ResponseBody
-    public String deleteComment(@RequestBody Long commentId) {
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteComment(@RequestBody Long commentId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            throw new ForbiddenException();
+        } else if (!commentService.findById(commentId).getAuthor().equals(userDetails.getUser())) {
+            throw new ForbiddenException();
+        }
+
         commentService.delete(commentId);
-        return String.valueOf(commentId);
     }
 
     @PostMapping("/comment/edit")
     @ResponseBody
-    public ResponseEntity<?> updateComment(@RequestBody CommentDto commentDto) {
+    public ResponseEntity<?> updateComment(@RequestBody CommentDto commentDto,
+                                           @AuthenticationPrincipal CustomUserDetails userDetails) {
         Set<Integer> errorsSet = commentValidator.validate(commentDto.getText());
+        if (userDetails == null) {
+            errorsSet.add(2);
+        } else if (!userDetails.getUser().equals(commentDto.getAuthor())) {
+            errorsSet.add(2);
+        }
+
         if (errorsSet.size() == 0) {
             Comment editableComment = commentService.findById(commentDto.getId());
             editableComment.setText(commentDto.getText());
