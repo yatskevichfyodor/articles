@@ -63,7 +63,8 @@ public class CommentController {
     public void deleteComment(@RequestBody Long commentId, @AuthenticationPrincipal CustomUserDetails userDetails) {
         if (userDetails == null) {
             throw new ForbiddenException();
-        } else if (!commentService.findById(commentId).getAuthor().equals(userDetails.getUser())) {
+        } else if (!commentService.findById(commentId).getAuthor().equals(userDetails.getUser()) &&
+                !userDetails.getUser().isAdmin()) {
             throw new ForbiddenException();
         }
 

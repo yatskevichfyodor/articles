@@ -33,9 +33,9 @@ public class WebController {
 		User currentUser = userDetails.getUser();
 		model.addAttribute("user", currentUser);
 		model.addAttribute("timestamp", new SimpleDateFormat("yyyy-MM-dd HH:mm").format(currentUser.getTimestamp()));
-		model.addAttribute("listOfCategories", categoryService.getHierarchicalListOfUsedCategories());
+		model.addAttribute("listOfCategories", categoryService.getHierarchicalListOfUserCategories(currentUser));
 		model.addAttribute("paramsMap", userService.getUserParams(userDetails.getId()));
-		model.addAttribute("isProfilePage", "true");;
+		model.addAttribute("isProfilePage", "true");
 
 		return "profile";
 	}

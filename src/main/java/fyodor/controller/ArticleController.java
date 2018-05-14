@@ -205,7 +205,8 @@ public class ArticleController {
     public void deleteArticle(@RequestBody Long articleId, @AuthenticationPrincipal CustomUserDetails userDetails) {
         if (userDetails == null) {
             throw new ForbiddenException();
-        } else if (!articleService.findById(articleId).getAuthor().equals(userDetails.getUser())) {
+        } else if (!articleService.findById(articleId).getAuthor().equals(userDetails.getUser()) &&
+                !userDetails.getUser().isAdmin()) {
             throw new ForbiddenException();
         }
 
