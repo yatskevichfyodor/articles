@@ -122,20 +122,26 @@ function closeInput() {
     editStarted = false;
 
     $('#edit-param-area-' + attributeId).empty();
-    $('#edit-param-area-' + attributeId).append('\n' +
+
+    var paramHtml = '\n' +
         '                            <div class="row">\n' +
         '                                <div class="col-md-9"  id="param-label-' + attributeId + '">' + paramValue + '</div>\n' +
         '                                <span class="text-right">' +
         '                                  <span class="edit-param-btn"\n' +
         '                                        onclick="paramShowInputForm(' + attributeId + ')" id="' + attributeId + '">\n' +
         '                                    <i class="fas fa-edit"></i>\n' +
-        '                                  </span>\n' +
+        '                                  </span>';
+    if (isAdmin == "true") {
+        paramHtml += '\n' +
         '                                  <span class="clickable-icon">\n' +
         '                                      <i id="btn-attr-del-' + attributeId + '"\n' +
         '                                         onclick="delAttribute(' + attributeId + ')"\n' +
         '                                         class="fas fa-trash-alt  mr-2 mt-2"></i>\n' +
-        '                                  </span>\n' +
+        '                                  </span>\n';
+    }
+    paramHtml += '\n' +
         '                                </span>' +
-        '                            </div>');
-    ;
+        '                            </div>';
+
+    $('#edit-param-area-' + attributeId).append(paramHtml);
 }

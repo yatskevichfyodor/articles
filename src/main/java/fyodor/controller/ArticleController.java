@@ -4,6 +4,7 @@ package fyodor.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fyodor.dto.ArticleDto;
+import fyodor.exception.ForbiddenException;
 import fyodor.model.*;
 import fyodor.service.*;
 import fyodor.util.ArticleDtoConverter;
@@ -201,7 +202,13 @@ public class ArticleController {
 
     @DeleteMapping("/article/delete")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteArticle(@RequestBody Long articleId) {
+    public void deleteArticle(@RequestBody Long articleId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            throw new ForbiddenException();
+        } else if (!articleService.findById(articleId).getAuthor().equals(userDetails.getUser())) {
+            throw new ForbiddenException();
+        }
+
         articleService.delete(articleId);
     }
 
@@ -214,7 +221,7 @@ public class ArticleController {
             return "message";
         }
         model.addAttribute("listOfCategories", categoryService.findAll());
-        model.addAttribute("article", articleService.findById(articleId));
+        model.addAttribute("article", article);
         return "article-edit";
     }
 

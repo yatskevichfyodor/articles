@@ -117,14 +117,15 @@
                             <div class="row">
                                 <div class="col-md-9" th:text="${entry.getValue()}"
                                      th:id="'param-label-' + ${entry.getKey().getId()}"></div>
-                                <span th:if="${isProfilePage}" sec:authorize="hasRole('ROLE_ADMIN')" class="text-right">
+                                <span th:if="${isProfilePage}" class="text-right">
                                     <span class="clickable-icon">
                                         <i th:id="${entry.getKey().getId()}"
                                            th:onclick="|paramShowInputForm(${entry.getKey().getId()})|"
                                            class="fas fa-edit"></i>
                                     </span>
                                     <span class="clickable-icon">
-                                        <i th:id="|btn-attr-del-${entry.getKey().getId()}|"
+                                        <i sec:authorize="hasRole('ROLE_ADMIN')"
+                                           th:id="|btn-attr-del-${entry.getKey().getId()}|"
                                            th:onclick="|delAttribute(${entry.getKey().getId()})|"
                                            class="fas fa-trash-alt  mr-2 mt-2"></i>
                                     </span>
