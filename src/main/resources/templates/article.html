@@ -113,14 +113,14 @@
             </div>
             <div th:if="${(currentUser != null) and (currentUser.getId() == article.getAuthor().getId() or currentUser.isAdmin())}"
                  class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <button th:if="${currentUser.getId() == article.getAuthor().getId()}" class="btn btn-secondary mb-2">
                         <a th:text="#{article.edit}" th:href="@{'/article/edit/' + ${article.getId()}}">Edit article</a>
                     </button>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <button class="btn btn-danger mb-2" id="btn-article-delete"
                             th:text="#{article.delete}">
                         Delete article
