@@ -12,8 +12,8 @@ var updateCommentErrorsMap = {
 var editStarted = false;
 var ajaxInProcess = false;
 
-var initialComment;
-var comment;
+var initialComment = {id: '', author: '', timestamp: '', text: ''};
+var comment = {id: '', author: '', timestamp: '', text: ''};
 
 function editComment(commentIdParam) {
     if (editStarted) return;
@@ -26,7 +26,10 @@ function editComment(commentIdParam) {
         text: $('#comment-text-' + commentIdParam).text()
     }
 
-    comment = initialComment;
+    comment.id = initialComment.id;
+    comment.author = initialComment.author;
+    comment.timestamp = initialComment.timestamp;
+    comment.text = initialComment.text;
 
     $('#comment-' + commentIdParam).empty();
     $('#comment-' + commentIdParam).append('' +
