@@ -78,7 +78,7 @@ public class CommentController {
         Set<Integer> errorsSet = commentValidator.validate(commentDto.getText());
         if (userDetails == null) {
             errorsSet.add(2);
-        } else if (!userDetails.getUser().equals(commentDto.getAuthor())) {
+        } else if (!(userDetails.getUser().getUsername().equals(commentDto.getAuthor()))) {
             errorsSet.add(2);
         }
 
