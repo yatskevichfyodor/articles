@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.PostPersist;
 import javax.transaction.Transactional;
 import java.sql.SQLException;
 import java.util.ArrayList;

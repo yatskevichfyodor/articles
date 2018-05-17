@@ -1,6 +1,8 @@
 var token = $('#_csrf').attr('content');
 var header = $('#_csrf_header').attr('content');
 
+var isAdmin = $('#isAdmin').attr('content');
+
 var paramErrorsSet = new Set();
 
 var paramErrorsMap = {
