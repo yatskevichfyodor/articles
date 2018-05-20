@@ -144,13 +144,11 @@ $(document).ready(function () {
     }
 
     $('#submit').click(function(event) {
-        $('#submit').prop("disabled",true);
         validateUsername();
         validateEmail();
         validatePassword();
         validateConfirmPassword();
         if (errorsSet.size > 0) {
-            $('#submit').prop("disabled",true);
             event.preventDefault();
         }
     })

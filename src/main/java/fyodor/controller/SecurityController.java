@@ -54,7 +54,8 @@ public class SecurityController {
     }
 
     @PostMapping("/login")
-    public String loginPost(@ModelAttribute("userLoginDto") User userDto, Errors errors, HttpServletRequest request, Model model) {
+    public String loginPost(@ModelAttribute("userLoginDto") User userDto, Errors errors,
+                            HttpServletRequest request, Model model) {
         userLoginValidator.validate(userDto, errors);
         if (errors.hasErrors())
             return "login";

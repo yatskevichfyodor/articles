@@ -3,6 +3,7 @@ package fyodor.validation;
 import fyodor.model.User;
 import fyodor.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -16,6 +17,9 @@ public class UserLoginValidator implements Validator {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Value("${emailConfirmation}")
+    private String emailConfirmation;
 
     @Override
     public boolean supports(Class<?> aClass) {
@@ -33,7 +37,8 @@ public class UserLoginValidator implements Validator {
 
         User user = checkIfRegistered(username, err);
         if (err.hasErrors()) return;
-        checkIfConfirmed(user, err);
+        if (emailConfirmation.equals("true"))
+            checkIfConfirmed(user, err);
         if (err.hasErrors()) return;
         checkPassword(password, user, err);
     }

@@ -40,7 +40,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
         }
 
-        if (emailConfirmation.equals("true"))
+        if (emailConfirmation.equals("false"))
             user.setConfirmed(true);
         return new CustomUserDetails(user, grantedAuthorities);
     }
