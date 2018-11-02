@@ -157,7 +157,7 @@ public class ArticleService implements IArticleService {
         List<Rating> ratings = article.getRatings();
         if (ratings.size() > 0)
             ratingService.deleteRatings(ratings);
-        articleRepository.delete(id);
+        articleRepository.deleteById(id);
         imageService.delete(article.getImage());
 
         this.publisher.publishEvent(new ArticleDeletedEvent(article));

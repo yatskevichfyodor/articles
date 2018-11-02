@@ -7,9 +7,7 @@ import fyodor.dto.ArticleDto;
 import fyodor.exception.ForbiddenException;
 import fyodor.model.*;
 import fyodor.service.*;
-import fyodor.util.ArticleDtoConverter;
 import fyodor.util.HierarchicalCategoryHierarchyToListConverter;
-import fyodor.util.ListToMatrixConverter;
 import fyodor.util.UsedCategoriesHierarchyBuilder;
 import fyodor.validation.ArticleValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class ArticleController {
@@ -62,9 +61,6 @@ public class ArticleController {
     @Value("${methodOfStoringPictures}")
     private String methodOfStoringPictures;
 
-    @Value("${horizontalSize}")
-    private int horizontalSize;
-
     @ModelAttribute("currentUser")
     public User getPrincipal(@AuthenticationPrincipal CustomUserDetails userDetails) {
         if (userDetails == null) return null;
@@ -73,10 +69,9 @@ public class ArticleController {
 
     @GetMapping(value = { "/", "home" })
     public String home(Model model) {
-        List<Article> articleList = articleService.findByCategoryIdAndOrderId(0L, 1);
+        List<Article> articles = articleService.findByCategoryIdAndOrderId(0L, 1);
 
-        model.addAttribute("horizontalSize", horizontalSize);
-        model.addAttribute("articlesMatrix", ListToMatrixConverter.convert(horizontalSize, articleList));
+        model.addAttribute("articles", articles);
         Category categoryHierarchy = usedCategoriesHierarchyBuilder.getHierarchy();
         List<Category> categoryList = new HierarchicalCategoryHierarchyToListConverter().convert(categoryHierarchy);
         model.addAttribute("categories", categoryList);
@@ -86,12 +81,12 @@ public class ArticleController {
 
     @GetMapping("/getArticleMatrixByCategoryIdAndOrderId")
     @ResponseBody
-    public List<List<ArticleDto>> getArticleMatrixByCategoryIdAndOrderId(@RequestParam("categoryId") Long categoryId,
+    public List<ArticleDto> getArticlesByCategoryIdAndOrderId(@RequestParam("categoryId") Long categoryId,
                                                                       @RequestParam("orderId") int orderId) {
         List<Article> articleList = articleService.findByCategoryIdAndOrderId(categoryId, orderId);
-        List<ArticleDto> articleDtoList = ArticleDtoConverter.covert(articleList);
+        List<ArticleDto> articleDtoList = articleList.stream().map(it -> new ArticleDto(it.getId(), it.getTitle(), null, it.getImage().getData(), null)).collect(Collectors.toList());
 
-        return ListToMatrixConverter.convert(horizontalSize, articleDtoList);
+        return articleDtoList;
     }
 
     @GetMapping("/article/add")
@@ -161,14 +156,9 @@ public class ArticleController {
     public Set<ArticleDto> findArticlesByCategoryIdAndAuthorId(@RequestParam("categoryId") Long categoryId, @RequestParam("authorId") Long authorId,
                                                       @AuthenticationPrincipal CustomUserDetails userDetails) {
         List<Article> articles = articleService.findByCategoryIdAndAuthorId(categoryId, authorId);
-        Set<ArticleDto> articleDtos = new HashSet<>();
-        for (Article article: articles) {
-            ArticleDto articleDto = new ArticleDto();
-            articleDto.setId(article.getId());
-            articleDto.setTitle(article.getTitle());
-            articleDtos.add(articleDto);
-        }
-        return articleDtos;
+        Set<ArticleDto> articleDtoList = articles.stream().map(it -> new ArticleDto(it.getId(), it.getTitle(), null, it.getImage().getData(), null)).collect(Collectors.toSet());
+
+        return articleDtoList;
     }
 
     @GetMapping("/article/changeRating")
