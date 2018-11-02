@@ -1,4 +1,4 @@
-package fyodor.config;qwe
+package fyodor.config;
 
 import java.util.Locale;
 
