@@ -1,8 +1,8 @@
 package fyodor.controller;
 
 import fyodor.model.User;
-import fyodor.service.IUserService;
 import fyodor.service.SecurityService;
+import fyodor.service.UserService;
 import fyodor.validation.UserLoginValidator;
 import fyodor.validation.UserRegistrationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import java.util.Locale;
 public class SecurityController {
 
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
     @Autowired
     private UserRegistrationValidator userRegistrationValidator;

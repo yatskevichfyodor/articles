@@ -13,22 +13,20 @@ import java.security.Principal;
 import java.util.*;
 
 @Service
-public class CommentService implements ICommentService {
+public class CommentService {
     @Autowired
     private CommentRepository commentRepository;
 
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
     @Autowired
-    private IArticleService articleService;
+    private ArticleService articleService;
 
-    @Override
     public void save(Comment comment) {
         commentRepository.save(comment);
     }
 
-    @Override
     public Comment save(String json, Principal author) {
         JsonParser springParser = JsonParserFactory.getJsonParser();
         Map<String, Object> data = springParser.parseMap(json);
@@ -42,7 +40,6 @@ public class CommentService implements ICommentService {
         return commentRepository.save(comment);
     }
 
-    @Override
     public Comment save(CommentDto commentDto, User author) {
         Comment comment = new Comment();
         comment.setAuthor(author);
@@ -52,22 +49,18 @@ public class CommentService implements ICommentService {
         return commentRepository.save(comment);
     }
 
-    @Override
     public Comment findById(Long id) {
         return commentRepository.findById(id).get();
     }
 
-    @Override
     public List<Comment> findByArticleId(Long id) {
         return commentRepository.findByArticleId(id);
     }
 
-    @Override
     public void delete(Long id) {
         commentRepository.deleteById(id);
     }
 
-    @Override
     public void deleteComments(List<Comment> comments) {
         Set<Long> commentIds = new HashSet<>();
         for (Comment comment: comments) {

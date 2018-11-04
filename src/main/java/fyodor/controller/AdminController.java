@@ -2,7 +2,7 @@ package fyodor.controller;
 
 
 import fyodor.repository.OverallDao;
-import fyodor.service.IUserService;
+import fyodor.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 public class AdminController {
 
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
     @Autowired
     private OverallDao overallDao;

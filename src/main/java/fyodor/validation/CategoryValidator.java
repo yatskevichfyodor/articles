@@ -1,21 +1,18 @@
 package fyodor.validation;
 
-import fyodor.model.Article;
 import fyodor.model.Category;
-import fyodor.service.ICategoryService;
-import fyodor.service.IUserAttributeService;
+import fyodor.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Component
 public class CategoryValidator {
 
     @Autowired
-    private ICategoryService categoryService;
+    private CategoryService categoryService;
 
     public Set<Integer> validateAdd(String categoryName) {
         Set<Integer> errorCodesSet = new HashSet<>();

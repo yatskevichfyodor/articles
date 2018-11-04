@@ -9,10 +9,10 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "article")
+@Table(name = "articles")
 @Data
-@EqualsAndHashCode(of={"id", "title"})
-@ToString(of={"id", "title"})
+@EqualsAndHashCode(of = {"id", "title"})
+@ToString(of = {"id", "title"})
 public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +20,8 @@ public class Article {
 
     private String title;
 
-    @Lob
+    // @Lob
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @Temporal(TemporalType.TIMESTAMP)

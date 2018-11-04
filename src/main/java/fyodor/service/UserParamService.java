@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserParamService implements IUserParamService {
+public class UserParamService {
 
     @Autowired
     private UserAttributeRepository userAttributeRepository;
@@ -17,7 +17,6 @@ public class UserParamService implements IUserParamService {
     @Autowired
     private UserParamRepository userParamRepository;
 
-    @Override
     public UserParam edit(EditUserParamDto editUserParamDto, User user) {
         if (editUserParamDto.getParamValue().equals("")) {
             UserParam.UserParamId userParamId = new UserParam.UserParamId();

@@ -23,7 +23,7 @@ function ajaxGetArticleMatrixByCategoryIdAndOrderId(categoryId, orderId) {
     $.ajax({
         type: "GET",
         contentType: "application/json",
-        url: "/getArticleMatrixByCategoryIdAndOrderId" + "?categoryId=" + categoryId + "&orderId=" + orderId,
+        url: "/getArticlesByCategoryIdAndOrderId" + "?categoryId=" + categoryId + "&orderId=" + orderId,
         beforeSend: function(xhr) {
             xhr.setRequestHeader(header, token);
         },

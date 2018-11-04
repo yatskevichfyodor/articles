@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fyodor.dto.ArticleDto;
 import fyodor.exception.ForbiddenException;
 import fyodor.model.*;
+import fyodor.repository.RatingRepository;
 import fyodor.service.*;
 import fyodor.util.HierarchicalCategoryHierarchyToListConverter;
 import fyodor.util.UsedCategoriesHierarchyBuilder;
@@ -32,19 +33,22 @@ import java.util.stream.Collectors;
 public class ArticleController {
 
     @Autowired
-    private IArticleService articleService;
+    private ArticleService articleService;
 
     @Autowired
-    private ICategoryService categoryService;
+    private CategoryService categoryService;
 
     @Autowired
-    private ICommentService commentService;
+    private CommentService commentService;
 
     @Autowired
-    private IRatingService ratingService;
+    private RatingService ratingService;
 
     @Autowired
-    private IImageService imageService;
+    private RatingRepository ratingRepository;
+
+    @Autowired
+    private ImageService imageService;
 
     @Autowired
     private ArticleValidator articleValidator;
@@ -79,7 +83,7 @@ public class ArticleController {
         return "index";
     }
 
-    @GetMapping("/getArticleMatrixByCategoryIdAndOrderId")
+    @GetMapping("/getArticlesByCategoryIdAndOrderId")
     @ResponseBody
     public List<ArticleDto> getArticlesByCategoryIdAndOrderId(@RequestParam("categoryId") Long categoryId,
                                                                       @RequestParam("orderId") int orderId) {
@@ -91,12 +95,12 @@ public class ArticleController {
 
     @GetMapping("/article/add")
     public String addArticle(HttpServletRequest request, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        if (articleService.checkIfUserAddedArticleRecently(userDetails.getUser())) {
-            Locale locale = localeResolver.resolveLocale(request);
-            String message = messageSource.getMessage("article.add.tooEarly", null, locale);
-            model.addAttribute("message", message);
-            return "message";
-        }
+//        if (articleService.checkIfUserAddedArticleRecently(userDetails.getUser())) {
+//            Locale locale = localeResolver.resolveLocale(request);
+//            String message = messageSource.getMessage("article.add.tooEarly", null, locale);
+//            model.addAttribute("message", message);
+//            return "message";
+//        }
 
         model.addAttribute("listOfCategories", categoryService.findAll());
         model.addAttribute("methodOfStoringPictures", methodOfStoringPictures);
@@ -145,8 +149,8 @@ public class ArticleController {
         }
         model.addAttribute("currentUserRating", currentUserRating);
 
-        model.addAttribute("likesNumber", ratingService.getValuesNumberByArticleId(articleId, "LIKE"));
-        model.addAttribute("dislikesNumber", ratingService.getValuesNumberByArticleId(articleId, "DISLIKE"));
+        model.addAttribute("likesNumber", ratingRepository.getValuesNumberByArticleId(articleId, Rating.RatingEnum.valueOf("LIKE")));
+        model.addAttribute("dislikesNumber", ratingRepository.getValuesNumberByArticleId(articleId, Rating.RatingEnum.valueOf("DISLIKE")));
 
         return "article";
     }
@@ -169,8 +173,8 @@ public class ArticleController {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode objectNode = mapper.createObjectNode();
         objectNode.put("value", ratingState);
-        objectNode.put("likesNumber", ratingService.getValuesNumberByArticleId(articleId, "LIKE"));
-        objectNode.put("dislikesNumber", ratingService.getValuesNumberByArticleId(articleId, "DISLIKE"));
+        objectNode.put("likesNumber", ratingRepository.getValuesNumberByArticleId(articleId, Rating.RatingEnum.valueOf("LIKE")));
+        objectNode.put("dislikesNumber", ratingRepository.getValuesNumberByArticleId(articleId, Rating.RatingEnum.valueOf("DISLIKE")));
         return objectNode.toString();
     }
 

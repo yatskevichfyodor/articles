@@ -17,10 +17,10 @@ import java.text.SimpleDateFormat;
 public class WebController {
 
 	@Autowired
-	private IUserService userService;
+	private UserService userService;
 
 	@Autowired
-	private ICategoryService categoryService;
+	private CategoryService categoryService;
 
 	@ModelAttribute("currentUser")
 	public User getPrincipal(@AuthenticationPrincipal CustomUserDetails userDetails) {

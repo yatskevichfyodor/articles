@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "rating")
+@Table(name = "ratings")
 @Data
 public class Rating {
     public enum RatingEnum {
@@ -30,6 +30,7 @@ public class Rating {
     @EmbeddedId
     private RatingId id;
 
+    @Column(name = "value", columnDefinition = "enum('LIKE','DISLIKE')")
     @Enumerated(EnumType.STRING)
     private RatingEnum value;
 

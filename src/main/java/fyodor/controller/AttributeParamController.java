@@ -19,10 +19,10 @@ import java.util.Set;
 public class AttributeParamController {
 
     @Autowired
-    private IUserAttributeService userAttributeService;
+    private UserAttributeService userAttributeService;
 
     @Autowired
-    private IUserParamService userParamService;
+    private UserParamService userParamService;
 
     @Autowired
     private UserAttributeValidator userAttributeValidator;

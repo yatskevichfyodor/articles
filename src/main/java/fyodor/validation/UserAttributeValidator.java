@@ -1,6 +1,6 @@
 package fyodor.validation;
 
-import fyodor.service.IUserAttributeService;
+import fyodor.service.UserAttributeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +10,7 @@ import java.util.Set;
 @Component
 public class UserAttributeValidator {
     @Autowired
-    private IUserAttributeService userAttributeService;
+    private UserAttributeService userAttributeService;
 
     public Set<Integer> validate(String attributeName) {
         Set<Integer> errorCodesSet = new HashSet<>();

@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Data
 @Entity
-@Table(name = "user_param")
+@Table(name = "user_params")
 public class UserParam {
 
     @Data

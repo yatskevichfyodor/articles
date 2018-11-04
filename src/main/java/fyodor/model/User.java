@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Data
 @EqualsAndHashCode(of={"id", "username", "email", "password"})
 @ToString(of={"id", "username", "email", "password"})
@@ -30,10 +30,7 @@ public class User {
     @Transient
     private String confirmPassword;
 
-    @Column(nullable = false, columnDefinition = "boolean default 0")
     private boolean blocked = false;
-
-    @Column(nullable = false, columnDefinition = "boolean default 0")
     private boolean confirmed = false;
 
     @ManyToMany

@@ -15,18 +15,17 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class RatingService implements IRatingService {
+public class RatingService {
 
     @Autowired
     private RatingRepository ratingRepository;
 
     @Autowired
-    private IArticleService articleService;
+    private ArticleService articleService;
 
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
-    @Override
     @Transactional
     public void changeState(Long articleId, String username, String ratingState) {
         Article article = articleService.findById(articleId);
@@ -54,17 +53,10 @@ public class RatingService implements IRatingService {
         ratingRepository.save(rating);
     }
 
-    @Override
     public Rating findRatingByUserAndArticleId(User user, Long articleId) {
         return ratingRepository.findByUserIdAndArticleId(user.getId(), articleId);
     }
 
-    @Override
-    public Long getValuesNumberByArticleId(Long id, String value) {
-        return ratingRepository.getValuesNumberByArticleId(String.valueOf(id), value);
-    }
-
-    @Override
     public void deleteRatings(List<Rating> ratings) {
         Set<Rating.RatingId> ratingIds = new HashSet<>();
         for (Rating rating: ratings) {

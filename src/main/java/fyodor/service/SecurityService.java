@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class SecurityService implements ISecurityService {
+public class SecurityService {
 	
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -24,7 +24,6 @@ public class SecurityService implements ISecurityService {
     @Autowired
     private SessionRegistry sessionRegistry;
 
-    @Override
     public void autologin(String username, String password) {
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
@@ -36,13 +35,11 @@ public class SecurityService implements ISecurityService {
         }
     }
 
-    @Override
     public List<Object> getLoggedInUsers() {
         List<Object> principals = sessionRegistry.getAllPrincipals();
         return principals;
     }
 
-    @Override
     public void logout(Object principal) {
         List<SessionInformation> sessionInformation = sessionRegistry.getAllSessions(principal, true);
         for (SessionInformation el : sessionInformation) {

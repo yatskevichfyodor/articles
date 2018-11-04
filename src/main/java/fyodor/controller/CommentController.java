@@ -4,9 +4,9 @@ import fyodor.dto.CommentDto;
 import fyodor.exception.ForbiddenException;
 import fyodor.model.Comment;
 import fyodor.model.User;
+import fyodor.service.CommentService;
 import fyodor.service.CustomUserDetails;
-import fyodor.service.ICommentService;
-import fyodor.service.IUserService;
+import fyodor.service.UserService;
 import fyodor.validation.CommentValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,10 +24,10 @@ import java.util.Set;
 public class CommentController {
 
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
     @Autowired
-    private ICommentService commentService;
+    private CommentService commentService;
 
     @Autowired
     private CommentValidator commentValidator;

@@ -8,16 +8,17 @@ import lombok.ToString;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "image")
+@Table(name = "images")
 @Data
-@EqualsAndHashCode(of={"id"})
-@ToString(of={"id"})
+@EqualsAndHashCode(of = {"id"})
+@ToString(of = {"id"})
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
+    //    @Lob
+    @Column(columnDefinition = "TEXT")
     private String data;
 
     @OneToOne

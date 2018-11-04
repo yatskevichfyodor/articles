@@ -8,12 +8,11 @@ import org.springframework.stereotype.Service;
 import java.util.Set;
 
 @Service
-public class RoleService implements IRoleService {
+public class RoleService {
 
     @Autowired
     private RoleRepository roleRepository;
 
-    @Override
     public Set<Role> findByName(String name) {
         return roleRepository.findByName(name);
     }

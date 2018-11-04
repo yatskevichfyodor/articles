@@ -11,16 +11,20 @@ import java.util.Set;
 
 public interface RatingRepository extends JpaRepository<Rating, Long> {
 
-    @Query(value = "SELECT * FROM rating r where r.user_id = :user_id and r.article_id = :article_id", nativeQuery=true)
+//    @Query(value = "SELECT * FROM ratings r where r.user_id = :user_id and r.article_id = :article_id", nativeQuery=true)
+    @Query(value = "SELECT r FROM Rating r where r.id.user.id = :user_id and r.id.article.id = :article_id")
     Rating findByUserIdAndArticleId(@Param("user_id") Long userId, @Param("article_id") Long articleId);
 
     void deleteById(Rating.RatingId ratingId);
 
-    @Query(value = "SELECT COUNT(*) FROM rating where article_id = :article_id and value = :value", nativeQuery=true)
-    Long getValuesNumberByArticleId(@Param("article_id") String id, @Param("value") String value);
+//    @Query(value = "SELECT COUNT(*) FROM ratings where article_id = :article_id and value = :value", nativeQuery=true)
+//    @Query(value = "SELECT COUNT(r) FROM Rating r where r.id.article.id = :article_id and r.value = :value")
+//    Long getValuesNumberByArticleId(@Param("article_id") Long id, @Param("value") String value);
+    @Query(value = "SELECT COUNT(r) FROM Rating r where r.id.article.id = :article_id and r.value = :value")
+    Long getValuesNumberByArticleId(@Param("article_id") Long id, @Param("value") Rating.RatingEnum value);
 
     @Modifying
-    @Query("DELETE FROM Rating c WHERE c.id in ?1")
+    @Query("DELETE FROM Rating r WHERE r.id in ?1")
     @Transactional
     void deleteRatings(@Param("id") Set<Rating.RatingId> id);
 }

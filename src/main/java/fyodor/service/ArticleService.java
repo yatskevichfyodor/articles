@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.PostPersist;
 import javax.transaction.Transactional;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -21,21 +20,21 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class ArticleService implements IArticleService {
+public class ArticleService {
     @Autowired
     private ArticleRepository articleRepository;
 
     @Autowired
-    private ICategoryService categoryService;
+    private CategoryService categoryService;
 
     @Autowired
-    private IImageService imageService;
+    private ImageService imageService;
 
     @Autowired
-    private ICommentService commentService;
+    private CommentService commentService;
 
     @Autowired
-    private IRatingService ratingService;
+    private RatingService ratingService;
 
     @Autowired
     private ApplicationEventPublisher publisher;
@@ -46,7 +45,6 @@ public class ArticleService implements IArticleService {
     @Autowired
     private ArticleDao articleDao;
 
-    @Override
     public Article save(ArticleDto articleDto, User author) {
         Article article = new Article();
         article.setTitle(articleDto.getTitle());
@@ -64,7 +62,6 @@ public class ArticleService implements IArticleService {
         return savedArticle;
     }
 
-    @Override
     public boolean checkIfUserAddedArticleRecently(User user) {
         Date lastTimeUserAddedArticle = null;
         try {
@@ -78,27 +75,23 @@ public class ArticleService implements IArticleService {
         return (currentTime.getTime() - lastTimeUserAddedArticle.getTime()) < 1000 * 60 * 60 * 2;
     }
 
-    @Override
     public Article edit(Article article) {
         return articleRepository.save(article);
     }
 
-    @Override
     public Article findById(Long id) {
         return articleRepository.findById(id).get();
     }
 
-    @Override
     public List<Article> findByCategoryIdHierarchically(Long id) {
         List<Category> categories = categoryService.findCategoriesAndSubcategoriesById(id);
         return articleRepository.findArticlesByCategoryIn(categories);
     }
 
-    @Override
     public List<Article> findByCategoryIdAndAuthor(Long categoryId, User author) {
         List<Article> articles = findByCategoryIdHierarchically(categoryId);
         List<Article> filteredArticles = new ArrayList<>();
-        for (Article article: articles) {
+        for (Article article : articles) {
             if (article.getAuthor().equals(author)) {
                 filteredArticles.add(article);
             }
@@ -106,11 +99,10 @@ public class ArticleService implements IArticleService {
         return filteredArticles;
     }
 
-    @Override
     public List<Article> findByCategoryIdAndAuthorId(Long categoryId, Long authorId) {
         List<Article> articles = findByCategoryIdHierarchically(categoryId);
         List<Article> filteredArticles = new ArrayList<>();
-        for (Article article: articles) {
+        for (Article article : articles) {
             if (article.getAuthor().getId() == authorId) {
                 filteredArticles.add(article);
             }
@@ -118,12 +110,10 @@ public class ArticleService implements IArticleService {
         return filteredArticles;
     }
 
-    @Override
     public Article findByTitleIgnoreCase(String title) {
         return articleRepository.findByTitleIgnoreCase(title);
     }
 
-    @Override
     public List<Article> findByCategoryIdAndOrderId(Long categoryId, int orderId) {
         List<Category> categories = null;
         if (categoryId == 0) {
@@ -132,23 +122,20 @@ public class ArticleService implements IArticleService {
             Category subhierarchy = usedCategoriesHierarchyBuilder.getSubhierarchy(categoryService.findById(categoryId));
             categories = new CategoryHierarchyToListConverter().convert(subhierarchy);
         }
-        try {
-            switch (orderId) {
-                case 1:
-                    return articleDao.getArticlesByCategoriesSortedByPopularity(categories);
-                case 2:
-                    return articleDao.getArticlesByCategoriesSortedByDateDesc(categories);
-                case 3:
-                    return articleDao.getArticlesByCategoriesSortedByDateAsc(categories);
-            }
-        } catch(SQLException e) {
-            throw new RuntimeException(e);
+
+        switch (orderId) {
+            case 1:
+                return articleDao.findAllByCategoriesSortedByPopularity(categories);
+            case 2:
+                return articleDao.findAllByCategoriesSortedByDateDesc(categories);
+            case 3:
+                return articleDao.findAllByCategoriesSortedByDateAsc(categories);
         }
+
         throw new RuntimeException("Unsupported order");
     }
 
     @Transactional
-    @Override
     public void delete(Long id) {
         Article article = articleRepository.findById(id).get();
         List<Comment> comments = article.getComments();
@@ -163,7 +150,6 @@ public class ArticleService implements IArticleService {
         this.publisher.publishEvent(new ArticleDeletedEvent(article));
     }
 
-    @Override
     public Article edit(ArticleDto articleDto) {
         Article article = articleRepository.findById(articleDto.getId()).get();
         article.setCategory(categoryService.findById(articleDto.getCategoryId()));

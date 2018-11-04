@@ -12,12 +12,11 @@ import java.io.File;
 import java.io.IOException;
 
 @Service
-public class ImageService implements IImageService {
+public class ImageService {
 
     @Autowired
     ImageRepository imageRepository;
 
-    @Override
     public Image save(String file) {
         Image image = new Image();
         image.setData(file);
@@ -25,7 +24,6 @@ public class ImageService implements IImageService {
     }
 
     @Transactional
-    @Override
     public Image saveOnServer(MultipartFile file, HttpServletRequest request) {
         if (!file.isEmpty()) {
             String uploadsDir = "/uploads/images";
@@ -52,7 +50,6 @@ public class ImageService implements IImageService {
     }
 
     @Transactional
-    @Override
     public void delete(Image image) {
         imageRepository.delete(image);
     }

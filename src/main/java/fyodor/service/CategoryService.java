@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class CategoryService implements ICategoryService {
+public class CategoryService {
 
     @Autowired
-    private ICategoryService categoryService;
+    private CategoryService categoryService;
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -32,17 +32,14 @@ public class CategoryService implements ICategoryService {
     @Autowired
     private UsedCategoriesHierarchyBuilder usedCategoriesHierarchyBuilder;
 
-    @Override
     public List<Category> findAll() {
         return categoryRepository.findAll();
     }
 
-    @Override
     public Category findById(Long id) {
         return categoryRepository.findById(id).get();
     }
 
-    @Override
     public List<Category> findCategoriesAndSubcategoriesById(Long id) {
         Category primaryCategory = categoryRepository.findById(id).get();
         Category subhierarchy = usedCategoriesHierarchyBuilder.getSubhierarchy(primaryCategory);
@@ -51,14 +48,12 @@ public class CategoryService implements ICategoryService {
         return categories;
     }
 
-    @Override
     public List<Category> getHierarchicalListOfUsedCategories() {
         List<Category> hierarchicalList = new HierarchicalCategoryHierarchyToListConverter()
                 .convert(usedCategoriesHierarchyBuilder.getHierarchy());
         return hierarchicalList;
     }
 
-    @Override
     public List<Category> getHierarchicalListOfUserCategories(User user) {
         UserCategoriesHierarchyBuilder userCategoriesHierarchyBuilder = new UserCategoriesHierarchyBuilder();
         userCategoriesHierarchyBuilder.setCategoryService(categoryService);
@@ -81,14 +76,12 @@ public class CategoryService implements ICategoryService {
         return categoryDtoList;
     }
 
-    @Override
     public boolean categoryExists(String name) {
         if (categoryRepository.findByName(name) == null)
             return false;
         return true;
     }
 
-    @Override
     public Category save(CategoryDto categoryDto) {
         Category category = new Category();
         category.setId(categoryDto.getId());
@@ -98,21 +91,18 @@ public class CategoryService implements ICategoryService {
         return categoryRepository.save(category);
     }
 
-    @Override
     public List<Category> getUsedParentsHierarchicalList() {
         Category categoryHierarchy = usedCategoriesHierarchyBuilder.getHierarchy();
         List<Category> categoryList = new HierarchicalCategoryHierarchyToListConverter().convert(categoryHierarchy, 4);
         return categoryList;
     }
 
-    @Override
     public List<Category> getFullUsedHierarchicalList() {
         Category categoryHierarchy = usedCategoriesHierarchyBuilder.getHierarchy();
         List<Category> categoryList = new HierarchicalCategoryHierarchyToListConverter().convert(categoryHierarchy);
         return categoryList;
     }
 
-    @Override
     public Category getFullHierarchy() {
         Category hierarchy = new Category();
         List<Category> allCategories = findAll();
@@ -127,25 +117,21 @@ public class CategoryService implements ICategoryService {
         return hierarchy;
     }
 
-    @Override
     public List<Category> getFullHierarchicalList() {
         Category hierarchy = getFullHierarchy();
         return new HierarchicalCategoryHierarchyToListConverter().convert(hierarchy);
     }
 
-    @Override
     public List<Category> getFullParentsHierarchicalList() {
         Category hierarchy = getFullHierarchy();
         return new HierarchicalCategoryHierarchyToListConverter().convert(hierarchy, 4);
     }
 
     @Transactional
-    @Override
     public void delete(Long id) {
         categoryRepository.delete(categoryRepository.findById(id).get());
     }
 
-    @Override
     public List<Category> findUsedCategoriesByUser(User user) {
         return categoryRepository.findUsedCategoriesByUserId(user.getId());
     }

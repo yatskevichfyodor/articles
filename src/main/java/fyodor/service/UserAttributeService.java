@@ -8,18 +8,16 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 
 @Service
-public class UserAttributeService implements IUserAttributeService {
+public class UserAttributeService {
     @Autowired
     private UserAttributeRepository userAttributeRepository;
 
-    @Override
     public boolean attributeExists(String attribute) {
         if (userAttributeRepository.findByNameIgnoreCase(attribute) != null)
             return true;
         return false;
     }
 
-    @Override
     public UserAttribute save(String name) {
         UserAttribute attribute = userAttributeRepository.findByNameIgnoreCase(name);
         if (attribute == null) {
@@ -31,18 +29,15 @@ public class UserAttributeService implements IUserAttributeService {
         return userAttributeRepository.save(attribute);
     }
 
-    @Override
     public UserAttribute save(UserAttribute attribute) {
         return userAttributeRepository.save(attribute);
     }
 
     @Transactional
-    @Override
     public void delete(Long id) {
         userAttributeRepository.delete(userAttributeRepository.findById(id).get());
     }
 
-    @Override
     public void disable(Long id) {
         UserAttribute userAttribute = userAttributeRepository.findById(id).get();
         userAttribute.setEnabled(false);

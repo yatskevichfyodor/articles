@@ -2,7 +2,7 @@ package fyodor.util;
 
 import fyodor.model.Category;
 import fyodor.model.User;
-import fyodor.service.ICategoryService;
+import fyodor.service.CategoryService;
 import lombok.Data;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Data
 public class UserCategoriesHierarchyBuilder {
-    private ICategoryService categoryService;
+    private CategoryService categoryService;
 
     private final Category hierarchy = new Category();
     private Set<Category> usedCategories;

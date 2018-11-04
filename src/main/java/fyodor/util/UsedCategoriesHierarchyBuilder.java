@@ -5,11 +5,8 @@ import fyodor.events.*;
 import fyodor.model.Article;
 import fyodor.model.Category;
 import fyodor.repository.CategoryRepository;
-import fyodor.service.ICategoryService;
-import lombok.AccessLevel;
+import fyodor.service.CategoryService;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
@@ -30,7 +27,7 @@ public class UsedCategoriesHierarchyBuilder {
     private CategoryRepository categoryRepository;
 
     @Autowired
-    private ICategoryService categoryService;
+    private CategoryService categoryService;
 
     private final Category hierarchy = new Category();
     private Set<Category> usedCategories;

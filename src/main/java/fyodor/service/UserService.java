@@ -22,10 +22,10 @@ import java.util.*;
 
 
 @Service
-public class UserService implements IUserService {
+public class UserService {
 
     @Autowired
-    private ISecurityService securityService;
+    private SecurityService securityService;
 
     @Autowired
     private UserRepository userRepository;
@@ -51,18 +51,15 @@ public class UserService implements IUserService {
     @Value("${emailConfirmation}")
     private String emailConfirmation;
 
-    @Override
     public User findByUsernameIgnoreCase(String username) {
         return userRepository.findByUsernameIgnoreCase(username);
     }
 
-    @Override
     public User findByEmailIgnoreCase(String email) {
         return userRepository.findByEmailIgnoreCase(email);
     }
 
     @Transactional
-    @Override
     public User register(User userDto, HttpServletRequest request) {
         User user = save(userDto);
 
@@ -86,7 +83,6 @@ public class UserService implements IUserService {
         emailConfirm.sendMail(appUrl, locale, username, user.getEmail(), hash);
     }
 
-    @Override
     @Transactional
     public boolean confirm(String username, String hash) {
         if (passwordEncoder.matches(username, hash)) {
@@ -96,22 +92,18 @@ public class UserService implements IUserService {
         return false;
     }
 
-    @Override
     public void delete(User user) {
         userRepository.delete(userRepository.findById(user.getId()).get());
     }
 
-    @Override
     public List<User> findAll() {
         return userRepository.findAll();
     }
 
-    @Override
     public User findById(Long id) {
         return userRepository.findById(id).get();
     }
 
-    @Override
     @Transactional
     public void delete(String[] users) {
         long[] idArray = Arrays.asList(users).stream().mapToLong(Long::parseLong).toArray();
@@ -121,7 +113,6 @@ public class UserService implements IUserService {
         }
     }
 
-    @Override
     @Transactional
     public void block(String[] users) {
         long[] idArray = Arrays.asList(users).stream().mapToLong(Long::parseLong).toArray();
@@ -131,7 +122,6 @@ public class UserService implements IUserService {
         }
     }
 
-    @Override
     @Transactional
     public void unblock(String[] users) {
         long[] idArray = Arrays.asList(users).stream().mapToLong(Long::parseLong).toArray();
@@ -140,7 +130,6 @@ public class UserService implements IUserService {
         }
     }
 
-    @Override
     @Transactional
     public void addRole(String[] users, String role) {
         User user;
@@ -154,7 +143,6 @@ public class UserService implements IUserService {
         }
     }
 
-    @Override
     @Transactional
     public void deleteRole(String[] users, String role) {
         User user;
@@ -177,7 +165,6 @@ public class UserService implements IUserService {
             }
     }
 
-    @Override
     public Map<UserAttribute, String> getUserParams(Long userId) {
         User user = userRepository.findById(userId).get();
         List<UserParam> params = user.getParams();

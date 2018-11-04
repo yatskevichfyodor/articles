@@ -1,7 +1,7 @@
 package fyodor.validation;
 
 import fyodor.model.User;
-import fyodor.service.IUserService;
+import fyodor.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -11,7 +11,7 @@ import org.springframework.validation.Validator;
 @Component
 public class UserRegistrationValidator implements Validator {
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
     private String username_regex = "^[a-z0-9_-]{3,32}$";
     private String email_regex = "^[_A-Za-z0-9-+]+(.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(.[A-Za-z0-9]+)*(.[A-Za-z]{2,})$";

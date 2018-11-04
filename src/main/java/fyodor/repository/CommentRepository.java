@@ -12,7 +12,7 @@ import java.util.Set;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    @Query(value = "SELECT * FROM comment c where c.article_id = :article_id", nativeQuery=true)
+    @Query(value = "SELECT * FROM comments c where c.article_id = :article_id", nativeQuery=true)
     List<Comment> findByArticleId(@Param("article_id") Long id);
 
     @Transactional

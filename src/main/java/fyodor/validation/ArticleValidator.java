@@ -2,7 +2,7 @@ package fyodor.validation;
 
 import fyodor.dto.ArticleDto;
 import fyodor.model.Article;
-import fyodor.service.IArticleService;
+import fyodor.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -12,7 +12,7 @@ import org.springframework.validation.Validator;
 @Component
 public class ArticleValidator implements Validator {
     @Autowired
-    private IArticleService articleService;
+    private ArticleService articleService;
 
     @Override
     public boolean supports(Class<?> aClass) {

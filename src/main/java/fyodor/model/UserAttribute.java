@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "user_attribute")
+@Table(name = "user_attributes")
 public class UserAttribute {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,6 +14,5 @@ public class UserAttribute {
 
     private String name;
 
-    @Column(nullable = false, columnDefinition = "boolean default 1")
     private boolean enabled = true;
 }

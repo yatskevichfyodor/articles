@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name="comment")
+@Table(name="comments")
 @Data
 @EqualsAndHashCode(of={"id", "text"})
 @ToString(of={"id", "text"})
