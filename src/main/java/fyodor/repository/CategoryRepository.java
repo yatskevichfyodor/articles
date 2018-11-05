@@ -14,15 +14,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     Category findByName(String name);
 
-//    @Query(value = "\n" +
-//            "SELECT *\n" +
-//            "FROM \"categories\" c\n" +
-//            "WHERE\n" +
-//            "\t(\n" +
-//            "\t\tSELECT COUNT(*)\n" +
-//            "\t\tFROM \"" + articlesTablesName + "\" a\n" +
-//            "\t\tWHERE a.\"category_id\" = c.\"id\"\n" +
-//            "\t) > 0", nativeQuery=true)
     @Query("SELECT c FROM Category c WHERE c IN (SELECT a.category FROM Article a)")
     List<Category> findUsedCategories();
 
@@ -39,6 +30,5 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             "    WHERE\n" +
             "      a.author_id = :id\n" +
             "    )", nativeQuery=true)
-//    @Query("SELECT c FROM Category c WHERE (SELECT COUNT(*) FROM Article a WHERE a.category.id = c.id) > 0")
     List<Category> findUsedCategoriesByUserId(@Param("id") Long id);
 }
