@@ -6,4 +6,4 @@ Technologies:
   HTML: Thymeleaf
   Javascript: jQuery
   CSS: Bootstrap 4
-  DB: MySQL
+  DB: MySQL, Postgresql
