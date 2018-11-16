@@ -15,14 +15,9 @@ import java.util.List;
 @Service
 public class SecurityService {
 	
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserDetailsService customUserDetailsService;
-
-    @Autowired
-    private SessionRegistry sessionRegistry;
+    @Autowired private AuthenticationManager authenticationManager;
+    @Autowired private UserDetailsService customUserDetailsService;
+    @Autowired private SessionRegistry sessionRegistry;
 
     public void autologin(String username, String password) {
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);

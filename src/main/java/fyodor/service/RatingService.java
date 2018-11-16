@@ -17,14 +17,9 @@ import java.util.Set;
 @Service
 public class RatingService {
 
-    @Autowired
-    private RatingRepository ratingRepository;
-
-    @Autowired
-    private ArticleService articleService;
-
-    @Autowired
-    private UserService userService;
+    @Autowired private RatingRepository ratingRepository;
+    @Autowired private ArticleService articleService;
+    @Autowired private UserService userService;
 
     @Transactional
     public void changeState(Long articleId, String username, String ratingState) {

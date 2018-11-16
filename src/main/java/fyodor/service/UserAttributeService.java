@@ -9,8 +9,8 @@ import javax.transaction.Transactional;
 
 @Service
 public class UserAttributeService {
-    @Autowired
-    private UserAttributeRepository userAttributeRepository;
+
+    @Autowired private UserAttributeRepository userAttributeRepository;
 
     public boolean attributeExists(String attribute) {
         if (userAttributeRepository.findByNameIgnoreCase(attribute) != null)

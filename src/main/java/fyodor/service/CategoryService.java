@@ -23,14 +23,9 @@ import java.util.Set;
 @Service
 public class CategoryService {
 
-    @Autowired
-    private CategoryService categoryService;
-
-    @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
-    private UsedCategoriesHierarchyBuilder usedCategoriesHierarchyBuilder;
+    @Autowired private CategoryService categoryService;
+    @Autowired private CategoryRepository categoryRepository;
+    @Autowired private UsedCategoriesHierarchyBuilder usedCategoriesHierarchyBuilder;
 
     public List<Category> findAll() {
         return categoryRepository.findAll();

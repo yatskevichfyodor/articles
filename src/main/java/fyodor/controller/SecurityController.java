@@ -3,8 +3,6 @@ package fyodor.controller;
 import fyodor.model.User;
 import fyodor.service.SecurityService;
 import fyodor.service.UserService;
-import fyodor.validation.UserLoginValidator;
-import fyodor.validation.UserRegistrationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -22,8 +20,6 @@ import java.util.Locale;
 public class SecurityController {
 
     @Autowired private UserService userService;
-    @Autowired private UserRegistrationValidator userRegistrationValidator;
-    @Autowired private UserLoginValidator userLoginValidator;
     @Autowired private MessageSource messageSource;
     @Autowired private LocaleResolver localeResolver;
     @Autowired private SecurityService securityService;
@@ -40,9 +36,9 @@ public class SecurityController {
 
     @PostMapping("/login")
     public String loginPost(@ModelAttribute("userLoginDto") User userDto, Errors errors) {
-        userLoginValidator.validate(userDto, errors);
         if (errors.hasErrors())
             return "login";
+
         securityService.autologin(userDto.getUsername(), userDto.getPassword());
         return "redirect:/home";
     }
@@ -60,9 +56,7 @@ public class SecurityController {
     }
 
     @PostMapping("/reg")
-    public String registration(@ModelAttribute("user") User userDto,
-                               Errors errors, HttpServletRequest request, Model model) {
-        userRegistrationValidator.validate(userDto, errors);
+    public String registration(@ModelAttribute("user") User userDto, Errors errors, HttpServletRequest request, Model model) {
         if (errors.hasErrors())
             return "reg";
         User user = userService.register(userDto, request);
@@ -80,7 +74,7 @@ public class SecurityController {
         return "message";
     }
 
-    @GetMapping("/registrationconfirm")
+    @GetMapping("/registrationConfirm")
     public String confirmRegistration(@RequestParam("username") String user, @RequestParam("hash") String hash, HttpServletRequest request, Model model) {
         String message;
         boolean confirmed = userService.confirm(user, hash);

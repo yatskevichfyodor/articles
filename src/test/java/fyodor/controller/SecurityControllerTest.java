@@ -2,6 +2,7 @@ package fyodor.controller;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -9,8 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import fyodor.service.SecurityService;
 import fyodor.service.UserService;
-import fyodor.validation.UserLoginValidator;
-import fyodor.validation.UserRegistrationValidator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,30 +41,28 @@ public class SecurityControllerTest {
     }
 
     @Test
-    public void loginPost() {
+    public void loginPost() throws Exception {
+        this.mockMvc.perform(post("/login").param("userLoginDto", "{\"username\":\"user\", \"password\":\"password\"}")).andDo(print()).andExpect(status().isOk())
+                .andExpect(content().string(containsString("redirect:/home")));
     }
 
     @Test
-    public void logout() {
+    public void logout() throws Exception {
     }
 
     @Test
-    public void registration() {
+    public void registration() throws Exception {
     }
 
     @Test
-    public void registration1() {
+    public void confirmRegistration() throws Exception {
     }
 
     @Test
-    public void confirmRegistration() {
+    public void checkIfUsernameNotExists() throws Exception {
     }
 
     @Test
-    public void checkIfUsernameNotExists() {
-    }
-
-    @Test
-    public void checkIfEmailNotExists() {
+    public void checkIfEmailNotExists() throws Exception {
     }
 }

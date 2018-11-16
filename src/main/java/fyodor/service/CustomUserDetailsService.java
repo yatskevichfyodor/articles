@@ -21,8 +21,7 @@ import java.util.Set;
 @Order(1)
 public class CustomUserDetailsService implements UserDetailsService {
 	
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired private UserRepository userRepository;
 
     @Value("${emailConfirmation}")
     private String emailConfirmation;

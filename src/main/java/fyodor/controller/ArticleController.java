@@ -10,7 +10,6 @@ import fyodor.repository.RatingRepository;
 import fyodor.service.*;
 import fyodor.util.HierarchicalCategoryHierarchyToListConverter;
 import fyodor.util.UsedCategoriesHierarchyBuilder;
-import fyodor.validation.ArticleValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -36,7 +35,6 @@ public class ArticleController {
     @Autowired private RatingService ratingService;
     @Autowired private RatingRepository ratingRepository;
     @Autowired private ImageService imageService;
-    @Autowired private ArticleValidator articleValidator;
 
     @Autowired
     private UsedCategoriesHierarchyBuilder usedCategoriesHierarchyBuilder;
@@ -89,11 +87,8 @@ public class ArticleController {
 
     @PostMapping("/article/add")
     @ResponseBody
-    public Long addArticle(@RequestBody ArticleDto articleDto, Errors errors,
-                           @AuthenticationPrincipal CustomUserDetails userDetails) {
-        articleValidator.validate(articleDto, errors);
-        if (errors.hasErrors())
-            throw new RuntimeException(("Article validation error.\n" + errors.getAllErrors().toString()));
+    public Long addArticle(@RequestBody ArticleDto articleDto, Errors errors, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (errors.hasErrors()) throw new RuntimeException(("Article validation error.\n" + errors.getAllErrors().toString()));
         Article article = articleService.save(articleDto, userDetails.getUser());
         return article.getId();
     }
@@ -160,9 +155,7 @@ public class ArticleController {
     @PostMapping("/checkIfTitleNotExists")
     @ResponseBody
     public Boolean checkIfTitleNotExists(@RequestBody String title) {
-        if (articleService.findByTitleIgnoreCase(title) == null)
-            return true;
-        return false;
+        return articleService.findByTitleIgnoreCase(title) == null;
     }
 
     @PostMapping("/image-upload")

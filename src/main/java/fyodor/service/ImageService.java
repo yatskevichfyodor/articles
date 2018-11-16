@@ -14,8 +14,7 @@ import java.io.IOException;
 @Service
 public class ImageService {
 
-    @Autowired
-    ImageRepository imageRepository;
+    @Autowired ImageRepository imageRepository;
 
     public Image save(String file) {
         Image image = new Image();

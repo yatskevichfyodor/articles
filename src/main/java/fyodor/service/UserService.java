@@ -24,29 +24,14 @@ import java.util.*;
 @Service
 public class UserService {
 
-    @Autowired
-    private SecurityService securityService;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private UserAttributeRepository userAttributeRepository;
-
-    @Autowired
-    private UserParamRepository userParamRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private LocaleResolver localeResolver;
-
-    @Autowired
-    private EmailConfirm emailConfirm;
+    @Autowired private SecurityService securityService;
+    @Autowired private UserRepository userRepository;
+    @Autowired private RoleRepository roleRepository;
+    @Autowired private UserAttributeRepository userAttributeRepository;
+    @Autowired private UserParamRepository userParamRepository;
+    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired private LocaleResolver localeResolver;
+    @Autowired private EmailConfirm emailConfirm;
 
     @Value("${emailConfirmation}")
     private String emailConfirmation;
@@ -57,6 +42,13 @@ public class UserService {
 
     public User findByEmailIgnoreCase(String email) {
         return userRepository.findByEmailIgnoreCase(email);
+    }
+
+    public User findByUsernameOrEmailIgnoreCase(String usernameOrEmail) {
+        User user = findByUsernameIgnoreCase(usernameOrEmail);
+        if (user != null) return user;
+        user = findByEmailIgnoreCase(usernameOrEmail);
+        return user;
     }
 
     @Transactional

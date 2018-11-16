@@ -10,8 +10,7 @@ import java.util.Set;
 @Service
 public class RoleService {
 
-    @Autowired
-    private RoleRepository roleRepository;
+    @Autowired private RoleRepository roleRepository;
 
     public Set<Role> findByName(String name) {
         return roleRepository.findByName(name);

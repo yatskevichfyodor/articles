@@ -21,29 +21,15 @@ import java.util.List;
 
 @Service
 public class ArticleService {
-    @Autowired
-    private ArticleRepository articleRepository;
 
-    @Autowired
-    private CategoryService categoryService;
-
-    @Autowired
-    private ImageService imageService;
-
-    @Autowired
-    private CommentService commentService;
-
-    @Autowired
-    private RatingService ratingService;
-
-    @Autowired
-    private ApplicationEventPublisher publisher;
-
-    @Autowired
-    private UsedCategoriesHierarchyBuilder usedCategoriesHierarchyBuilder;
-
-    @Autowired
-    private ArticleDao articleDao;
+    @Autowired private ArticleRepository articleRepository;
+    @Autowired private CategoryService categoryService;
+    @Autowired private ImageService imageService;
+    @Autowired private CommentService commentService;
+    @Autowired private RatingService ratingService;
+    @Autowired private ApplicationEventPublisher publisher;
+    @Autowired private UsedCategoriesHierarchyBuilder usedCategoriesHierarchyBuilder;
+    @Autowired private ArticleDao articleDao;
 
     public Article save(ArticleDto articleDto, User author) {
         Article article = new Article();

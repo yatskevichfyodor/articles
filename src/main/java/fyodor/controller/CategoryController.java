@@ -2,22 +2,20 @@ package fyodor.controller;
 
 import fyodor.dto.CategoryDto;
 import fyodor.service.CategoryService;
-import fyodor.validation.CategoryValidator;
+import fyodor.validation.CategoryWithoutArticles;
+import fyodor.validation.CategoryWithoutSubcategories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.Set;
 
 @Controller
 public class CategoryController {
 
     @Autowired private CategoryService categoryService;
-    @Autowired private CategoryValidator categoryValidator;
 
     @GetMapping("/categoryManagement")
     public String categoryManagement(Model model) {
@@ -29,11 +27,8 @@ public class CategoryController {
 
     @PostMapping("/category/add")
     @ResponseBody
-    public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) {
-        Set<Integer> errorsSet = categoryValidator.validateAdd(categoryDto.getName());
-        if (errorsSet.size() != 0) {
-            return new ResponseEntity<>(new ArrayList<>(errorsSet), HttpStatus.NOT_ACCEPTABLE);
-        }
+    public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto, Errors errors) {
+        if (errors.hasErrors()) throw new RuntimeException();
 
         categoryService.save(categoryDto);
 
@@ -42,11 +37,9 @@ public class CategoryController {
 
     @DeleteMapping("/category/delete")
     @ResponseBody
-    public ResponseEntity<?> deleteCategory(@RequestBody Long categoryId) {
-        Set<Integer> errorsSet = categoryValidator.validateDelete(categoryId);
-        if (errorsSet.size() != 0) {
-            return new ResponseEntity<>(errorsSet, HttpStatus.NOT_ACCEPTABLE);
-        }
+    public ResponseEntity<?> deleteCategory(@RequestBody @CategoryWithoutSubcategories @CategoryWithoutArticles Long categoryId, Errors errors) {
+        if (errors.hasErrors()) throw new RuntimeException();
+
         categoryService.delete(categoryId);
 
         return new ResponseEntity<>(categoryId, HttpStatus.OK);

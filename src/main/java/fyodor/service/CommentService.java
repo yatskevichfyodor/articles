@@ -14,14 +14,10 @@ import java.util.*;
 
 @Service
 public class CommentService {
-    @Autowired
-    private CommentRepository commentRepository;
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private ArticleService articleService;
+    @Autowired private CommentRepository commentRepository;
+    @Autowired private UserService userService;
+    @Autowired private ArticleService articleService;
 
     public void save(Comment comment) {
         commentRepository.save(comment);

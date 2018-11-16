@@ -27,9 +27,6 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp = new Date();
 
-    @Transient
-    private String confirmPassword;
-
     private boolean blocked = false;
     private boolean confirmed = false;
 

@@ -7,13 +7,13 @@ import fyodor.model.User;
 import fyodor.service.CommentService;
 import fyodor.service.CustomUserDetails;
 import fyodor.service.UserService;
-import fyodor.validation.CommentValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
@@ -25,7 +25,6 @@ public class CommentController {
 
     @Autowired private UserService userService;
     @Autowired private CommentService commentService;
-    @Autowired private CommentValidator commentValidator;
     @Autowired private SimpMessagingTemplate simpMessagingTemplate;
 
     @ModelAttribute("currentUser")
@@ -36,18 +35,16 @@ public class CommentController {
 
     @PostMapping("comment/add")
     @ResponseBody
-    public ResponseEntity<?> saveComment(@RequestBody CommentDto commentDto, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        Set<Integer> errorsSet = commentValidator.validate(commentDto.getText());
-        if (errorsSet.size() != 0) {
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-        }
+    public ResponseEntity<?> saveComment(@RequestBody CommentDto commentDto, Errors errors, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (errors.hasErrors())
+            throw new RuntimeException(("Article validation error.\n" + errors.getAllErrors().toString()));
         Comment comment = commentService.save(commentDto, userService.findByUsernameIgnoreCase(userDetails.getUser().getUsername()));
         CommentDto savedCommentDto = new CommentDto();
         savedCommentDto.setId(comment.getId());
         savedCommentDto.setAuthor(comment.getAuthor().getUsername());
         savedCommentDto.setTimestamp(String.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(comment.getTimestamp())));
         savedCommentDto.setText(comment.getText());
-        simpMessagingTemplate.convertAndSend("/comments/" + commentDto.getArticleId() , savedCommentDto);
+        simpMessagingTemplate.convertAndSend("/comments/" + commentDto.getArticleId(), savedCommentDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -66,25 +63,19 @@ public class CommentController {
 
     @PostMapping("/comment/edit")
     @ResponseBody
-    public ResponseEntity<?> updateComment(@RequestBody CommentDto commentDto,
+    public ResponseEntity<?> updateComment(@RequestBody CommentDto commentDto, Errors errors,
                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
-        Set<Integer> errorsSet = commentValidator.validate(commentDto.getText());
-        if (userDetails == null) {
-            errorsSet.add(2);
-        } else if (!(userDetails.getUser().getUsername().equals(commentDto.getAuthor()))) {
-            errorsSet.add(2);
-        }
+        if (errors.hasErrors())
+            throw new RuntimeException(("Article validation error.\n" + errors.getAllErrors().toString()));
 
-        if (errorsSet.size() == 0) {
-            Comment editableComment = commentService.findById(commentDto.getId());
-            editableComment.setText(commentDto.getText());
-            Date newTimestamp = new Date();
-            editableComment.setTimestamp(newTimestamp);
-            commentService.save(editableComment);
+        Comment editableComment = commentService.findById(commentDto.getId());
+        editableComment.setText(commentDto.getText());
+        Date newTimestamp = new Date();
+        editableComment.setTimestamp(newTimestamp);
+        commentService.save(editableComment);
 
-            commentDto.setTimestamp(String.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(newTimestamp)));
-            return new ResponseEntity<>(commentDto, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(errorsSet, HttpStatus.NOT_ACCEPTABLE);
+        commentDto.setTimestamp(String.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(newTimestamp)));
+        return new ResponseEntity<>(commentDto, HttpStatus.OK);
+
     }
 }

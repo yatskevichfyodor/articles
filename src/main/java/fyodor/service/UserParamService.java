@@ -11,11 +11,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserParamService {
 
-    @Autowired
-    private UserAttributeRepository userAttributeRepository;
-
-    @Autowired
-    private UserParamRepository userParamRepository;
+    @Autowired private UserAttributeRepository userAttributeRepository;
+    @Autowired private UserParamRepository userParamRepository;
 
     public UserParam edit(EditUserParamDto editUserParamDto, User user) {
         if (editUserParamDto.getParamValue().equals("")) {
