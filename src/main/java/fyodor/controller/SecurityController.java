@@ -22,26 +22,13 @@ import java.util.Locale;
 @Controller
 public class SecurityController {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UserRegistrationValidator userRegistrationValidator;
-
-    @Autowired
-    private UserLoginValidator userLoginValidator;
-
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
-
-    @Autowired
-    private MessageSource messageSource;
-
-    @Autowired
-    private LocaleResolver localeResolver;
-
-    @Autowired
-    private SecurityService securityService;
+    @Autowired private UserService userService;
+    @Autowired private UserRegistrationValidator userRegistrationValidator;
+    @Autowired private UserLoginValidator userLoginValidator;
+    @Autowired private ApplicationEventPublisher eventPublisher;
+    @Autowired private MessageSource messageSource;
+    @Autowired private LocaleResolver localeResolver;
+    @Autowired private SecurityService securityService;
 
     @Value("${emailConfirmation}")
     private String emailConfirmation;
@@ -112,16 +99,12 @@ public class SecurityController {
     @PostMapping("/checkIfUsernameNotExists")
     @ResponseBody
     public Boolean checkIfUsernameNotExists(@RequestBody String username) {
-        if (userService.findByUsernameIgnoreCase(username) == null)
-            return true;
-        return false;
+        return userService.findByUsernameIgnoreCase(username) == null;
     }
 
     @PostMapping("/checkIfEmailNotExists")
     @ResponseBody
     public Boolean checkIfEmailNotExists(@RequestBody String email) {
-        if (userService.findByEmailIgnoreCase(email) == null)
-            return true;
-        return false;
+        return userService.findByEmailIgnoreCase(email) == null;
     }
 }
