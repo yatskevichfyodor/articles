@@ -23,17 +23,10 @@ import java.util.Set;
 @Controller
 public class CommentController {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private CommentService commentService;
-
-    @Autowired
-    private CommentValidator commentValidator;
-
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
+    @Autowired private UserService userService;
+    @Autowired private CommentService commentService;
+    @Autowired private CommentValidator commentValidator;
+    @Autowired private SimpMessagingTemplate simpMessagingTemplate;
 
     @ModelAttribute("currentUser")
     public User getPrincipal(@AuthenticationPrincipal CustomUserDetails userDetails) {

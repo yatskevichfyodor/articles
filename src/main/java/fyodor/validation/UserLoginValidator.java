@@ -12,11 +12,9 @@ import org.springframework.validation.Validator;
 
 @Component
 public class UserLoginValidator implements Validator {
-    @Autowired
-    private UserService userService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    @Autowired private UserService userService;
+    @Autowired private PasswordEncoder passwordEncoder;
 
     @Value("${emailConfirmation}")
     private String emailConfirmation;

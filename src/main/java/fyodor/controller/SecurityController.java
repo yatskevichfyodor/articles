@@ -7,7 +7,6 @@ import fyodor.validation.UserLoginValidator;
 import fyodor.validation.UserRegistrationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -25,7 +24,6 @@ public class SecurityController {
     @Autowired private UserService userService;
     @Autowired private UserRegistrationValidator userRegistrationValidator;
     @Autowired private UserLoginValidator userLoginValidator;
-    @Autowired private ApplicationEventPublisher eventPublisher;
     @Autowired private MessageSource messageSource;
     @Autowired private LocaleResolver localeResolver;
     @Autowired private SecurityService securityService;
@@ -41,8 +39,7 @@ public class SecurityController {
     }
 
     @PostMapping("/login")
-    public String loginPost(@ModelAttribute("userLoginDto") User userDto, Errors errors,
-                            HttpServletRequest request, Model model) {
+    public String loginPost(@ModelAttribute("userLoginDto") User userDto, Errors errors) {
         userLoginValidator.validate(userDto, errors);
         if (errors.hasErrors())
             return "login";

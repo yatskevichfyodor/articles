@@ -2,9 +2,6 @@ package fyodor.controller;
 
 import fyodor.model.*;
 import fyodor.service.*;
-import fyodor.util.UserCategoriesHierarchyBuilder;
-import fyodor.validation.UserAttributeValidator;
-import fyodor.validation.UserParamValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -16,11 +13,8 @@ import java.text.SimpleDateFormat;
 @Controller
 public class WebController {
 
-	@Autowired
-	private UserService userService;
-
-	@Autowired
-	private CategoryService categoryService;
+	@Autowired private UserService userService;
+	@Autowired private CategoryService categoryService;
 
 	@ModelAttribute("currentUser")
 	public User getPrincipal(@AuthenticationPrincipal CustomUserDetails userDetails) {

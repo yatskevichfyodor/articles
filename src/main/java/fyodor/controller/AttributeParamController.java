@@ -18,17 +18,10 @@ import java.util.Set;
 @Controller
 public class AttributeParamController {
 
-    @Autowired
-    private UserAttributeService userAttributeService;
-
-    @Autowired
-    private UserParamService userParamService;
-
-    @Autowired
-    private UserAttributeValidator userAttributeValidator;
-
-    @Autowired
-    private UserParamValidator userParamValidator;
+    @Autowired private UserAttributeService userAttributeService;
+    @Autowired private UserParamService userParamService;
+    @Autowired private UserAttributeValidator userAttributeValidator;
+    @Autowired private UserParamValidator userParamValidator;
 
     @ModelAttribute("currentUser")
     public User getPrincipal(@AuthenticationPrincipal CustomUserDetails userDetails) {

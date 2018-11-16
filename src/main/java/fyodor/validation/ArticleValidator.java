@@ -11,6 +11,7 @@ import org.springframework.validation.Validator;
 
 @Component
 public class ArticleValidator implements Validator {
+
     @Autowired
     private ArticleService articleService;
 

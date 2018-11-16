@@ -1,6 +1,5 @@
 package fyodor.controller;
 
-
 import fyodor.repository.OverallDao;
 import fyodor.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,19 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-
 @Controller
 public class AdminController {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private OverallDao overallDao;
+    @Autowired private UserService userService;
+    @Autowired private OverallDao overallDao;
 
     @GetMapping("/admin")
-    public String admin(HttpServletRequest request, Model model) {
+    public String admin(Model model) {
         model.addAttribute("listOfUsers", userService.findAll());
 
         return "admin";

@@ -2,7 +2,6 @@ package fyodor.controller;
 
 import fyodor.dto.CategoryDto;
 import fyodor.service.CategoryService;
-import fyodor.util.UsedCategoriesHierarchyBuilder;
 import fyodor.validation.CategoryValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,11 +16,8 @@ import java.util.Set;
 @Controller
 public class CategoryController {
 
-    @Autowired
-    private CategoryService categoryService;
-
-    @Autowired
-    private CategoryValidator categoryValidator;
+    @Autowired private CategoryService categoryService;
+    @Autowired private CategoryValidator categoryValidator;
 
     @GetMapping("/categoryManagement")
     public String categoryManagement(Model model) {
