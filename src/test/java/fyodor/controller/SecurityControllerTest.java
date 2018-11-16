@@ -28,8 +28,6 @@ public class SecurityControllerTest {
     private MockMvc mockMvc;
 
     @MockBean private UserService userService;
-    @MockBean private UserRegistrationValidator userRegistrationValidator;
-    @MockBean private UserLoginValidator userLoginValidator;
     @MockBean private MessageSource messageSource;
     @MockBean private LocaleResolver localeResolver;
     @MockBean private SecurityService securityService;

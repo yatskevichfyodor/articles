@@ -1,8 +1,6 @@
 package fyodor.model;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -14,6 +12,8 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(of={"id", "username", "email", "password"})
 @ToString(of={"id", "username", "email", "password"})
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
@@ -42,6 +42,12 @@ public class User {
 
     @OneToMany(mappedBy = "id.user")
     List<UserParam> params;
+
+    public User(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
 
     public boolean isAdmin() {
         for (Role role : roles) {

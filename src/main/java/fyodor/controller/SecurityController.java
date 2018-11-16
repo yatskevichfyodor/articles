@@ -1,5 +1,6 @@
 package fyodor.controller;
 
+import fyodor.dto.UserRegistrationDto;
 import fyodor.model.User;
 import fyodor.service.SecurityService;
 import fyodor.service.UserService;
@@ -51,15 +52,15 @@ public class SecurityController {
 
     @GetMapping("/reg")
     public String registration(Model model) {
-        model.addAttribute("user", new User());
+        model.addAttribute("user", new UserRegistrationDto());
         return "reg";
     }
 
     @PostMapping("/reg")
-    public String registration(@ModelAttribute("user") User userDto, Errors errors, HttpServletRequest request, Model model) {
+    public String registration(@ModelAttribute("user") UserRegistrationDto userDto, Errors errors, HttpServletRequest request, Model model) {
         if (errors.hasErrors())
             return "reg";
-        User user = userService.register(userDto, request);
+        User user = userService.register(new User(userDto.getUsername(), userDto.getEmail(), userDto.getPassword()), request);
 
         Locale locale = localeResolver.resolveLocale(request);
         String message;
