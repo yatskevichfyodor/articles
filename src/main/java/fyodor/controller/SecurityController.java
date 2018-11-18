@@ -10,6 +10,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.LocaleResolver;
@@ -36,7 +37,8 @@ public class SecurityController {
     }
 
     @PostMapping("/login")
-    public String loginPost(@ModelAttribute("userLoginDto") User userDto, Errors errors) {
+    public String loginPost(@ModelAttribute("userLoginDto") User userDto, BindingResult errors) {
+        System.out.println("@@@@@@@@@@@@@@@");
         if (errors.hasErrors())
             return "login";
 
@@ -98,5 +100,11 @@ public class SecurityController {
     @ResponseBody
     public Boolean checkIfEmailNotExists(@RequestBody String email) {
         return userService.findByEmailIgnoreCase(email) == null;
+    }
+
+    @PostMapping("/testtest")
+    public void testtest() {
+        System.out.println("Hello World!");
+//        if (errors.hasErrors()) throw new RuntimeException();
     }
 }
