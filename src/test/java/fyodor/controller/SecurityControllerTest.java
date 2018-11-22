@@ -1,109 +1,133 @@
 package fyodor.controller;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
-import fyodor.config.SecurityConfig;
 import fyodor.model.User;
 import fyodor.service.SecurityService;
 import fyodor.service.UserService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.ViewResolver;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(SecurityController.class)
-@Import(value = { SecurityConfig.class, ViewResolver.class })
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SecurityControllerTest {
 
-    @Autowired private MockMvc mockMvc;
+    @Autowired private WebApplicationContext context;
 
-    @MockBean private UserService userService;
-    @MockBean private MessageSource messageSource;
-    @MockBean private LocaleResolver localeResolver;
     @MockBean private SecurityService securityService;
-    @MockBean private BindingResult bindingResult;
+    @MockBean private UserService userService;
+
+    private MockMvc mvc;
+
+    @Before
+    public void setup() {
+        mvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .apply(springSecurity())
+                .build();
+    }
 
     @Test
-    public void login() throws Exception {
-        this.mockMvc.perform(get("/login")).andDo(print()).andExpect(status().isOk())
+    public void loginGet() throws Exception {
+        this.mvc.perform(get("/login"))
+                .andExpect(status().isOk())
                 .andExpect(view().name("login"));
     }
 
     @Test
     public void loginPost() throws Exception {
-        Mockito.doNothing().when(securityService).autologin(any(), any());
-        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+        doNothing().when(securityService).autologin(any(), any());
 
-        this.mockMvc.perform(post("/login")
+        this.mvc.perform(post("/login")
                 .param("username", "user")
                 .param("password", "password")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .with(csrf()))
-                .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/home"));
     }
 
-//    @Test
-//    public void logout() throws Exception {
-//    }
-//
     @Test
-    public void registration() throws Exception {
-        this.mockMvc.perform(get("/reg"))
-                .andDo(print()).andExpect(status().isOk());
+    public void logoutGet() throws Exception {
+        this.mvc.perform(get("/logout"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"));
     }
-//
-//    @Test
-//    public void confirmRegistration() throws Exception {
-//    }
-//
-//    @Test
-//    public void checkIfUsernameNotExists() throws Exception {
-//    }
-//
-    @Test
-    public void checkIfEmailNotExists() throws Exception {
-        Mockito.when(userService.findByUsernameIgnoreCase(any())).thenReturn(new User());
 
-        this.mockMvc.perform(post("/checkIfUsernameNotExists")
+    @Test
+    public void registrationGet() throws Exception {
+        this.mvc.perform(get("/reg"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("reg"));
+    }
+
+    @Test
+    public void registrationPost() throws Exception {
+        when(userService.register(any(), any())).thenReturn(new User("username", "email", "password"));
+
+        this.mvc.perform(post("/reg")
+                .param("username", "user")
+                .param("email", "email1@mail.com")
+                .param("password", "password")
+                .param("confirmPassword", "confirmPassword")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("message"));
+    }
+
+    @Test
+    public void confirmRegistration() throws Exception {
+        when(userService.confirm(any(), any())).thenReturn(true);
+
+        this.mvc.perform(get("/registrationConfirm")
+                .param("username", "user")
+                .param("hash", "WUGw498BIngHGEGN99NGOHG")
+        )
+                .andExpect(status().isOk())
+                .andExpect(view().name("message"));
+    }
+
+    @Test
+    public void checkIfUsernameNotExists() throws Exception {
+        when(userService.findByUsernameIgnoreCase(any())).thenReturn(new User("user", "email1@mail.com", "password"));
+
+        this.mvc.perform(post("/checkIfUsernameNotExists")
                 .param("username", "user")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk());
+//                .andExpect(content().json("{'username':'user','}"));
     }
 
-
-
     @Test
-    public void testtest() throws Exception {
-        this.mockMvc.perform(post("/testtest")
-                .with(csrf())
-        )
+    public void checkIfEmailNotExists() throws Exception {
+        when(userService.findByEmailIgnoreCase(any())).thenReturn(new User("user", "email1@mail.com", "password"));
+
+        this.mvc.perform(post("/checkIfEmailNotExists")
+                .param("username", "user")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .with(csrf()))
                 .andDo(print())
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isOk());
+//                .andExpect(content().json("{'username':'user','}"));
     }
 }

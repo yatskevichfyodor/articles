@@ -101,10 +101,4 @@ public class SecurityController {
     public Boolean checkIfEmailNotExists(@RequestBody String email) {
         return userService.findByEmailIgnoreCase(email) == null;
     }
-
-    @PostMapping("/testtest")
-    public void testtest() {
-        System.out.println("Hello World!");
-//        if (errors.hasErrors()) throw new RuntimeException();
-    }
 }
