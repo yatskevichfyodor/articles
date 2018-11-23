@@ -38,7 +38,6 @@ public class SecurityController {
 
     @PostMapping("/login")
     public String loginPost(@ModelAttribute("userLoginDto") User userDto, BindingResult errors) {
-        System.out.println("@@@@@@@@@@@@@@@");
         if (errors.hasErrors())
             return "login";
 

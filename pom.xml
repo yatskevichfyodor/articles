@@ -84,14 +84,15 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.thymeleaf.extras</groupId>-->
-            <!--<artifactId>thymeleaf-extras-springsecurity4</artifactId>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.thymeleaf.extras</groupId>
-            <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+            <artifactId>thymeleaf-extras-springsecurity4</artifactId>
         </dependency>
+        <!--NOT WORKS WITH CURRENT SPRING SECURITY-->
+        <!--<dependency>-->
+            <!--<groupId>org.thymeleaf.extras</groupId>-->
+            <!--<artifactId>thymeleaf-extras-springsecurity5</artifactId>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.webjars</groupId>

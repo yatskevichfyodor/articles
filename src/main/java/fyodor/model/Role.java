@@ -1,8 +1,6 @@
 package fyodor.model;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -12,6 +10,8 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(of={"id", "name"})
 @ToString(of={"id", "name"})
+@AllArgsConstructor
+@NoArgsConstructor
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

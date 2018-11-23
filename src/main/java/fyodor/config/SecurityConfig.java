@@ -33,11 +33,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 						"/commentAdd", "/comment/delete", "/comment/edit",
 						"/userParam/edit").authenticated()
 
-                .antMatchers("/testtest", "/login").permitAll()
-
-				.anyRequest().permitAll()
+                .antMatchers("/login").permitAll()
 		.and()
-				.logout().logoutSuccessUrl("/index.html").permitAll()
+				.logout().logoutSuccessUrl("/home").permitAll()
 		.and()
 				.sessionManagement().maximumSessions(1).sessionRegistry(sessionRegistry());
 	}

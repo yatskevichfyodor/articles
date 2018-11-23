@@ -10,7 +10,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import fyodor.model.Role;
 import fyodor.model.User;
+import fyodor.repository.UserRepository;
 import fyodor.service.SecurityService;
 import fyodor.service.UserService;
 import org.junit.Before;
@@ -25,14 +27,20 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SecurityControllerTest {
 
     @Autowired private WebApplicationContext context;
 
-    @MockBean private SecurityService securityService;
+    //@Autowired private SecurityService securityService;
+
     @MockBean private UserService userService;
+    @MockBean private UserRepository userRepository;
 
     private MockMvc mvc;
 
@@ -53,15 +61,20 @@ public class SecurityControllerTest {
 
     @Test
     public void loginPost() throws Exception {
-        doNothing().when(securityService).autologin(any(), any());
+//        doNothing().when(securityService).autologin(any(), any());
+
+        when(userRepository.findByUsernameIgnoreCase(any()))
+                .thenReturn(new User("username", "email", "password", new Date(), false, true, new HashSet<Role>(Arrays.asList(new Role("ROLE_USER)")))));
 
         this.mvc.perform(post("/login")
                 .param("username", "user")
                 .param("password", "password")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .with(csrf()))
+                .andDo(print())
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/home"));
+                .andExpect(redirectedUrl("/home"))
+                .andExpect(cookie().exists("JSESSIONID"));
     }
 
     @Test
