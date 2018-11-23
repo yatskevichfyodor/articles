@@ -49,6 +49,16 @@ public class User {
         this.password = password;
     }
 
+    public User(String username, String email, String password, Date timestamp, boolean blocked, boolean confirmed, Set<Role> roles) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.timestamp = timestamp;
+        this.blocked = blocked;
+        this.confirmed = confirmed;
+        this.roles = roles;
+    }
+
     public boolean isAdmin() {
         for (Role role : roles) {
             if (role.getName().equals("ROLE_ADMIN")) return true;
