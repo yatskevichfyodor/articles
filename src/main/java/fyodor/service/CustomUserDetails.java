@@ -2,9 +2,13 @@ package fyodor.service;
 
 import fyodor.model.User;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class CustomUserDetails implements UserDetails {
     private User user;
@@ -16,6 +20,11 @@ public class CustomUserDetails implements UserDetails {
     public CustomUserDetails(User user, Set<GrantedAuthority> grantedAuthorities) {
         this.user = user;
         this.grantedAuthorities = grantedAuthorities;
+    }
+
+    public CustomUserDetails(User user) {
+        this.user = user;
+        this.grantedAuthorities = user.getRoles().stream().map(it -> new SimpleGrantedAuthority(it.getName())).collect(Collectors.toSet());
     }
 
     public User getUser() {

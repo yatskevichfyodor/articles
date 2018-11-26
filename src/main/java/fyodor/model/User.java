@@ -49,6 +49,14 @@ public class User {
         this.password = password;
     }
 
+    public User(String username, String email, String password, Date timestamp, Set<Role> roles) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.timestamp = timestamp;
+        this.roles = roles;
+    }
+
     public User(String username, String email, String password, Date timestamp, boolean blocked, boolean confirmed, Set<Role> roles) {
         this.username = username;
         this.email = email;

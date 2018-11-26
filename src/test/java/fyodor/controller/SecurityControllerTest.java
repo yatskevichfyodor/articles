@@ -18,6 +18,7 @@ import fyodor.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -37,9 +38,8 @@ public class SecurityControllerTest {
 
     @Autowired private WebApplicationContext context;
 
-    //@Autowired private SecurityService securityService;
-
     @MockBean private UserService userService;
+    @MockBean private SecurityService securityService;
     @MockBean private UserRepository userRepository;
 
     private MockMvc mvc;
@@ -61,8 +61,6 @@ public class SecurityControllerTest {
 
     @Test
     public void loginPost() throws Exception {
-//        doNothing().when(securityService).autologin(any(), any());
-
         when(userRepository.findByUsernameIgnoreCase(any()))
                 .thenReturn(new User("username", "email", "password", new Date(), false, true, new HashSet<Role>(Arrays.asList(new Role("ROLE_USER)")))));
 
@@ -93,7 +91,7 @@ public class SecurityControllerTest {
 
     @Test
     public void registrationPost() throws Exception {
-        when(userService.register(any(), any())).thenReturn(new User("username", "email", "password"));
+        when(securityService.register(any(), any())).thenReturn(new User("username", "email", "password"));
 
         this.mvc.perform(post("/reg")
                 .param("username", "user")
@@ -108,7 +106,7 @@ public class SecurityControllerTest {
 
     @Test
     public void confirmRegistration() throws Exception {
-        when(userService.confirm(any(), any())).thenReturn(true);
+        when(securityService.confirm(any(), any())).thenReturn(true);
 
         this.mvc.perform(get("/registrationConfirm")
                 .param("username", "user")
@@ -128,7 +126,6 @@ public class SecurityControllerTest {
                 .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk());
-//                .andExpect(content().json("{'username':'user','}"));
     }
 
     @Test
@@ -141,6 +138,5 @@ public class SecurityControllerTest {
                 .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk());
-//                .andExpect(content().json("{'username':'user','}"));
     }
 }

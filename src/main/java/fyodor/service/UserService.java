@@ -28,10 +28,6 @@ public class UserService {
     @Autowired private UserRepository userRepository;
     @Autowired private RoleRepository roleRepository;
     @Autowired private UserAttributeRepository userAttributeRepository;
-    @Autowired private UserParamRepository userParamRepository;
-    @Autowired private PasswordEncoder passwordEncoder;
-    @Autowired private LocaleResolver localeResolver;
-    @Autowired private EmailConfirm emailConfirm;
 
     @Value("${emailConfirmation}")
     private String emailConfirmation;
@@ -49,39 +45,6 @@ public class UserService {
         if (user != null) return user;
         user = findByEmailIgnoreCase(usernameOrEmail);
         return user;
-    }
-
-    @Transactional
-    public User register(User userDto, HttpServletRequest request) {
-        User user = save(userDto);
-
-        if (emailConfirmation.equals("true")) {
-            String appUrl = String.format("%s://%s:%d", request.getScheme(), request.getServerName(), request.getServerPort());
-            confirmRegistration(user, localeResolver.resolveLocale(request), appUrl);
-        }
-
-        return user;
-    }
-
-    public User save(User userDto) {
-        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        userDto.setRoles(roleRepository.findByName("ROLE_USER"));
-        return userRepository.save(userDto);
-    }
-
-    private void confirmRegistration(User user, Locale locale, String appUrl) {
-        String username = user.getUsername();
-        String hash = passwordEncoder.encode(username);
-        emailConfirm.sendMail(appUrl, locale, username, user.getEmail(), hash);
-    }
-
-    @Transactional
-    public boolean confirm(String username, String hash) {
-        if (passwordEncoder.matches(username, hash)) {
-            userRepository.confirm(username);
-            return true;
-        }
-        return false;
     }
 
     public void delete(User user) {

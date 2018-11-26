@@ -61,7 +61,7 @@ public class SecurityController {
     public String registration(@ModelAttribute("user") UserRegistrationDto userDto, Errors errors, HttpServletRequest request, Model model) {
         if (errors.hasErrors())
             return "reg";
-        User user = userService.register(new User(userDto.getUsername(), userDto.getEmail(), userDto.getPassword()), request);
+        User user = securityService.register(new User(userDto.getUsername(), userDto.getEmail(), userDto.getPassword()), request);
 
         Locale locale = localeResolver.resolveLocale(request);
         String message;
@@ -79,7 +79,7 @@ public class SecurityController {
     @GetMapping("/registrationConfirm")
     public String confirmRegistration(@RequestParam("username") String user, @RequestParam("hash") String hash, HttpServletRequest request, Model model) {
         String message;
-        boolean confirmed = userService.confirm(user, hash);
+        boolean confirmed = securityService.confirm(user, hash);
         Locale locale = localeResolver.resolveLocale(request);
         if (confirmed)
             message = messageSource.getMessage("auth.message.successful", null, locale);
