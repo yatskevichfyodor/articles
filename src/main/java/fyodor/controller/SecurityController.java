@@ -59,8 +59,9 @@ public class SecurityController {
 
     @PostMapping("/reg")
     public String registration(@ModelAttribute("user") UserRegistrationDto userDto, Errors errors, HttpServletRequest request, Model model) {
-        if (errors.hasErrors())
+        if (errors.hasErrors()) {
             return "reg";
+        }
         User user = securityService.register(new User(userDto.getUsername(), userDto.getEmail(), userDto.getPassword()), request);
 
         Locale locale = localeResolver.resolveLocale(request);

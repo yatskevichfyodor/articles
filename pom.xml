@@ -55,13 +55,13 @@
             <scope>runtime</scope>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>mysql</groupId>-->
-            <!--<artifactId>mysql-connector-java</artifactId>-->
-            <!--<scope>runtime</scope>-->
+        <!--<groupId>mysql</groupId>-->
+        <!--<artifactId>mysql-connector-java</artifactId>-->
+        <!--<scope>runtime</scope>-->
         <!--</dependency>-->
         <dependency>
-        <groupId>org.postgresql</groupId>
-        <artifactId>postgresql</artifactId>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -78,7 +78,10 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <!--<dependency>-->
+            <!--<groupId>org.seleniumhq.selenium</groupId>-->
+            <!--<artifactId>selenium-java</artifactId>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -90,8 +93,8 @@
         </dependency>
         <!--NOT WORKS WITH CURRENT SPRING SECURITY-->
         <!--<dependency>-->
-            <!--<groupId>org.thymeleaf.extras</groupId>-->
-            <!--<artifactId>thymeleaf-extras-springsecurity5</artifactId>-->
+        <!--<groupId>org.thymeleaf.extras</groupId>-->
+        <!--<artifactId>thymeleaf-extras-springsecurity5</artifactId>-->
         <!--</dependency>-->
 
         <dependency>
