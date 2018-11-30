@@ -4,6 +4,7 @@ import fyodor.dto.CommentDto;
 import fyodor.exception.ForbiddenException;
 import fyodor.model.Comment;
 import fyodor.model.User;
+import fyodor.repository.UserRepository;
 import fyodor.service.CommentService;
 import fyodor.service.CustomUserDetails;
 import fyodor.service.UserService;
@@ -23,7 +24,7 @@ import java.util.Set;
 @Controller
 public class CommentController {
 
-    @Autowired private UserService userService;
+    @Autowired private UserRepository userRepository;
     @Autowired private CommentService commentService;
     @Autowired private SimpMessagingTemplate simpMessagingTemplate;
 
@@ -38,7 +39,7 @@ public class CommentController {
     public ResponseEntity<?> saveComment(@RequestBody CommentDto commentDto, Errors errors, @AuthenticationPrincipal CustomUserDetails userDetails) {
         if (errors.hasErrors())
             throw new RuntimeException(("Article validation error.\n" + errors.getAllErrors().toString()));
-        Comment comment = commentService.save(commentDto, userService.findByUsernameIgnoreCase(userDetails.getUser().getUsername()));
+        Comment comment = commentService.save(commentDto, userRepository.findByUsernameIgnoreCase(userDetails.getUser().getUsername()));
         CommentDto savedCommentDto = new CommentDto();
         savedCommentDto.setId(comment.getId());
         savedCommentDto.setAuthor(comment.getAuthor().getUsername());

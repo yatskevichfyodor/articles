@@ -1,6 +1,7 @@
 package fyodor.controller;
 
 import fyodor.model.*;
+import fyodor.repository.UserRepository;
 import fyodor.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,6 +15,7 @@ import java.text.SimpleDateFormat;
 public class WebController {
 
 	@Autowired private UserService userService;
+	@Autowired private UserRepository userRepository;
 	@Autowired private CategoryService categoryService;
 
 	@ModelAttribute("currentUser")
@@ -37,7 +39,7 @@ public class WebController {
 	@GetMapping("/user/{username}")
 	public String userProfile(Model model, @PathVariable("username") String username,
 							  @AuthenticationPrincipal CustomUserDetails userDetails) {
-		User user = userService.findByUsernameIgnoreCase(username);
+		User user = userRepository.findByUsernameIgnoreCase(username);
 		//if (userDetails == null) return "redirect:/home";
 		if (userDetails != null && userDetails.getUser().equals(user)) return "redirect:/profile";
 

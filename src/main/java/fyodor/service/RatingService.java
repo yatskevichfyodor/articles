@@ -5,6 +5,7 @@ import fyodor.model.Article;
 import fyodor.model.Rating;
 import fyodor.model.User;
 import fyodor.repository.RatingRepository;
+import fyodor.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +21,12 @@ public class RatingService {
     @Autowired private RatingRepository ratingRepository;
     @Autowired private ArticleService articleService;
     @Autowired private UserService userService;
+    @Autowired private UserRepository userRepository;
 
     @Transactional
     public void changeState(Long articleId, String username, String ratingState) {
         Article article = articleService.findById(articleId);
-        User user = userService.findByUsernameIgnoreCase(username);
+        User user = userRepository.findByUsernameIgnoreCase(username);
 
 
         Rating rating = new Rating();

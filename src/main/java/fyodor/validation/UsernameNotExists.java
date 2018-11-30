@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Target( { ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UsernameNotExists {
-    String message() default "Invalid phone number";
+    String message() default "Specified username already exists";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

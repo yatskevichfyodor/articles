@@ -1,7 +1,9 @@
 package fyodor.controller;
 
+import fyodor.dto.UserLoginDto;
 import fyodor.dto.UserRegistrationDto;
 import fyodor.model.User;
+import fyodor.repository.UserRepository;
 import fyodor.service.SecurityService;
 import fyodor.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +18,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.LocaleResolver;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Locale;
 
 @Controller
 public class SecurityController {
 
     @Autowired private UserService userService;
+    @Autowired private UserRepository userRepository;
     @Autowired private MessageSource messageSource;
     @Autowired private LocaleResolver localeResolver;
     @Autowired private SecurityService securityService;
@@ -37,7 +41,7 @@ public class SecurityController {
     }
 
     @PostMapping("/login")
-    public String loginPost(@ModelAttribute("userLoginDto") User userDto, BindingResult errors) {
+    public String loginPost(@Valid @ModelAttribute("userLoginDto") UserLoginDto userDto, BindingResult errors) {
         if (errors.hasErrors())
             return "login";
 
@@ -92,13 +96,13 @@ public class SecurityController {
 
     @PostMapping("/checkIfUsernameNotExists")
     @ResponseBody
-    public Boolean checkIfUsernameNotExists(@RequestBody String username) {
-        return userService.findByUsernameIgnoreCase(username) == null;
+    public Boolean checkIfUsernameNotExists(@RequestParam String username) {
+        return userRepository.findByUsernameIgnoreCase(username) == null;
     }
 
     @PostMapping("/checkIfEmailNotExists")
     @ResponseBody
-    public Boolean checkIfEmailNotExists(@RequestBody String email) {
-        return userService.findByEmailIgnoreCase(email) == null;
+    public Boolean checkIfEmailNotExists(@RequestParam String email) {
+        return userRepository.findByEmailIgnoreCase(email) == null;
     }
 }

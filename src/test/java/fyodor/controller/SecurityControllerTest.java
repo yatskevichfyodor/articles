@@ -118,7 +118,7 @@ public class SecurityControllerTest {
 
     @Test
     public void checkIfUsernameNotExists() throws Exception {
-        when(userService.findByUsernameIgnoreCase(any())).thenReturn(new User("user", "email1@mail.com", "password"));
+        when(userRepository.findByUsernameIgnoreCase(any())).thenReturn(new User("user", "email1@mail.com", "password"));
 
         this.mvc.perform(post("/checkIfUsernameNotExists")
                 .param("username", "user")
@@ -130,7 +130,7 @@ public class SecurityControllerTest {
 
     @Test
     public void checkIfEmailNotExists() throws Exception {
-        when(userService.findByEmailIgnoreCase(any())).thenReturn(new User("user", "email1@mail.com", "password"));
+        when(userRepository.findByEmailIgnoreCase(any())).thenReturn(new User("user", "email1@mail.com", "password"));
 
         this.mvc.perform(post("/checkIfEmailNotExists")
                 .param("username", "user")

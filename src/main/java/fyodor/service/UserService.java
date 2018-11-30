@@ -32,18 +32,10 @@ public class UserService {
     @Value("${emailConfirmation}")
     private String emailConfirmation;
 
-    public User findByUsernameIgnoreCase(String username) {
-        return userRepository.findByUsernameIgnoreCase(username);
-    }
-
-    public User findByEmailIgnoreCase(String email) {
-        return userRepository.findByEmailIgnoreCase(email);
-    }
-
     public User findByUsernameOrEmailIgnoreCase(String usernameOrEmail) {
-        User user = findByUsernameIgnoreCase(usernameOrEmail);
+        User user = userRepository.findByUsernameIgnoreCase(usernameOrEmail);
         if (user != null) return user;
-        user = findByEmailIgnoreCase(usernameOrEmail);
+        user = userRepository.findByEmailIgnoreCase(usernameOrEmail);
         return user;
     }
 

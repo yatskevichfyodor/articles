@@ -14,7 +14,7 @@ import javax.validation.Payload;
 @Documented
 @Constraint(validatedBy = ValidCredentialsValidator.class)
 public @interface ValidCredentials {
-    String message() default "Passwords don't match";
+    String message() default "Invalid credentials";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

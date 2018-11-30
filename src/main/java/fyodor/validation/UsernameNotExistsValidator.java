@@ -1,5 +1,6 @@
 package fyodor.validation;
 
+import fyodor.repository.UserRepository;
 import fyodor.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -8,8 +9,7 @@ import javax.validation.ConstraintValidatorContext;
 
 public class UsernameNotExistsValidator implements ConstraintValidator<UsernameNotExists, String> {
 
-    @Autowired
-    private UserService userService;
+    @Autowired private UserRepository userRepository;
 
     @Override
     public void initialize(UsernameNotExists contactNumber) {
@@ -17,6 +17,6 @@ public class UsernameNotExistsValidator implements ConstraintValidator<UsernameN
 
     @Override
     public boolean isValid(String username, ConstraintValidatorContext cxt) {
-        return userService.findByUsernameIgnoreCase(username) == null;
+        return userRepository.findByUsernameIgnoreCase(username) == null;
     }
 }

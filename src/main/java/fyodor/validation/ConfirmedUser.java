@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Target( { ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConfirmedUser {
-    String message() default "Invalid phone number";
+    String message() default "This user was not confirmed";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

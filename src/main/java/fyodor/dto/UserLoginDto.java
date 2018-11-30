@@ -12,10 +12,10 @@ import javax.validation.constraints.Size;
 @ConfirmedUser
 public class UserLoginDto {
     @NotNull
-    @Size(min=4, max=32, message="Name should have atleast 2 characters")
+    @Size(min=4, max=32, message="Username should have from 4 to 32 characters")
     private String username;
 
     @NotNull
-    @Size(min=4, max=32, message="Name should have atleast 2 characters")
+    @Size(min=4, max=32, message="Password should have from 4 to 32 characters")
     private String password;
 }

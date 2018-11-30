@@ -4,6 +4,7 @@ import fyodor.dto.CommentDto;
 import fyodor.model.Comment;
 import fyodor.model.User;
 import fyodor.repository.CommentRepository;
+import fyodor.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;
@@ -17,6 +18,7 @@ public class CommentService {
 
     @Autowired private CommentRepository commentRepository;
     @Autowired private UserService userService;
+    @Autowired private UserRepository userRepository;
     @Autowired private ArticleService articleService;
 
     public void save(Comment comment) {
@@ -28,7 +30,7 @@ public class CommentService {
         Map<String, Object> data = springParser.parseMap(json);
 
         Comment comment = new Comment();
-        User user = userService.findByUsernameIgnoreCase(author.getName());
+        User user = userRepository.findByUsernameIgnoreCase(author.getName());
         comment.setAuthor(user);
         comment.setText((String)data.get("text"));
         comment.setArticle(articleService.findById(Long.valueOf((String)data.get("articleId"))));
