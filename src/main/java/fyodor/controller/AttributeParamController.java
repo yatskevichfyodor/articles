@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
 @Controller
@@ -44,7 +45,7 @@ public class AttributeParamController {
 
     @PostMapping("/userParam/edit")
     @ResponseBody
-    public ResponseEntity<?> editParam(@RequestBody EditUserParamDto editUserParamDto, Errors errors, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<?> editParam(@RequestBody @Valid EditUserParamDto editUserParamDto, Errors errors, @AuthenticationPrincipal CustomUserDetails userDetails) {
         if (errors.hasErrors()) throw new RuntimeException();
 
         userParamService.edit(editUserParamDto, userDetails.getUser());
