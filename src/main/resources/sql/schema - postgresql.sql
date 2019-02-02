@@ -1,4 +1,4 @@
-
+create database db1;
 
 create table if not exists roles
 (
