@@ -13,7 +13,7 @@
 ![Alt text](/description/category-management.PNG "Add topic page")
 ![Alt text](/description/article.PNG "Main page")
 ![Alt text](/description/save-as-pdf.PNG "Topic page")
-![Alt text](/description/sql terminal.PNG "Topic page")
+![Alt text](/description/sql-terminal.PNG "Topic page")
 
 ## Getting started (instruction has done in a hurry)
 #### 1. Clone project from github
