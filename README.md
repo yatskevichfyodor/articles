@@ -15,7 +15,7 @@
 ![Alt text](/description/save-as-pdf.PNG "Topic page")
 ![Alt text](/description/sql-terminal.PNG "Topic page")
 
-## Getting started (instruction has done in a hurry)
+## Getting started (instruction was created in a hurry)
 #### 1. Clone project from github
 #### 2. Use jdk 8
 #### 3. Create mysql database db1
