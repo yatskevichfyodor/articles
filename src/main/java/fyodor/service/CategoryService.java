@@ -1,7 +1,6 @@
 package fyodor.service;
 
 import fyodor.dto.CategoryDto;
-import fyodor.model.Article;
 import fyodor.model.Category;
 import fyodor.model.User;
 import fyodor.repository.CategoryRepository;
@@ -9,10 +8,8 @@ import fyodor.util.CategoryHierarchyToListConverter;
 import fyodor.util.HierarchicalCategoryHierarchyToListConverter;
 import fyodor.util.UsedCategoriesHierarchyBuilder;
 import fyodor.util.UserCategoriesHierarchyBuilder;
-import org.hibernate.jpa.event.internal.jpa.ListenerCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.util.resources.cldr.de.CalendarData_de_AT;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;

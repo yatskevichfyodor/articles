@@ -46,7 +46,7 @@ public class ArticleDao {
             Article article = new Article();
             article.setId(rs.getInt(1));
             article.setContent(rs.getString(2));
-            article.setTimestamp(rs.getDate(3));
+//            article.setTimestamp(rs.getDate(3));
             article.setTitle(rs.getString(4));
             User author = userRepository.findById(rs.getLong(5)).get();
             article.setAuthor(author);
